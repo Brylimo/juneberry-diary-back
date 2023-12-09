@@ -1,2 +1,2 @@
-# merci
-app helps "merci"ing(french)
+# juneberry diary
+juneberry diary project
