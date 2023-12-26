@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.util;
 
-import com.thxpapa.juneberrydiary.domain.file.MerciFile;
+import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,18 +16,18 @@ public class FileUtil {
     @Value("${file.upload.dir}")
     private String fileDir;
 
-    public String getMerciFilePath(String filename) {
+    public String getJuneberryFilePath(String filename) {
         return fileDir + filename;
     }
 
-    public MerciFile storeFile(MultipartFile multipartFile) throws IOException {
+    public JuneberryFile storeFile(MultipartFile multipartFile) throws IOException {
         if (multipartFile.isEmpty()) return null;
 
         String originalFileName = multipartFile.getOriginalFilename();
         String newFileName = createStoreFileName(originalFileName);
-        multipartFile.transferTo(new File(getMerciFilePath(newFileName)));
+        multipartFile.transferTo(new File(getJuneberryFilePath(newFileName)));
 
-        return MerciFile.builder()
+        return JuneberryFile.builder()
                         .uploadName(originalFileName)
                         .storeName(newFileName)
                         .statusCd("01")

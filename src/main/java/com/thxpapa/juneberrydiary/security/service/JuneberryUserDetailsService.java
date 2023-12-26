@@ -1,8 +1,8 @@
 package com.thxpapa.juneberrydiary.security.service;
 
-import com.thxpapa.juneberrydiary.domain.user.MerciUser;
+import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.domain.user.SecurityUser;
-import com.thxpapa.juneberrydiary.repository.userRepository.MerciUserRepository;
+import com.thxpapa.juneberrydiary.repository.userRepository.JuneberryUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,23 +17,23 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MerciUserDetailsService implements UserDetailsService {
+public class JuneberryUserDetailsService implements UserDetailsService {
 
-    private final MerciUserRepository merciUserRepository;
+    private final JuneberryUserRepository juneberryUserRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        MerciUser merciUser = merciUserRepository.findByEmail(email);
+        JuneberryUser juneberryUser = juneberryUserRepository.findByEmail(email);
 
-        if (merciUser == null) {
+        if (juneberryUser == null) {
             throw new UsernameNotFoundException("UsernameNotfoundException");
         }
 
         List<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-        return new SecurityUser(merciUser, roles);
+        return new SecurityUser(juneberryUser, roles);
     }
 }

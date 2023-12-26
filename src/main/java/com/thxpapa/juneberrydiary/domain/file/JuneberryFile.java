@@ -10,15 +10,15 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(name="merci_file", schema="datamart")
+@Table(name="juneberry_file", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = "merciFileUid", callSuper=false)
+@EqualsAndHashCode(of = "juneberryFileUid", callSuper=false)
 @ToString
-public class MerciFile {
+public class JuneberryFile {
     @Id
-    @Column(name="merci_file_uid")
+    @Column(name="juneberry_file_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int merciFileUid;
+    private int juneberryFileUid;
 
     @Comment("업로드 파일 이름")
     @Column(name="upload_name", length = 255)
@@ -44,7 +44,7 @@ public class MerciFile {
     private LocalDateTime modDt;
 
     @Builder
-    public MerciFile(String uploadName, String storeName, String statusCd) {
+    public JuneberryFile(String uploadName, String storeName, String statusCd) {
         this.uploadName = uploadName;
         this.storeName = storeName;
         this.statusCd = statusCd;

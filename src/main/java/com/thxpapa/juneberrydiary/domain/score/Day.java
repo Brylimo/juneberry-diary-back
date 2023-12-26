@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.score;
 
-import com.thxpapa.juneberrydiary.domain.user.MerciUser;
+import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -42,8 +42,8 @@ public class Day {
     private LocalDateTime modDt;
 
     @ManyToOne
-    @JoinColumn(name="merciUserId")
-    private MerciUser merciUser;
+    @JoinColumn(name="juneberryUserId")
+    private JuneberryUser juneberryUser;
 
     @Builder
     public Day(LocalDate date, String statusCd) {

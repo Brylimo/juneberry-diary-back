@@ -3,7 +3,7 @@ package com.thxpapa.juneberrydiary.web;
 import com.thxpapa.juneberrydiary.domain.score.Day;
 import com.thxpapa.juneberrydiary.domain.score.SpecialDay;
 import com.thxpapa.juneberrydiary.domain.score.Task;
-import com.thxpapa.juneberrydiary.domain.user.MerciUser;
+import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.ErrorResponse;
 import com.thxpapa.juneberrydiary.dto.UserRegisterRequestDto;
 import com.thxpapa.juneberrydiary.dto.score.TagDto;
@@ -12,7 +12,7 @@ import com.thxpapa.juneberrydiary.service.geo.GeoService;
 import com.thxpapa.juneberrydiary.service.score.DayService;
 import com.thxpapa.juneberrydiary.service.score.SpecialDayService;
 import com.thxpapa.juneberrydiary.service.score.TaskService;
-import com.thxpapa.juneberrydiary.service.user.MerciUserService;
+import com.thxpapa.juneberrydiary.service.user.JuneberryUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class ApiController {
 
     private final GeoService geoService;
-    private final MerciUserService merciUserService;
+    private final JuneberryUserService juneberryUserService;
     private final SpecialDayService specialDayService;
     private final DayService dayService;
     private final TaskService taskService;
@@ -50,7 +50,7 @@ public class ApiController {
 
     // geo rest api call
     @GetMapping(value = "/geo/cvtcoordtoaddr.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> cvtCoordToAddr(@RequestParam("lon") String lon, @RequestParam("lat") String lat) {
+    public ResponseEntity<?> cvtCoordToAddr(@RequestParam("lon") String lon, @RequestParam("lat") String lat) {
         try {
             Object res = geoService.cvtCoordToAddr(lon, lat);
 
@@ -67,7 +67,7 @@ public class ApiController {
     }
 
     @GetMapping(value = "/geo/cvtquerytocoord.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> cvtQueryToCoord(@RequestParam("query") String query) {
+    public ResponseEntity<?> cvtQueryToCoord(@RequestParam("query") String query) {
         try {
             List<Object> res = geoService.cvtQueryToCoord(query);
 
@@ -84,7 +84,7 @@ public class ApiController {
     }
 
     @GetMapping(value = "/geo/fetchInfra.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<ResponseEntity<Object>> fetchInfra(@RequestParam("lon") String lon, @RequestParam("lat") String lat, @RequestParam("rad") String rad) {
+    public CompletableFuture<ResponseEntity<?>> fetchInfra(@RequestParam("lon") String lon, @RequestParam("lat") String lat, @RequestParam("rad") String rad) {
         List<CompletableFuture<List<Object>>> categorySearchFutures = new ArrayList<>();
 
         for (String code : kakaoCategoryGroupCodeList) {
@@ -116,7 +116,7 @@ public class ApiController {
     }
 
     @GetMapping(value = "/geo/fetchSttnList.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> fetchSttnList(@RequestParam("lon") String lon, @RequestParam("lat") String lat) {
+    public ResponseEntity<?> fetchSttnList(@RequestParam("lon") String lon, @RequestParam("lat") String lat) {
         try {
             List<Object> res = geoService.fetchSttnList(lon, lat);
 
@@ -133,7 +133,7 @@ public class ApiController {
     }
 
     @GetMapping(value = "/geo/getSttnArvInfo.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getSttnArvInfo(@RequestParam("cityCode") String cityCode, @RequestParam("nodeId") String nodeId) {
+    public ResponseEntity<?> getSttnArvInfo(@RequestParam("cityCode") String cityCode, @RequestParam("nodeId") String nodeId) {
         try {
             List<Object> res = geoService.getSttnArvInfo(cityCode, nodeId);
 
@@ -151,7 +151,7 @@ public class ApiController {
 
     // calendar rest api call
     @GetMapping(value = "/cal/getTagDaysByMonth.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getTagDaysByMonth(@RequestParam("year") String year, @RequestParam("month") String month) {
+    public ResponseEntity<?> getTagDaysByMonth(@RequestParam("year") String year, @RequestParam("month") String month) {
         try {
             LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
             LocalDate endDate = startDate.plusMonths(1).minusDays(1);
@@ -202,7 +202,7 @@ public class ApiController {
     }
 
     @PostMapping(value = "/cal/addOneTask.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> addOneTask(@RequestBody MultiValueMap<String, String> formData) {
+    public ResponseEntity<?> addOneTask(@RequestBody MultiValueMap<String, String> formData) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
@@ -237,7 +237,7 @@ public class ApiController {
     }
 
     @PostMapping(value="/cal/modifyTask.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> modifyTask(@RequestBody TaskUpdateDto taskUpdateDto) {
+    public ResponseEntity<?> modifyTask(@RequestBody TaskUpdateDto taskUpdateDto) {
         try {
             Task updatedTask = taskService.updateTask(taskUpdateDto);
             return ResponseEntity.status(HttpStatus.OK).body(updatedTask);
@@ -249,7 +249,7 @@ public class ApiController {
     }
 
     @DeleteMapping(value = "/cal/deleteTask/{id}.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> deleteTask(@PathVariable int id) {
+    public ResponseEntity<?> deleteTask(@PathVariable int id) {
         try {
             taskService.deleteById(id);
 
@@ -262,7 +262,7 @@ public class ApiController {
     }
 
     @GetMapping(value = "/cal/getAllDayTasks.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getAllDayTasks(@RequestParam("date") String date) {
+    public ResponseEntity<?> getAllDayTasks(@RequestParam("date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
@@ -285,7 +285,7 @@ public class ApiController {
     }
 
     @GetMapping(value = "/cal/getTodayScore.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getTodayScore(@RequestParam("date") String date) {
+    public ResponseEntity<?> getTodayScore(@RequestParam("date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
@@ -312,21 +312,27 @@ public class ApiController {
 
     // auth rest api call
     @PostMapping(value = "/auth/join.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> join(@ModelAttribute UserRegisterRequestDto userRegisterRequestDto) {
+    public ResponseEntity<?> join(@ModelAttribute UserRegisterRequestDto userRegisterRequestDto) {
         log.debug("join starts!");
 
         try {
-            MerciUser merciUser = merciUserService.createMerciUser(userRegisterRequestDto);
+            JuneberryUser juneberryUser = juneberryUserService.createJuneberryUser(userRegisterRequestDto);
 
-            if (merciUser == null) {
+            if (juneberryUser == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("can't register user"));
             }
 
-            return ResponseEntity.status(HttpStatus.OK).body(merciUser);
+            return ResponseEntity.status(HttpStatus.OK).body(juneberryUser);
         } catch (Exception e) {
             log.debug("cvtquerytocoord error occurred!");
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("server error"));
         }
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticate(@RequestBody UserRegisterRequestDto userRegisterRequestDto) {
+
+        return null;
     }
 }

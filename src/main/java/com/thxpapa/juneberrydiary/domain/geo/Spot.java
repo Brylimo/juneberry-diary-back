@@ -1,7 +1,7 @@
 package com.thxpapa.juneberrydiary.domain.geo;
 
-import com.thxpapa.juneberrydiary.domain.file.MerciFile;
-import com.thxpapa.juneberrydiary.domain.user.MerciUser;
+import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
+import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -59,21 +59,21 @@ public class Spot {
     private LocalDateTime modDt;
 
     @ManyToOne
-    @JoinColumn(name="merciUserId")
-    private MerciUser merciUser;
+    @JoinColumn(name="juneberryUserId")
+    private JuneberryUser juneberryUser;
 
     @OneToOne
-    @JoinColumn(name="merciFileId")
-    private MerciFile merciFile;
+    @JoinColumn(name="juneberryFileId")
+    private JuneberryFile juneberryFile;
 
     @Builder
-    public Spot(String name, String loc, String exp, Double lon, Double lat, MerciFile merciFile, String statusCd) {
+    public Spot(String name, String loc, String exp, Double lon, Double lat, JuneberryFile juneberryFile, String statusCd) {
         this.name = name;
         this.loc = loc;
         this.exp = exp;
         this.lon = lon;
         this.lat = lat;
         this.statusCd = statusCd;
-        this.merciFile = merciFile;
+        this.juneberryFile = juneberryFile;
     }
 }

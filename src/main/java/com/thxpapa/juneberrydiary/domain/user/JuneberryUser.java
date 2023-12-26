@@ -12,15 +12,15 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name="merci_user", schema="datamart")
+@Table(name="juneberry_user", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = "merciUserUid", callSuper=false)
+@EqualsAndHashCode(of = "juneberryUserUid", callSuper=false)
 @ToString
-public class MerciUser {
+public class JuneberryUser {
     @Id
-    @Column(name="merci_user_uid")
+    @Column(name="juneberry_user_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int merciUserUid;
+    private int juneberryUserUid;
 
     @Comment("이름")
     @Column(name="name", length = 45, nullable = false)
@@ -58,11 +58,11 @@ public class MerciUser {
     @Column(name="mod_dt")
     private LocalDateTime modDt;
 
-    @OneToMany(mappedBy = "merciUser", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "juneberryUser", fetch=FetchType.EAGER)
     private List<Spot> spots = new ArrayList<Spot>();
 
     @Builder
-    public MerciUser(String name, String email, String username, String password, String intro, String statusCd) {
+    public JuneberryUser(String name, String email, String username, String password, String intro, String statusCd) {
         this.name = name;
         this.email = email;
         this.username = username;

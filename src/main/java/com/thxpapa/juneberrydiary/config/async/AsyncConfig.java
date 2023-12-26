@@ -17,7 +17,7 @@ public class AsyncConfig extends AsyncConfigurerSupport {
         executor.setCorePoolSize(5);
         executor.setMaxPoolSize(30);
         executor.setQueueCapacity(50);
-        executor.setThreadNamePrefix("MERCI-ASYNC-");
+        executor.setThreadNamePrefix("JUNEBERRY-ASYNC-");
         executor.initialize();
         return executor;
     }

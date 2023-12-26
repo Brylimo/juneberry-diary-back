@@ -1,7 +1,7 @@
 package com.thxpapa.juneberrydiary.security.provider;
 
 import com.thxpapa.juneberrydiary.domain.user.SecurityUser;
-import com.thxpapa.juneberrydiary.security.service.MerciUserDetailsService;
+import com.thxpapa.juneberrydiary.security.service.JuneberryUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -12,10 +12,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RequiredArgsConstructor
-public class MerciAuthenticationProvider implements AuthenticationProvider {
+public class JuneberryAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
-    private MerciUserDetailsService merciUserDetailsService;
+    private JuneberryUserDetailsService juneberryUserDetailsService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -26,14 +26,14 @@ public class MerciAuthenticationProvider implements AuthenticationProvider {
         String password = (String) authentication.getCredentials();
 
         // verify email
-        SecurityUser securityUser = (SecurityUser) merciUserDetailsService.loadUserByUsername(email);
+        SecurityUser securityUser = (SecurityUser) juneberryUserDetailsService.loadUserByUsername(email);
 
         // verify password
-        if (!passwordEncoder.matches(password, securityUser.getMerciUser().getPassword())) {
+        if (!passwordEncoder.matches(password, securityUser.getJuneberryUser().getPassword())) {
             throw new BadCredentialsException("BadCredentialsException");
         }
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(securityUser.getMerciUser(), null, securityUser.getAuthorities());
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(securityUser.getJuneberryUser(), null, securityUser.getAuthorities());
 
         return authToken;
     }

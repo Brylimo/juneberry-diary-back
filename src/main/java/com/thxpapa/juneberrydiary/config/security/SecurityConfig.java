@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.config.security;
 
-import com.thxpapa.juneberrydiary.security.provider.MerciAuthenticationProvider;
+import com.thxpapa.juneberrydiary.security.provider.JuneberryAuthenticationProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -89,7 +89,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public MerciAuthenticationProvider merciAuthenticationProvider() {
-        return new MerciAuthenticationProvider();
+    public JuneberryAuthenticationProvider juneberryAuthenticationProvider() {
+        return new JuneberryAuthenticationProvider();
     }
 }

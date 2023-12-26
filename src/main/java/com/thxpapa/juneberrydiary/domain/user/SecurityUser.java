@@ -7,14 +7,14 @@ import java.util.Collection;
 
 public class SecurityUser extends User {
 
-    private final MerciUser merciUser;
+    private final JuneberryUser juneberryUser;
 
-    public SecurityUser(MerciUser merciUser, Collection<? extends GrantedAuthority> authorities) {
-        super(merciUser.getEmail(), merciUser.getPassword(), authorities);
-        this.merciUser = merciUser;
+    public SecurityUser(JuneberryUser juneberryUser, Collection<? extends GrantedAuthority> authorities) {
+        super(juneberryUser.getEmail(), juneberryUser.getPassword(), authorities);
+        this.juneberryUser = juneberryUser;
     }
 
-    public MerciUser getMerciUser() {
-        return merciUser;
+    public JuneberryUser getJuneberryUser() {
+        return juneberryUser;
     }
 }
