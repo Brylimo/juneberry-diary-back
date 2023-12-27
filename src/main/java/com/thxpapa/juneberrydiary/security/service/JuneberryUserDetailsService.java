@@ -23,9 +23,9 @@ public class JuneberryUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
-        JuneberryUser juneberryUser = juneberryUserRepository.findByEmail(email);
+        JuneberryUser juneberryUser = juneberryUserRepository.findByJuneberryUserUid(Integer.parseInt(userId));
 
         if (juneberryUser == null) {
             throw new UsernameNotFoundException("UsernameNotfoundException");

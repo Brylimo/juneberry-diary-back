@@ -4,10 +4,13 @@ import com.thxpapa.juneberrydiary.domain.score.Day;
 import com.thxpapa.juneberrydiary.domain.score.SpecialDay;
 import com.thxpapa.juneberrydiary.domain.score.Task;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
+import com.thxpapa.juneberrydiary.domain.user.SecurityUser;
 import com.thxpapa.juneberrydiary.dto.ErrorResponse;
-import com.thxpapa.juneberrydiary.dto.UserRegisterRequestDto;
+import com.thxpapa.juneberrydiary.dto.user.UserDto;
+import com.thxpapa.juneberrydiary.dto.user.UserRegisterRequestDto;
 import com.thxpapa.juneberrydiary.dto.score.TagDto;
 import com.thxpapa.juneberrydiary.dto.score.TaskUpdateDto;
+import com.thxpapa.juneberrydiary.security.provider.TokenProvider;
 import com.thxpapa.juneberrydiary.service.geo.GeoService;
 import com.thxpapa.juneberrydiary.service.score.DayService;
 import com.thxpapa.juneberrydiary.service.score.SpecialDayService;
@@ -18,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +45,8 @@ public class ApiController {
     private final SpecialDayService specialDayService;
     private final DayService dayService;
     private final TaskService taskService;
+
+    private final TokenProvider tokenProvider;
 
     /* MT1 대형마트 / CS2 편의점 / PS3 어린이집, 유치원 / SC4 학교 / AC5 학원 / PK6 주차장 / OL7 주유소, 충전소 / SW8 지하철역
     * BK9 은행 / CT1 문화시설 / AG2 중개업소 / PO3 공공기관 / AT4 관광명소 / AD5 숙박 / FD6 음식점 / CE7 카페 / HP8 병원 / PM9 약국 */
@@ -262,7 +268,7 @@ public class ApiController {
     }
 
     @GetMapping(value = "/cal/getAllDayTasks.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllDayTasks(@RequestParam("date") String date) {
+    public ResponseEntity<?> getAllDayTasks(@RequestParam("date") String date, @AuthenticationPrincipal SecurityUser user) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
@@ -330,9 +336,28 @@ public class ApiController {
         }
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticate(@RequestBody UserRegisterRequestDto userRegisterRequestDto) {
+    @PostMapping(value="/auth/signin.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> authenticate(@RequestBody UserDto userDto) {
+        log.debug("signin starts!");
 
-        return null;
+        try {
+            JuneberryUser user = juneberryUserService.getByCredentials(userDto.getUsername(), userDto.getPassword());
+
+            if (user != null) {
+                final String token = tokenProvider.create(user);
+                final UserDto res = UserDto.builder()
+                        .username(user.getUsername())
+                        .id(user.getJuneberryUserUid())
+                        .token(token)
+                        .build();
+                return ResponseEntity.ok().body(res);
+            } else {
+                return ResponseEntity.badRequest().body(new ErrorResponse("Login failed."));
+            }
+        } catch (Exception e) {
+            log.debug("authenticate error occurred!");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("server error"));
+        }
     }
 }

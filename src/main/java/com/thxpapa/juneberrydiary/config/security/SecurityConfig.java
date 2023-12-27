@@ -1,5 +1,6 @@
 package com.thxpapa.juneberrydiary.config.security;
 
+import com.thxpapa.juneberrydiary.security.JwtAuthenticationFilter;
 import com.thxpapa.juneberrydiary.security.provider.JuneberryAuthenticationProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,12 +19,15 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 import java.io.IOException;
 
@@ -33,18 +37,20 @@ import java.io.IOException;
 @ConditionalOnDefaultWebSecurity
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SecurityConfig {
-
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .httpBasic(basic->basic.disable())
+                .sessionManagement(configurer->configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests->
                         authorizeRequests
-                                .requestMatchers("/auth/**", "/user/**", "/api/**", "/post/**", "/score/**").permitAll()
+                                .requestMatchers("/auth/**"/*, "/user/**", "/api/**", "/post/**", "/score/***/).permitAll()
                                 .anyRequest().authenticated()
                 )
-                .formLogin(login -> login
+                /*.formLogin(login -> login
                         .loginPage("/auth/login")
                         .defaultSuccessUrl("/geo/map", true)
                         .failureUrl("/auth/login")
@@ -55,7 +61,7 @@ public class SecurityConfig {
                 )
                 .logout((logoutConfig)->
                         logoutConfig.logoutSuccessUrl("/auth/login")
-                )
+                )*/
                 .exceptionHandling(exceptionHandlingConfig->
                         exceptionHandlingConfig
                                 .authenticationEntryPoint(new AuthenticationEntryPoint() {
@@ -70,7 +76,7 @@ public class SecurityConfig {
                                         response.sendRedirect("/access-denied");
                                     }
                                 })
-                );
+                ).addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

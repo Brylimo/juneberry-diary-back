@@ -1,7 +1,7 @@
 package com.thxpapa.juneberrydiary.service.user;
 
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
-import com.thxpapa.juneberrydiary.dto.UserRegisterRequestDto;
+import com.thxpapa.juneberrydiary.dto.user.UserRegisterRequestDto;
 import com.thxpapa.juneberrydiary.repository.userRepository.JuneberryUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,16 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
     public List<JuneberryUser> getAllJuneberryUsers() {
         List<JuneberryUser> juneberryUsers = juneberryUserRepository.findAll();
         return juneberryUsers;
+    }
+
+    @Override
+    public JuneberryUser getByCredentials(final String username, final String password) {
+        final JuneberryUser user = juneberryUserRepository.findByUsername(username);
+
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+        return null;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.dto;
+package com.thxpapa.juneberrydiary.dto.user;
 
 import lombok.Builder;
 import lombok.Data;
