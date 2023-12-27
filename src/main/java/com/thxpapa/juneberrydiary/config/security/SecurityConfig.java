@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .sessionManagement(configurer->configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests->
                         authorizeRequests
-                                .requestMatchers("/auth/**"/*, "/user/**", "/api/**", "/post/**", "/score/***/).permitAll()
+                                .requestMatchers("/api/**"/*, "/user/**", "/api/**", "/post/**", "/score/***/).permitAll()
                                 .anyRequest().authenticated()
                 )
                 /*.formLogin(login -> login
