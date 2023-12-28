@@ -41,12 +41,9 @@ import java.util.stream.Collectors;
 public class ApiController {
 
     private final GeoService geoService;
-    private final JuneberryUserService juneberryUserService;
     private final SpecialDayService specialDayService;
     private final DayService dayService;
     private final TaskService taskService;
-
-    private final TokenProvider tokenProvider;
 
     /* MT1 대형마트 / CS2 편의점 / PS3 어린이집, 유치원 / SC4 학교 / AC5 학원 / PK6 주차장 / OL7 주유소, 충전소 / SW8 지하철역
     * BK9 은행 / CT1 문화시설 / AG2 중개업소 / PO3 공공기관 / AT4 관광명소 / AD5 숙박 / FD6 음식점 / CE7 카페 / HP8 병원 / PM9 약국 */
@@ -311,51 +308,6 @@ public class ApiController {
             }
         } catch (Exception e) {
             log.debug("getTodayScore error occurred!");
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("server error"));
-        }
-    }
-
-    // auth rest api call
-    @PostMapping(value = "/auth/join.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> join(@ModelAttribute UserRegisterRequestDto userRegisterRequestDto) {
-        log.debug("join starts!");
-
-        try {
-            JuneberryUser juneberryUser = juneberryUserService.createJuneberryUser(userRegisterRequestDto);
-
-            if (juneberryUser == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("can't register user"));
-            }
-
-            return ResponseEntity.status(HttpStatus.OK).body(juneberryUser);
-        } catch (Exception e) {
-            log.debug("cvtquerytocoord error occurred!");
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("server error"));
-        }
-    }
-
-    @PostMapping(value="/auth/signin.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> authenticate(@RequestBody UserDto userDto) {
-        log.debug("signin starts!");
-
-        try {
-            JuneberryUser user = juneberryUserService.getByCredentials(userDto.getUsername(), userDto.getPassword());
-
-            if (user != null) {
-                final String token = tokenProvider.create(user);
-                final UserDto res = UserDto.builder()
-                        .username(user.getUsername())
-                        .id(user.getJuneberryUserUid())
-                        .token(token)
-                        .build();
-                return ResponseEntity.ok().body(res);
-            } else {
-                return ResponseEntity.badRequest().body(new ErrorResponse("Login failed."));
-            }
-        } catch (Exception e) {
-            log.debug("authenticate error occurred!");
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("server error"));
         }

@@ -27,7 +27,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 import java.io.IOException;
 
@@ -47,7 +46,7 @@ public class SecurityConfig {
                 .sessionManagement(configurer->configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests->
                         authorizeRequests
-                                .requestMatchers("/api/**"/*, "/user/**", "/api/**", "/post/**", "/score/***/).permitAll()
+                                .requestMatchers("/api/auth/**"/*, "/user/**", "/api/**", "/post/**", "/score/***/).permitAll()
                                 .anyRequest().authenticated()
                 )
                 /*.formLogin(login -> login
