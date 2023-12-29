@@ -1,14 +1,13 @@
 package com.thxpapa.juneberrydiary.domain.score;
 
+import com.thxpapa.juneberrydiary.domain.BaseEntity;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "dayUid", callSuper=false)
 @ToString
-public class Day {
+public class Day extends BaseEntity {
     @Id
     @Column(name="day_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,16 +29,6 @@ public class Day {
     @Column(name="status_cd", length = 3, nullable = false)
     @ColumnDefault("'01'")
     private String statusCd;
-
-    @Comment("등록 날짜 시간")
-    @CreationTimestamp
-    @Column(name="reg_dt")
-    private LocalDateTime regDt;
-
-    @Comment("업데이트 날짜 시간")
-    @CreationTimestamp
-    @Column(name="mod_dt")
-    private LocalDateTime modDt;
 
     @ManyToOne
     @JoinColumn(name="juneberryUserId")

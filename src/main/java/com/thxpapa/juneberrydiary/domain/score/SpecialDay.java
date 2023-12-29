@@ -1,5 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.score;
 
+import com.thxpapa.juneberrydiary.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -7,10 +8,8 @@ import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "specialDayUid", callSuper=false)
 @ToString
-public class SpecialDay {
+public class SpecialDay extends BaseEntity {
     @Id
     @Column(name="special_day_uid")
     private String specialDayUid;
@@ -43,16 +42,6 @@ public class SpecialDay {
     @Column(name="status_cd", length = 3, nullable = false)
     @ColumnDefault("'01'")
     private String statusCd;
-
-    @Comment("등록 날짜 시간")
-    @CreationTimestamp
-    @Column(name="reg_dt")
-    private LocalDateTime regDt;
-
-    @Comment("업데이트 날짜 시간")
-    @CreationTimestamp
-    @Column(name="mod_dt")
-    private LocalDateTime modDt;
 
     static public final String idSplitter = "::";
 

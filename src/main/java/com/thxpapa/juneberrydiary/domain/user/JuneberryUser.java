@@ -1,14 +1,19 @@
 package com.thxpapa.juneberrydiary.domain.user;
 
+import com.thxpapa.juneberrydiary.domain.BaseEntity;
 import com.thxpapa.juneberrydiary.domain.geo.Spot;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.CreationTimestamp;
-import java.time.LocalDateTime;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -16,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "juneberryUserUid", callSuper=false)
 @ToString
-public class JuneberryUser {
+public class JuneberryUser extends BaseEntity implements UserDetails {
     @Id
     @Column(name="juneberry_user_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,15 +53,41 @@ public class JuneberryUser {
     @ColumnDefault("'01'")
     private String statusCd;
 
-    @Comment("등록 날짜 시간")
-    @CreationTimestamp
-    @Column(name="reg_dt")
-    private LocalDateTime regDt;
+    @Column
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles = new ArrayList<>();
 
-    @Comment("업데이트 날짜 시간")
-    @CreationTimestamp
-    @Column(name="mod_dt")
-    private LocalDateTime modDt;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
     @OneToMany(mappedBy = "juneberryUser", fetch=FetchType.EAGER)
     private List<Spot> spots = new ArrayList<Spot>();

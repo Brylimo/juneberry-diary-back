@@ -4,21 +4,18 @@ import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.domain.user.SecurityUser;
 import com.thxpapa.juneberrydiary.dto.ErrorResponse;
 import com.thxpapa.juneberrydiary.dto.user.UserDto;
-import com.thxpapa.juneberrydiary.dto.user.UserRegisterRequestDto;
+import com.thxpapa.juneberrydiary.dto.user.UserRequestDto;
 import com.thxpapa.juneberrydiary.security.provider.TokenProvider;
 import com.thxpapa.juneberrydiary.service.user.JuneberryUserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -29,7 +26,7 @@ public class AuthController {
     private final JuneberryUserService juneberryUserService;
     private final TokenProvider tokenProvider;
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> join(@RequestBody UserRegisterRequestDto userRegisterRequestDto) {
+    public ResponseEntity<?> join(@RequestBody @Validated  UserRequestDto.Register userRegisterRequestDto, Errors errors) {
         try {
             JuneberryUser juneberryUser = juneberryUserService.createJuneberryUser(userRegisterRequestDto);
 
@@ -46,18 +43,23 @@ public class AuthController {
     }
 
     @PostMapping(value="/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> authenticate(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> login(@RequestBody @Validated  UserRequestDto.Login userLoginRequestDto, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Login failed."));
+        }
+
         try {
-            JuneberryUser user = juneberryUserService.getByCredentials(userDto.getUsername(), userDto.getPassword());
+            JuneberryUser user = juneberryUserService.getByCredentials(userLoginRequestDto.getUsername(), userLoginRequestDto.getPassword());
 
             if (user != null) {
-                final String token = tokenProvider.create(user);
+                /*final String token = tokenProvider.create(user);
                 final UserDto res = UserDto.builder()
                         .username(user.getUsername())
                         .id(user.getJuneberryUserUid())
                         .token(token)
                         .build();
-                return ResponseEntity.ok().body(res);
+                return ResponseEntity.ok().body(res);*/
+
             } else {
                 return ResponseEntity.badRequest().body(new ErrorResponse("Login failed."));
             }

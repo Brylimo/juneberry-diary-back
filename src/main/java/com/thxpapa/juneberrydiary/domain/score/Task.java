@@ -1,12 +1,11 @@
 package com.thxpapa.juneberrydiary.domain.score;
 
+import com.thxpapa.juneberrydiary.domain.BaseEntity;
 import com.thxpapa.juneberrydiary.dto.score.TaskUpdateDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.CreationTimestamp;
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "taskUid", callSuper=false)
 @ToString
-public class Task {
+public class Task extends BaseEntity {
     @Id
     @Column(name="task_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,16 +42,6 @@ public class Task {
     @Column(name="status_cd", length = 3, nullable = false)
     @ColumnDefault("'01'")
     private String statusCd;
-
-    @Comment("등록 날짜 시간")
-    @CreationTimestamp
-    @Column(name="reg_dt")
-    private LocalDateTime regDt;
-
-    @Comment("업데이트 날짜 시간")
-    @CreationTimestamp
-    @Column(name="mod_dt")
-    private LocalDateTime modDt;
 
     @ManyToOne
     @JoinColumn(name="dayId")
