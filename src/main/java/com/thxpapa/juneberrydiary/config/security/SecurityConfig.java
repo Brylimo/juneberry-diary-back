@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.config.security;
 
-import com.thxpapa.juneberrydiary.security.JwtAuthenticationFilter;
+import com.thxpapa.juneberrydiary.security.filter.JwtAuthenticationFilter;
 import com.thxpapa.juneberrydiary.security.provider.JuneberryAuthenticationProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

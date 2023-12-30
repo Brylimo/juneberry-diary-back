@@ -3,7 +3,6 @@ package com.thxpapa.juneberrydiary.web;
 import com.thxpapa.juneberrydiary.domain.score.Day;
 import com.thxpapa.juneberrydiary.domain.score.SpecialDay;
 import com.thxpapa.juneberrydiary.domain.score.Task;
-import com.thxpapa.juneberrydiary.domain.user.SecurityUser;
 import com.thxpapa.juneberrydiary.dto.ErrorResponse;
 import com.thxpapa.juneberrydiary.dto.score.TagDto;
 import com.thxpapa.juneberrydiary.dto.score.TaskUpdateDto;
@@ -260,7 +259,7 @@ public class ApiController {
     }
 
     @GetMapping(value = "/cal/getAllDayTasks.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllDayTasks(@RequestParam("date") String date, @AuthenticationPrincipal SecurityUser user) {
+    public ResponseEntity<?> getAllDayTasks(@RequestParam("date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {

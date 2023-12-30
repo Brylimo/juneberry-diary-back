@@ -5,11 +5,13 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 public class UserRequestDto {
     @Builder
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Register {
         @NotEmpty(message = "성명은 필수 입력값입니다.")
@@ -26,6 +28,7 @@ public class UserRequestDto {
 
     @Builder
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Login {
         @NotEmpty(message = "사용자 이름은 필수 입력값입니다.")
@@ -36,5 +39,16 @@ public class UserRequestDto {
         public UsernamePasswordAuthenticationToken toAuthentication() {
             return new UsernamePasswordAuthenticationToken(username, password);
         }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Reissue {
+        @NotEmpty(message = "accessToken을 입력해주세요.")
+        private String accessToken;
+        @NotEmpty(message = "refreshToken을 입력해주세요.")
+        private String refreshToken;
     }
 }

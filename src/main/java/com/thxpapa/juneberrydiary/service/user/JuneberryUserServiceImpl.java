@@ -1,18 +1,24 @@
 package com.thxpapa.juneberrydiary.service.user;
 
+import com.thxpapa.juneberrydiary.domain.auth.RefreshToken;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.user.UserRequestDto;
 import com.thxpapa.juneberrydiary.dto.user.UserResponseDto;
+import com.thxpapa.juneberrydiary.enums.Authority;
+import com.thxpapa.juneberrydiary.repository.authRepository.RefreshTokenRepository;
 import com.thxpapa.juneberrydiary.repository.userRepository.JuneberryUserRepository;
 import com.thxpapa.juneberrydiary.security.provider.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -23,8 +29,10 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
     private final PasswordEncoder passwordEncoder;
 
     private final JuneberryUserRepository juneberryUserRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+
     @Override
     public List<JuneberryUser> getAllJuneberryUsers() {
         List<JuneberryUser> juneberryUsers = juneberryUserRepository.findAll();
@@ -48,6 +56,7 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
                                             .email(userRegisterRequestDto.getEmail())
                                             .username(userRegisterRequestDto.getUsername())
                                             .password(passwordEncoder.encode(userRegisterRequestDto.getPassword()))
+                                            .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                                             .intro(userRegisterRequestDto.getIntro())
                                             .statusCd("01")
                                             .build());
@@ -58,15 +67,27 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
     public UserResponseDto.TokenInfo login(UserRequestDto.Login userLoginRequestDto) {
         JuneberryUser user = getByCredentials(userLoginRequestDto.getUsername(), userLoginRequestDto.getPassword());
 
-        if (user != null) {
-            UsernamePasswordAuthenticationToken authenticationToken = userLoginRequestDto.toAuthentication();
-
-            // 실제 검증(loadUserByUsername)
-            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-            UserResponseDto.TokenInfo tokenInfo = tokenProvider.generateToken(authentication);
-
-            return tokenInfo;
+        if (user == null) {
+            return null;
         }
+
+        UsernamePasswordAuthenticationToken authenticationToken = userLoginRequestDto.toAuthentication();
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken); // 실제 검증
+        UserResponseDto.TokenInfo tokenInfo = tokenProvider.generateToken(authentication);
+
+        refreshTokenRepository.save(RefreshToken.builder()
+                        .username(user.getUsername())
+                        .accessToken(tokenInfo.getAccessToken())
+                        .refreshToken(tokenInfo.getRefreshToken())
+                        .build());
+
+        return tokenInfo;
+    }
+
+    @Override
+    public UserResponseDto.TokenInfo reissue(UserRequestDto.Reissue userReissueRequestDto) {
+        Authentication authentication = tokenProvider.getAuthentication(userReissueRequestDto.getAccessToken());
+
+        return null;
     }
 }

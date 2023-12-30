@@ -32,20 +32,6 @@ public class TokenProvider {
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;  // 7일
 
-    public String create(JuneberryUser juneberryUser) {
-        Date expiryDate = Date.from(
-                Instant.now()
-                        .plus(1, ChronoUnit.DAYS));
-
-        return Jwts.builder()
-                .signWith(SignatureAlgorithm.HS512, key)
-                .setSubject(String.valueOf(juneberryUser.getJuneberryUserUid()))
-                .setIssuer("juneberry diary app")
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
-                .compact();
-    }
-
     public UserResponseDto.TokenInfo generateToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -71,11 +57,12 @@ public class TokenProvider {
         return UserResponseDto.TokenInfo.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .accessTokenExpirationTime(ACCESS_TOKEN_EXPIRE_TIME)
                 .refreshTokenExpirationTime(REFRESH_TOKEN_EXPIRE_TIME)
                 .build();
     }
 
-    public String validateAndGetUserId(String token) {
+    public String validateAndGetUsername(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(key)
                 .parseClaimsJws(token)
@@ -99,6 +86,16 @@ public class TokenProvider {
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            log.debug("validateToken error");
+        }
+        return false;
     }
 
     private Claims parseClaims(String accessToken) {

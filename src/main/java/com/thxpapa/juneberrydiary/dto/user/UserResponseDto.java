@@ -11,6 +11,7 @@ public class UserResponseDto {
     public static class TokenInfo {
         private String accessToken;
         private String refreshToken;
+        private Long accessTokenExpirationTime;
         private Long refreshTokenExpirationTime;
     }
 }

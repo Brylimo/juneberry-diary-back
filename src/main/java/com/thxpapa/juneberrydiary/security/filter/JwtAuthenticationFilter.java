@@ -1,6 +1,6 @@
-package com.thxpapa.juneberrydiary.security;
+package com.thxpapa.juneberrydiary.security.filter;
 
-import com.thxpapa.juneberrydiary.domain.user.SecurityUser;
+import com.thxpapa.juneberrydiary.repository.authRepository.RefreshTokenRepository;
 import com.thxpapa.juneberrydiary.security.provider.TokenProvider;
 import com.thxpapa.juneberrydiary.security.service.JuneberryUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -26,6 +26,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JuneberryUserDetailsService juneberryUserDetailsService;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
 
     @Override
@@ -33,10 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = parseBearerToken(request);
 
-            if (token != null && !token.equalsIgnoreCase("null")) {
-                String userId = tokenProvider.validateAndGetUserId(token);
+            if (token != null && !token.equalsIgnoreCase("null") && tokenProvider.validateToken(token)) {
+                String username = tokenProvider.validateAndGetUsername(token);
                 AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        (SecurityUser) juneberryUserDetailsService.loadUserByUsername(userId),
+                        juneberryUserDetailsService.loadUserByUsername(username),
                         null,
                         AuthorityUtils.NO_AUTHORITIES
                 );
@@ -44,6 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 securityContext.setAuthentication(authentication);
                 SecurityContextHolder.setContext(securityContext);
+            } else {
+                refreshTokenRepository.findByAccessToken(token)
+                        .orElseThrow(()-> new RuntimeException("GO"));
             }
         } catch (Exception e) {
             log.debug("Could not set user authentication in security context", e);

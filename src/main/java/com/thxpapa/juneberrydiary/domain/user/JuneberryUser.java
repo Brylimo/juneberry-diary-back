@@ -93,11 +93,12 @@ public class JuneberryUser extends BaseEntity implements UserDetails {
     private List<Spot> spots = new ArrayList<Spot>();
 
     @Builder
-    public JuneberryUser(String name, String email, String username, String password, String intro, String statusCd) {
+    public JuneberryUser(String name, String email, String username, String password, List<String> roles, String intro, String statusCd) {
         this.name = name;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.roles = roles;
         this.intro = intro;
         this.statusCd = statusCd;
     }

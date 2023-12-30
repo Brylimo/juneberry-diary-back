@@ -11,5 +11,6 @@ public interface JuneberryUserService {
     List<JuneberryUser> getAllJuneberryUsers();
     JuneberryUser getByCredentials(final String username, final String password);
     JuneberryUser createJuneberryUser(UserRequestDto.Register userRegisterRequestDto);
-    UserResponseDto.TokenInfo login(UserRequestDto.Login login);
+    UserResponseDto.TokenInfo login(UserRequestDto.Login userLoginRequestDto);
+    UserResponseDto.TokenInfo reissue(UserRequestDto.Reissue userReissueRequestDto);
 }
