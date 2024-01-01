@@ -32,7 +32,7 @@ public class TokenProvider {
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;  // 7일
 
-    public UserResponseDto.TokenInfo generateToken(Authentication authentication) {
+    public UserResponseDto.TokenInfo generateTokens(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -60,6 +60,24 @@ public class TokenProvider {
                 .accessTokenExpirationTime(ACCESS_TOKEN_EXPIRE_TIME)
                 .refreshTokenExpirationTime(REFRESH_TOKEN_EXPIRE_TIME)
                 .build();
+    }
+
+    public String generateAccessToken(JuneberryUser juneberryUser) {
+        String authorities = juneberryUser.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        long now = (new Date()).getTime();
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        String accessToken = Jwts.builder()
+                .signWith(SignatureAlgorithm.HS512, key)
+                .setSubject(juneberryUser.getUsername())
+                .claim(AUTHORITIES_KEY, authorities)
+                .setIssuer("juneberry diary")
+                .setIssuedAt(new Date())
+                .setExpiration(accessTokenExpiresIn)
+                .compact();
+        return accessToken;
     }
 
     public String validateAndGetUsername(String token) {
@@ -90,7 +108,15 @@ public class TokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
+            long expirationTimeMillis = claims.getExpiration().getTime();
+            long currentTimeMillis = System.currentTimeMillis();
+
+            if (expirationTimeMillis < currentTimeMillis) {
+                // token is expired
+                return false;
+            }
+
             return true;
         } catch (Exception e) {
             log.debug("validateToken error");

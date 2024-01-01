@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 @Component
-public class Response {
+public class ResponseDto {
 
     @Getter
     @Builder

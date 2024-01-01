@@ -1,12 +1,14 @@
 package com.thxpapa.juneberrydiary.web;
 
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
-import com.thxpapa.juneberrydiary.dto.Response;
+import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.user.UserRequestDto;
 import com.thxpapa.juneberrydiary.dto.user.UserResponseDto;
 import com.thxpapa.juneberrydiary.security.provider.TokenProvider;
 import com.thxpapa.juneberrydiary.service.user.JuneberryUserService;
 import com.thxpapa.juneberrydiary.util.ErrorUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,45 +26,50 @@ public class AuthController {
     private final JuneberryUserService juneberryUserService;
     private final TokenProvider tokenProvider;
     private final ErrorUtil errorUtil;
-    private final Response response;
+    private final ResponseDto responseDto;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> join(@RequestBody @Validated  UserRequestDto.Register userRegisterRequestDto, Errors errors) {
         if (errors.hasErrors()) {
-            return response.invalidData(errorUtil.flatErrors(errors));
+            return responseDto.invalidData(errorUtil.flatErrors(errors));
         }
 
         try {
             JuneberryUser juneberryUser = juneberryUserService.createJuneberryUser(userRegisterRequestDto);
 
             if (juneberryUser == null) {
-                return response.fail("can't register user", HttpStatus.BAD_REQUEST);
+                return responseDto.fail("can't register user", HttpStatus.BAD_REQUEST);
             }
 
-            return response.success(juneberryUser);
+            return responseDto.success(juneberryUser);
         } catch (Exception e) {
             log.debug("register error occurred!");
-            return response.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping(value="/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> login(@RequestBody @Validated  UserRequestDto.Login userLoginRequestDto, Errors errors) {
+    public ResponseEntity<?> login(@RequestBody @Validated  UserRequestDto.Login userLoginRequestDto, HttpServletResponse response, Errors errors) {
         if (errors.hasErrors()) {
-            return response.invalidData(errorUtil.flatErrors(errors));
+            return responseDto.invalidData(errorUtil.flatErrors(errors));
         }
 
         try {
             UserResponseDto.TokenInfo tokenInfo = juneberryUserService.login(userLoginRequestDto);
 
             if (tokenInfo == null) {
-                return response.fail("login failed.", HttpStatus.BAD_REQUEST);
+                return responseDto.fail("login failed.", HttpStatus.BAD_REQUEST);
             }
 
-            return response.success(tokenInfo);
+            Cookie cookie = new Cookie("access_token", tokenInfo.getAccessToken());
+            cookie.setMaxAge(30 * 60 * 1000);
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
+
+            return responseDto.success(tokenInfo);
         } catch (Exception e) {
             log.debug("login error occurred!");
-            return response.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

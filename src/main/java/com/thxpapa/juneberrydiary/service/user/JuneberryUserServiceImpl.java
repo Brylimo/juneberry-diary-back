@@ -73,7 +73,7 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
 
         UsernamePasswordAuthenticationToken authenticationToken = userLoginRequestDto.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken); // 실제 검증
-        UserResponseDto.TokenInfo tokenInfo = tokenProvider.generateToken(authentication);
+        UserResponseDto.TokenInfo tokenInfo = tokenProvider.generateTokens(authentication);
 
         refreshTokenRepository.save(RefreshToken.builder()
                         .username(user.getUsername())
