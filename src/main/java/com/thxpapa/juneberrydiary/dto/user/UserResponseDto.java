@@ -14,4 +14,14 @@ public class UserResponseDto {
         private Long accessTokenExpirationTime;
         private Long refreshTokenExpirationTime;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class UserInfo {
+        private String name;
+        private String email;
+        private String username;
+        private String intro;
+    }
 }

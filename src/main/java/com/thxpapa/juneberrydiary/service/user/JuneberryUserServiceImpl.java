@@ -83,11 +83,4 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
 
         return tokenInfo;
     }
-
-    @Override
-    public UserResponseDto.TokenInfo reissue(UserRequestDto.Reissue userReissueRequestDto) {
-        Authentication authentication = tokenProvider.getAuthentication(userReissueRequestDto.getAccessToken());
-
-        return null;
-    }
 }

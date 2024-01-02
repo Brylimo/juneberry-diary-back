@@ -28,6 +28,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -41,17 +44,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String token = parseBearerToken(request);
+            String token = parseCookieToken(request);
 
             if (token != null && !token.equalsIgnoreCase("null")) {
                 if (tokenProvider.validateToken(token)) {
                     String username = tokenProvider.validateAndGetUsername(token);
-                    UserDetails userDetails = juneberryUserDetailsService.loadUserByUsername(username);
+                    JuneberryUser juneberryUser = juneberryUserDetailsService.loadUserByUsername(username);
 
                     AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
+                            juneberryUser,
                             null,
-                            userDetails.getAuthorities()
+                            juneberryUser.getAuthorities()
                     );
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
@@ -75,7 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 .build());
 
                         Cookie cookie = new Cookie("access_token", newAccessToken);
-                        cookie.setMaxAge(30 * 60 * 1000);
+                        cookie.setMaxAge(7 * 24 * 60 * 60 * 1000);
                         cookie.setHttpOnly(true);
                         response.addCookie(cookie);
                     }
@@ -89,11 +92,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // extract token info
-    private String parseBearerToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+    private String parseCookieToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+        if (cookies != null) {
+            Cookie atkCookie = Arrays.stream(cookies).filter(cookie -> cookie.getName().equals("access_token")).findFirst().orElse(null);
+            if (atkCookie != null) {
+                String token = atkCookie.getValue();
+                return token;
+            }
         }
         return null;
     }

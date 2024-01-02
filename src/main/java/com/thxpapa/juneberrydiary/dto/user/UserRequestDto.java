@@ -40,15 +40,4 @@ public class UserRequestDto {
             return new UsernamePasswordAuthenticationToken(username, password);
         }
     }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Reissue {
-        @NotEmpty(message = "accessToken을 입력해주세요.")
-        private String accessToken;
-        @NotEmpty(message = "refreshToken을 입력해주세요.")
-        private String refreshToken;
-    }
 }

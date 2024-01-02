@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,12 @@ public class AuthController {
                 return responseDto.fail("can't register user", HttpStatus.BAD_REQUEST);
             }
 
-            return responseDto.success(juneberryUser);
+            return responseDto.success(UserResponseDto.UserInfo.builder()
+                            .name(juneberryUser.getName())
+                            .username(juneberryUser.getUsername())
+                            .email(juneberryUser.getEmail())
+                            .intro(juneberryUser.getIntro())
+                            .build());
         } catch (Exception e) {
             log.debug("register error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -62,15 +68,25 @@ public class AuthController {
             }
 
             Cookie cookie = new Cookie("access_token", tokenInfo.getAccessToken());
-            cookie.setMaxAge(30 * 60 * 1000);
+            cookie.setMaxAge(7 * 24 * 60 * 60 * 1000);
             cookie.setHttpOnly(true);
             response.addCookie(cookie);
 
-            return responseDto.success(tokenInfo);
+            return responseDto.success("login success");
         } catch (Exception e) {
             log.debug("login error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(value = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> validate(@AuthenticationPrincipal JuneberryUser juneberryUser) {
+        return responseDto.success(UserResponseDto.UserInfo.builder()
+                        .name(juneberryUser.getName())
+                        .username(juneberryUser.getUsername())
+                        .email(juneberryUser.getEmail())
+                        .intro(juneberryUser.getIntro())
+                        .build());
     }
 
     /*@PostMapping(value="/reissue", produces = MediaType.APPLICATION_JSON_VALUE)
