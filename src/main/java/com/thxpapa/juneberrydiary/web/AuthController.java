@@ -4,7 +4,7 @@ import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.user.UserRequestDto;
 import com.thxpapa.juneberrydiary.dto.user.UserResponseDto;
-import com.thxpapa.juneberrydiary.security.provider.TokenProvider;
+import com.thxpapa.juneberrydiary.service.auth.RefreshTokenService;
 import com.thxpapa.juneberrydiary.service.user.JuneberryUserService;
 import com.thxpapa.juneberrydiary.util.ErrorUtil;
 import jakarta.servlet.http.Cookie;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/auth")
 public class AuthController {
     private final JuneberryUserService juneberryUserService;
-    private final TokenProvider tokenProvider;
+    private final RefreshTokenService refreshTokenService;
     private final ErrorUtil errorUtil;
     private final ResponseDto responseDto;
 
@@ -79,6 +79,19 @@ public class AuthController {
         }
     }
 
+    @GetMapping(value="/logout", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> logout(@CookieValue("access_token") Cookie atkCookie, HttpServletResponse response) {
+        if (atkCookie != null) {
+            refreshTokenService.removeRefreshToken(atkCookie.getValue());
+
+            atkCookie.setMaxAge(0);
+            response.addCookie(atkCookie);;
+            return responseDto.success("logout success ");
+        }
+
+        return responseDto.fail("logout failed", HttpStatus.BAD_REQUEST);
+    }
+
     @GetMapping(value = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> validate(@AuthenticationPrincipal JuneberryUser juneberryUser) {
         return responseDto.success(UserResponseDto.UserInfo.builder()
@@ -88,23 +101,4 @@ public class AuthController {
                         .intro(juneberryUser.getIntro())
                         .build());
     }
-
-    /*@PostMapping(value="/reissue", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> reissue(@RequestBody @Validated UserRequestDto.Reissue userReissueRequestDto, Errors errors) {
-        if (errors.hasErrors()) {
-            return response.invalidData(errorUtil.flatErrors(errors));
-        }
-
-        try {
-            if (!tokenProvider.validateToken(userReissueRequestDto.getRefreshToken())) {
-                return response.fail("refresh token isn't valid", HttpStatus.BAD_REQUEST);
-            }
-
-
-            return null;
-        } catch (Exception e) {
-            log.debug("login error occurred!");
-            return response.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
 }

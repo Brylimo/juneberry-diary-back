@@ -1,23 +1,20 @@
 package com.thxpapa.juneberrydiary.service.user;
 
-import com.thxpapa.juneberrydiary.domain.auth.RefreshToken;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.user.UserRequestDto;
 import com.thxpapa.juneberrydiary.dto.user.UserResponseDto;
 import com.thxpapa.juneberrydiary.enums.Authority;
-import com.thxpapa.juneberrydiary.repository.authRepository.RefreshTokenRepository;
 import com.thxpapa.juneberrydiary.repository.userRepository.JuneberryUserRepository;
 import com.thxpapa.juneberrydiary.security.provider.TokenProvider;
+import com.thxpapa.juneberrydiary.service.auth.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +26,7 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
     private final PasswordEncoder passwordEncoder;
 
     private final JuneberryUserRepository juneberryUserRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
 
@@ -75,12 +72,7 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken); // 실제 검증
         UserResponseDto.TokenInfo tokenInfo = tokenProvider.generateTokens(authentication);
 
-        refreshTokenRepository.save(RefreshToken.builder()
-                        .username(user.getUsername())
-                        .accessToken(tokenInfo.getAccessToken())
-                        .refreshToken(tokenInfo.getRefreshToken())
-                        .build());
-
+        refreshTokenService.writeTokenInfo(user.getUsername(), tokenInfo.getRefreshToken(), tokenInfo.getAccessToken());
         return tokenInfo;
     }
 }

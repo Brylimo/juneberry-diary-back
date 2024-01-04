@@ -258,7 +258,7 @@ public class ApiController {
         }
     }
 
-    @GetMapping(value = "/cal/getAllDayTasks.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/cal/getAllDayTasks", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllDayTasks(@RequestParam("date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
