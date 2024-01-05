@@ -1,7 +1,7 @@
-package com.thxpapa.juneberrydiary.service.score;
+package com.thxpapa.juneberrydiary.service.cal;
 
-import com.thxpapa.juneberrydiary.domain.score.Day;
-import com.thxpapa.juneberrydiary.repository.scoreRepository.DayRepository;
+import com.thxpapa.juneberrydiary.domain.cal.Day;
+import com.thxpapa.juneberrydiary.repository.calRepository.DayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

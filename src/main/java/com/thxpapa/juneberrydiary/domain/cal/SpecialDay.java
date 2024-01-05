@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.domain.score;
+package com.thxpapa.juneberrydiary.domain.cal;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
 import jakarta.persistence.Column;

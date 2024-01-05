@@ -1,21 +1,18 @@
 package com.thxpapa.juneberrydiary.web;
 
-import com.thxpapa.juneberrydiary.domain.score.SpecialDay;
-import com.thxpapa.juneberrydiary.domain.score.Task;
-import com.thxpapa.juneberrydiary.dto.ErrorResponse;
-import com.thxpapa.juneberrydiary.dto.score.TagDto;
-import com.thxpapa.juneberrydiary.service.score.SpecialDayService;
-import com.thxpapa.juneberrydiary.service.score.TaskService;
+import com.thxpapa.juneberrydiary.domain.cal.SpecialDay;
+import com.thxpapa.juneberrydiary.domain.cal.Task;
+import com.thxpapa.juneberrydiary.dto.ResponseDto;
+import com.thxpapa.juneberrydiary.dto.cal.TagDto;
+import com.thxpapa.juneberrydiary.service.cal.SpecialDayService;
+import com.thxpapa.juneberrydiary.service.cal.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -31,8 +28,10 @@ import java.util.stream.Collectors;
 public class CalController {
     private final TaskService taskService;
     private final SpecialDayService specialDayService;
-    @GetMapping(value = "/getTagDaysByMonth", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getTagDaysByMonth(@RequestParam("year") String year, @RequestParam("month") String month) {
+    private final ResponseDto responseDto;
+
+    @GetMapping(value = "/getTagsByMonth", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTagsByMonth(@RequestParam("year") String year, @RequestParam("month") String month) {
         try {
             LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
             LocalDate endDate = startDate.plusMonths(1).minusDays(1);
@@ -74,11 +73,10 @@ public class CalController {
                         .build();
             }).collect(Collectors.toList()));
 
-            return ResponseEntity.status(HttpStatus.OK).body(tagList);
+            return responseDto.success(tagList);
         } catch (Exception e) {
-            log.debug("getTagDaysByMonth error occurred!");
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("server error"));
+            log.debug("getTagByMonth error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -1,7 +1,7 @@
-package com.thxpapa.juneberrydiary.domain.score;
+package com.thxpapa.juneberrydiary.domain.cal;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
-import com.thxpapa.juneberrydiary.dto.score.TaskUpdateDto;
+import com.thxpapa.juneberrydiary.dto.cal.TaskUpdateDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

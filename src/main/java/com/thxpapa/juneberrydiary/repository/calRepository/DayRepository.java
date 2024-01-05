@@ -1,6 +1,6 @@
-package com.thxpapa.juneberrydiary.repository.scoreRepository;
+package com.thxpapa.juneberrydiary.repository.calRepository;
 
-import com.thxpapa.juneberrydiary.domain.score.Day;
+import com.thxpapa.juneberrydiary.domain.cal.Day;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

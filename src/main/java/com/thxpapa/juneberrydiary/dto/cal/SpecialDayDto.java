@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.dto.score;
+package com.thxpapa.juneberrydiary.dto.cal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.scheduler;
 
-import com.thxpapa.juneberrydiary.service.score.SpecialDayService;
+import com.thxpapa.juneberrydiary.service.cal.SpecialDayService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

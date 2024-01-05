@@ -1,6 +1,6 @@
-package com.thxpapa.juneberrydiary.service.score;
+package com.thxpapa.juneberrydiary.service.cal;
 
-import com.thxpapa.juneberrydiary.domain.score.Day;
+import com.thxpapa.juneberrydiary.domain.cal.Day;
 
 import java.time.LocalDate;
 

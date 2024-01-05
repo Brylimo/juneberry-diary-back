@@ -1,32 +1,26 @@
 package com.thxpapa.juneberrydiary.web;
 
-import com.thxpapa.juneberrydiary.domain.score.Day;
-import com.thxpapa.juneberrydiary.domain.score.SpecialDay;
-import com.thxpapa.juneberrydiary.domain.score.Task;
+import com.thxpapa.juneberrydiary.domain.cal.Day;
+import com.thxpapa.juneberrydiary.domain.cal.Task;
 import com.thxpapa.juneberrydiary.dto.ErrorResponse;
-import com.thxpapa.juneberrydiary.dto.score.TagDto;
-import com.thxpapa.juneberrydiary.dto.score.TaskUpdateDto;
+import com.thxpapa.juneberrydiary.dto.cal.TaskUpdateDto;
 import com.thxpapa.juneberrydiary.service.geo.GeoService;
-import com.thxpapa.juneberrydiary.service.score.DayService;
-import com.thxpapa.juneberrydiary.service.score.SpecialDayService;
-import com.thxpapa.juneberrydiary.service.score.TaskService;
+import com.thxpapa.juneberrydiary.service.cal.DayService;
+import com.thxpapa.juneberrydiary.service.cal.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController

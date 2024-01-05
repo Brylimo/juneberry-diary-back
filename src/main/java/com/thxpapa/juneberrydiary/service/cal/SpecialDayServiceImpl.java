@@ -1,8 +1,8 @@
-package com.thxpapa.juneberrydiary.service.score;
+package com.thxpapa.juneberrydiary.service.cal;
 
-import com.thxpapa.juneberrydiary.domain.score.SpecialDay;
-import com.thxpapa.juneberrydiary.dto.score.SpecialDayDto;
-import com.thxpapa.juneberrydiary.repository.scoreRepository.SpecialDayRepository;
+import com.thxpapa.juneberrydiary.domain.cal.SpecialDay;
+import com.thxpapa.juneberrydiary.dto.cal.SpecialDayDto;
+import com.thxpapa.juneberrydiary.repository.calRepository.SpecialDayRepository;
 import com.thxpapa.juneberrydiary.util.SpecialDayUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

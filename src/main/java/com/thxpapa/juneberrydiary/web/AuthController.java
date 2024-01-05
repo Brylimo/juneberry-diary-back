@@ -30,7 +30,7 @@ public class AuthController {
     private final ResponseDto responseDto;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> join(@RequestBody @Validated  UserRequestDto.Register userRegisterRequestDto, Errors errors) {
+    public ResponseEntity<?> join(@RequestBody @Validated UserRequestDto.Register userRegisterRequestDto, Errors errors) {
         if (errors.hasErrors()) {
             return responseDto.invalidData(errorUtil.flatErrors(errors));
         }

@@ -1,9 +1,9 @@
-package com.thxpapa.juneberrydiary.service.score;
+package com.thxpapa.juneberrydiary.service.cal;
 
-import com.thxpapa.juneberrydiary.domain.score.Day;
-import com.thxpapa.juneberrydiary.domain.score.Task;
-import com.thxpapa.juneberrydiary.dto.score.TaskUpdateDto;
-import com.thxpapa.juneberrydiary.repository.scoreRepository.TaskRepository;
+import com.thxpapa.juneberrydiary.domain.cal.Day;
+import com.thxpapa.juneberrydiary.domain.cal.Task;
+import com.thxpapa.juneberrydiary.dto.cal.TaskUpdateDto;
+import com.thxpapa.juneberrydiary.repository.calRepository.TaskRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
