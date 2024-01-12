@@ -19,7 +19,6 @@ public class DayServiceImpl implements DayService {
     public Day createDay(LocalDate date) {
         Day createdDay = dayRepository.save(Day.builder()
                                 .date(date)
-                                .statusCd("01")
                                 .build());
 
         return createdDay;

@@ -1,11 +1,14 @@
 package com.thxpapa.juneberrydiary.service.cal;
 
 import com.thxpapa.juneberrydiary.domain.cal.SpecialDay;
+import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
 import com.thxpapa.juneberrydiary.dto.cal.SpecialDayDto;
 import com.thxpapa.juneberrydiary.repository.calRepository.SpecialDayRepository;
 import com.thxpapa.juneberrydiary.util.SpecialDayUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,6 +28,7 @@ public class SpecialDayServiceImpl implements SpecialDayService {
     private final SpecialDayRepository specialDayRepository;
 
     @Override
+    @CacheEvict(value="specialDay", allEntries = true)
     public void updateHoliday() { // holiday + anniversary(제헌절)
         final int startYear = 2004;
         final int endYear = LocalDate.now().plusYears(1).getYear();
@@ -87,6 +91,7 @@ public class SpecialDayServiceImpl implements SpecialDayService {
     }
 
     @Override
+    @CacheEvict(value="specialDay", allEntries = true)
     public void updateAnniversary() {
         final int startYear = 2004;
         final int endYear = LocalDate.now().plusYears(1).getYear();
@@ -157,6 +162,7 @@ public class SpecialDayServiceImpl implements SpecialDayService {
     }
 
     @Override
+    @CacheEvict(value="specialDay", allEntries = true)
     public void update24Divisions() {
         final int startYear = 2004;
         final int endYear = LocalDate.now().plusYears(1).getYear();
@@ -219,7 +225,16 @@ public class SpecialDayServiceImpl implements SpecialDayService {
     }
 
     @Override
-    public List<SpecialDay> getSpecialDaysByMonth(LocalDate startDate, LocalDate endDate) {
-        return specialDayRepository.findAllByDateBetween(startDate, endDate);
+    @Cacheable(value = "specialDay")
+    public List<CalResponseDto.SpecialDayInfo> getSpecialDaysByMonth(LocalDate startDate, LocalDate endDate) {
+        List<SpecialDay> specialDayList = specialDayRepository.findAllByDateBetween(startDate, endDate);
+        return specialDayList.stream().map(specialDay -> {
+                    return CalResponseDto.SpecialDayInfo.builder()
+                            .datStId(specialDay.getDatStId())
+                            .dateName(specialDay.getDateName())
+                            .date(specialDay.getDate())
+                            .holidayCd(specialDay.getHolidayCd())
+                            .build();
+                }).collect(Collectors.toList());
     }
 }

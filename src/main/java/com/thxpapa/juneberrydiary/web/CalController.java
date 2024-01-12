@@ -3,6 +3,7 @@ package com.thxpapa.juneberrydiary.web;
 import com.thxpapa.juneberrydiary.domain.cal.SpecialDay;
 import com.thxpapa.juneberrydiary.domain.cal.Task;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
+import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
 import com.thxpapa.juneberrydiary.dto.cal.TagDto;
 import com.thxpapa.juneberrydiary.service.cal.SpecialDayService;
 import com.thxpapa.juneberrydiary.service.cal.TaskService;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -38,46 +40,51 @@ public class CalController {
 
             List<TagDto> tagList = new ArrayList<>();
 
-            List<SpecialDay> specialDayList = specialDayService.getSpecialDaysByMonth(startDate, endDate);
-            List<Task> eventList = taskService.getEventsByMonth(startDate, endDate);
+            List<CalResponseDto.SpecialDayInfo> specialDayInfoList = specialDayService.getSpecialDaysByMonth(startDate, endDate);
+            // List<Task> eventList = taskService.getEventsByMonth(startDate, endDate);
 
             // convert SpecialDay to TagDto
-            tagList.addAll(specialDayList.stream().map(specialDay -> {
-                if (specialDay.getDatStId().equals("24DIVISIONS")) {
+            tagList.addAll(specialDayInfoList.stream().map(specialDayInfo -> {
+                if (specialDayInfo.getDatStId().equals("24DIVISIONS")) {
                     return TagDto.builder()
-                            .date(specialDay.getDate())
-                            .name(specialDay.getDateName())
+                            .date(specialDayInfo.getDate())
+                            .name(specialDayInfo.getDateName())
                             .tagType("division")
                             .build();
-                } else if (!specialDay.getHolidayCd()) {
+                } else if (!specialDayInfo.getHolidayCd()) {
                     return TagDto.builder()
-                            .date(specialDay.getDate())
-                            .name(specialDay.getDateName())
+                            .date(specialDayInfo.getDate())
+                            .name(specialDayInfo.getDateName())
                             .tagType("anniversary")
                             .build();
                 }
 
                 return TagDto.builder()
-                        .date(specialDay.getDate())
-                        .name(specialDay.getDateName())
+                        .date(specialDayInfo.getDate())
+                        .name(specialDayInfo.getDateName())
                         .tagType("holiday")
                         .build();
             }).collect(Collectors.toList()));
 
             // convert Task to TagDto
-            tagList.addAll(eventList.stream().map(event -> {
+            /*tagList.addAll(eventList.stream().map(event -> {
                 return TagDto.builder()
                         .date(event.getDay().getDate())
                         .name(event.getContent())
                         .tagType("event")
                         .build();
-            }).collect(Collectors.toList()));
+            }).collect(Collectors.toList()));*/
 
             return responseDto.success(tagList);
         } catch (Exception e) {
             log.debug("getTagByMonth error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping(value = "/cal/addEventTagList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addEventTagList() {
+        return null;
     }
 
     @GetMapping("/calendar")

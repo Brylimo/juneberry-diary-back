@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "dayUid", callSuper=false)
 @ToString
-public class Day extends BaseEntity {
+public class Day {
     @Id
     @Column(name="day_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,18 +25,12 @@ public class Day extends BaseEntity {
     @Column(name="date")
     private LocalDate date;
 
-    @Comment("상태정보")
-    @Column(name="status_cd", length = 3, nullable = false)
-    @ColumnDefault("'01'")
-    private String statusCd;
-
     @ManyToOne
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
 
     @Builder
-    public Day(LocalDate date, String statusCd) {
+    public Day(LocalDate date) {
         this.date = date;
-        this.statusCd = statusCd;
     }
 }
