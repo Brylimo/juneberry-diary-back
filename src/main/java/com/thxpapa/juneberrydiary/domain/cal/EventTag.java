@@ -2,6 +2,7 @@ package com.thxpapa.juneberrydiary.domain.cal;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
 @Getter
@@ -20,13 +21,19 @@ public class EventTag {
     @Column(name="event", length = 45, nullable = false)
     private String event;
 
+    @Comment("순서")
+    @Column(name="position")
+    @ColumnDefault("0")
+    private int position;
+
     @ManyToOne
     @JoinColumn(name="dayId")
     private Day day;
 
     @Builder
-    public EventTag(String event, Day day) {
+    public EventTag(String event, int position, Day day) {
         this.event = event;
+        this.position = position;
         this.day = day;
     }
 }

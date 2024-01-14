@@ -3,6 +3,7 @@ package com.thxpapa.juneberrydiary.web;
 import com.thxpapa.juneberrydiary.domain.cal.SpecialDay;
 import com.thxpapa.juneberrydiary.domain.cal.Task;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
+import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
 import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
 import com.thxpapa.juneberrydiary.dto.cal.TagDto;
 import com.thxpapa.juneberrydiary.service.cal.SpecialDayService;
@@ -83,7 +84,8 @@ public class CalController {
     }
 
     @PostMapping(value = "/cal/addEventTagList", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addEventTagList() {
+    public ResponseEntity<?> addEventTagList(@RequestBody List<String> eventTagList) {
+        System.out.println(eventTagList);
         return null;
     }
 
