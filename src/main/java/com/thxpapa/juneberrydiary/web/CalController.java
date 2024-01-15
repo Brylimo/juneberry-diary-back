@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.web;
 
 import com.thxpapa.juneberrydiary.domain.cal.Day;
+import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
 import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
@@ -13,11 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -85,15 +88,20 @@ public class CalController {
     }
 
     @PostMapping(value = "/addEventTagList", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addEventTagList(@RequestBody CalRequestDto.SetEventTags calSetEventTagsRequestDto) {
+    public ResponseEntity<?> addEventTagList(@RequestBody CalRequestDto.SetEventTags calSetEventTagsRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         try {
-            LocalDate thisDate = calSetEventTagsRequestDto.getDate();
-            Optional<Day> optionalDay = dayService.findOneDay(thisDate);
+            LocalDate date = LocalDate.parse(calSetEventTagsRequestDto.getDate(), formatter);
+            List<String> eventTagList = calSetEventTagsRequestDto.getEventTagList();
 
-           Day day = optionalDay.orElseGet(() -> dayService.createDay(thisDate).orElseThrow());
-            day.setEventTagList(calSetEventTagsRequestDto.getEventTagList());
+            Optional<Day> dayOptional = dayService.storeEventTagList(juneberryUser, date, eventTagList);
 
-            return responseDto.success(day);
+            if (dayOptional.isPresent()) {
+                return responseDto.success(dayOptional.get());
+            } else {
+                return responseDto.fail("Day not found", HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
             log.debug("addEventTagList error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

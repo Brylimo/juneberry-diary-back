@@ -11,7 +11,7 @@ public class CalRequestDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class SetEventTags {
-        private LocalDate date;
+        private String date;
         private List<String> eventTagList;
     }
 }

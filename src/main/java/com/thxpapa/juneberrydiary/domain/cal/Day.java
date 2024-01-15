@@ -27,20 +27,22 @@ public class Day {
     private LocalDate date;
 
     @Comment("이벤트 태그 목록")
-    @Column(name="event_tag_list")
-    private String eventTagList;
+    @Column(name="event_tags")
+    private String eventTags;
 
     @ManyToOne
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
 
-    public void setEventTagList(List<String> eventTagList) {
-        this.eventTagList = "hi";
+    public void updateEventTagList(List<String> eventTagList) {
+
+        this.eventTags = String.join(",", eventTagList);
     }
 
     @Builder
-    public Day(LocalDate date, String eventTagList) {
+    public Day(LocalDate date, String eventTagList, JuneberryUser juneberryUser) {
         this.date = date;
-        this.eventTagList = eventTagList;
+        this.eventTags = eventTagList;
+        this.juneberryUser = juneberryUser;
     }
 }
