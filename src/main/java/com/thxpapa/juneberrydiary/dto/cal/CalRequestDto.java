@@ -1,14 +1,17 @@
 package com.thxpapa.juneberrydiary.dto.cal;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class CalRequestDto {
     @Builder
     @Getter
     @AllArgsConstructor
-    public static class EventTagInfo {
-        private String eventText;
+    @NoArgsConstructor
+    public static class SetEventTags {
+        private LocalDate date;
+        private List<String> eventTagList;
     }
 }

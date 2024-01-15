@@ -69,6 +69,7 @@ public class AuthController {
 
             Cookie cookie = new Cookie("access_token", tokenInfo.getAccessToken());
             cookie.setMaxAge(7 * 24 * 60 * 60 * 1000);
+            cookie.setPath("/");
             cookie.setHttpOnly(true);
             response.addCookie(cookie);
 
@@ -85,6 +86,7 @@ public class AuthController {
             refreshTokenService.removeRefreshToken(atkCookie.getValue());
 
             atkCookie.setMaxAge(0);
+            atkCookie.setPath("/");
             response.addCookie(atkCookie);;
             return responseDto.success("logout success ");
         }

@@ -141,7 +141,7 @@ public class ApiController {
 
     // calendar rest api call
 
-    @PostMapping(value = "/cal/addOneTask.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    /*@PostMapping(value = "/cal/addOneTask.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addOneTask(@RequestBody MultiValueMap<String, String> formData) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -248,5 +248,5 @@ public class ApiController {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("server error"));
         }
-    }
+    }*/
 }

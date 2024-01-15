@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -16,18 +17,16 @@ public class DayServiceImpl implements DayService {
     private final DayRepository dayRepository;
 
     @Override
-    public Day createDay(LocalDate date) {
+    public Optional<Day> createDay(LocalDate date) {
         Day createdDay = dayRepository.save(Day.builder()
                                 .date(date)
                                 .build());
 
-        return createdDay;
+        return Optional.ofNullable(createdDay);
     }
 
     @Override
-    public Day findOneDay(LocalDate date) {
-        Day day = dayRepository.findDayByDate(date);
-
-        return day;
+    public Optional<Day> findOneDay(LocalDate date) {
+        return dayRepository.findDayByDate(date);
     }
 }

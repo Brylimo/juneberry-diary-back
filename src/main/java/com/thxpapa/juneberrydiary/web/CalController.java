@@ -1,11 +1,11 @@
 package com.thxpapa.juneberrydiary.web;
 
-import com.thxpapa.juneberrydiary.domain.cal.SpecialDay;
-import com.thxpapa.juneberrydiary.domain.cal.Task;
+import com.thxpapa.juneberrydiary.domain.cal.Day;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
 import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
 import com.thxpapa.juneberrydiary.dto.cal.TagDto;
+import com.thxpapa.juneberrydiary.service.cal.DayService;
 import com.thxpapa.juneberrydiary.service.cal.SpecialDayService;
 import com.thxpapa.juneberrydiary.service.cal.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -22,6 +21,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api/cal")
 public class CalController {
     private final TaskService taskService;
+    private final DayService dayService;
     private final SpecialDayService specialDayService;
     private final ResponseDto responseDto;
 
@@ -83,10 +84,20 @@ public class CalController {
         }
     }
 
-    @PostMapping(value = "/cal/addEventTagList", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addEventTagList(@RequestBody List<String> eventTagList) {
-        System.out.println(eventTagList);
-        return null;
+    @PostMapping(value = "/addEventTagList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addEventTagList(@RequestBody CalRequestDto.SetEventTags calSetEventTagsRequestDto) {
+        try {
+            LocalDate thisDate = calSetEventTagsRequestDto.getDate();
+            Optional<Day> optionalDay = dayService.findOneDay(thisDate);
+
+           Day day = optionalDay.orElseGet(() -> dayService.createDay(thisDate).orElseThrow());
+            day.setEventTagList(calSetEventTagsRequestDto.getEventTagList());
+
+            return responseDto.success(day);
+        } catch (Exception e) {
+            log.debug("addEventTagList error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/calendar")

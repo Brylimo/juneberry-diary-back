@@ -80,6 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                         Cookie cookie = new Cookie("access_token", newAccessToken);
                         cookie.setMaxAge(7 * 24 * 60 * 60 * 1000);
+                        cookie.setPath("/");
                         cookie.setHttpOnly(true);
                         response.addCookie(cookie);
                     }
