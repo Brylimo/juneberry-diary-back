@@ -2,6 +2,7 @@ package com.thxpapa.juneberrydiary.service.cal;
 
 import com.thxpapa.juneberrydiary.domain.cal.Day;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
+import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
 import com.thxpapa.juneberrydiary.repository.calRepository.DayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -38,6 +41,24 @@ public class DayServiceImpl implements DayService {
 
     @Override
     @Transactional
+    public Optional<List<CalResponseDto.EventDayInfo>> findEventDayByMonth(JuneberryUser user, LocalDate startDate, LocalDate endDate) {
+        Optional<List<Day>> optionalDays = dayRepository.findDayByJuneberryUserAndDateBetween(user, startDate, endDate);
+
+        Optional<List<CalResponseDto.EventDayInfo>> eventTagsInfoList = optionalDays.map(days ->
+                days.stream().map(day -> {
+                    String[] tags = day.getEventTags().split(",");
+
+                    return CalResponseDto.EventDayInfo.builder()
+                            .date(day.getDate())
+                            .evnetTags(Arrays.asList(tags))
+                            .build();
+                }).collect(Collectors.toList()));
+
+        return eventTagsInfoList;
+    }
+
+    @Override
+    @Transactional
     public Optional<Day> storeEventTagList(JuneberryUser user, LocalDate date, List<String> eventTagList) {
         Optional<Day> optionalDay = findOneDay(user, date);
 
@@ -46,4 +67,6 @@ public class DayServiceImpl implements DayService {
 
         return Optional.ofNullable(day);
     }
+
+
 }

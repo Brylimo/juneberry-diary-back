@@ -44,9 +44,7 @@ public class CalController {
             LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
             List<TagDto> tagList = new ArrayList<>();
-
             List<CalResponseDto.SpecialDayInfo> specialDayInfoList = specialDayService.getSpecialDaysByMonth(startDate, endDate);
-            // List<Task> eventList = taskService.getEventsByMonth(startDate, endDate);
 
             // convert SpecialDay to TagDto
             tagList.addAll(specialDayInfoList.stream().map(specialDayInfo -> {
@@ -71,16 +69,21 @@ public class CalController {
                         .build();
             }).collect(Collectors.toList()));
 
-            // convert Task to TagDto
-            /*tagList.addAll(eventList.stream().map(event -> {
-                return TagDto.builder()
-                        .date(event.getDay().getDate())
-                        .name(event.getContent())
-                        .tagType("event")
-                        .build();
-            }).collect(Collectors.toList()));*/
-
             return responseDto.success(tagList);
+        } catch (Exception e) {
+            log.debug("getTagByMonth error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/getEventTagsByMonth", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getEventTagsByMonth(@RequestParam("year") String year, @RequestParam("month") String month, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        try {
+            LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
+            LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+
+            Optional<List<CalResponseDto.EventDayInfo>> eventDayInfoList = dayService.findEventDayByMonth(juneberryUser, startDate, endDate);
+            return responseDto.success(eventDayInfoList.orElse(new ArrayList<>()));
         } catch (Exception e) {
             log.debug("getTagByMonth error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

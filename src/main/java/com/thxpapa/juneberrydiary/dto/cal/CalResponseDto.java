@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class CalResponseDto {
     @Builder
@@ -24,5 +25,14 @@ public class CalResponseDto {
         @JsonSerialize(using= LocalDateSerializer.class)
         @JsonDeserialize(using= LocalDateDeserializer.class)
         private LocalDate date;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class EventDayInfo {
+        private LocalDate date;
+        private List<String> evnetTags;
     }
 }
