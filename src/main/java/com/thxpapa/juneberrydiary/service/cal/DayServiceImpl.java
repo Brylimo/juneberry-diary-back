@@ -50,7 +50,7 @@ public class DayServiceImpl implements DayService {
 
                     return CalResponseDto.EventDayInfo.builder()
                             .date(day.getDate())
-                            .evnetTags(Arrays.asList(tags))
+                            .eventTags(Arrays.asList(tags))
                             .build();
                 }).collect(Collectors.toList()));
 

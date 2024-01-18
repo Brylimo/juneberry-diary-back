@@ -33,6 +33,6 @@ public class CalResponseDto {
     @NoArgsConstructor
     public static class EventDayInfo {
         private LocalDate date;
-        private List<String> evnetTags;
+        private List<String> eventTags;
     }
 }
