@@ -63,7 +63,7 @@ public class DayServiceImpl implements DayService {
         Optional<Day> optionalDay = findOneDay(user, date);
 
         Day day = optionalDay.orElseGet(() -> createDay(user, date).orElseThrow());
-        day.updateEventTagList(eventTagList);
+        day.updateEventTagList(Optional.ofNullable(eventTagList));
 
         return Optional.ofNullable(day);
     }

@@ -9,6 +9,7 @@ import org.hibernate.annotations.Comment;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Entity
@@ -34,9 +35,11 @@ public class Day {
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
 
-    public void updateEventTagList(List<String> eventTagList) {
-
-        this.eventTags = String.join(",", eventTagList);
+    public void updateEventTagList(Optional<List<String>> optEventTagList) {
+        optEventTagList.ifPresent(eventTagList->{
+            this.eventTags = String.join(",", eventTagList);
+            System.out.println("this.eventTags = " + this.eventTags);
+        });
     }
 
     @Builder
