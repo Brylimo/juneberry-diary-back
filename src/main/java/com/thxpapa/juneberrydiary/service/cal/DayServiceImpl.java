@@ -45,7 +45,10 @@ public class DayServiceImpl implements DayService {
         Optional<List<Day>> optionalDays = dayRepository.findDayByJuneberryUserAndDateBetween(user, startDate, endDate);
 
         Optional<List<CalResponseDto.EventDayInfo>> eventTagsInfoList = optionalDays.map(days ->
-                days.stream().map(day -> {
+                days.stream().filter(day -> {
+                    if (!day.getEventTags().isEmpty()) return true;
+                    else return false;
+                }).map(day -> {
                     String[] tags = day.getEventTags().split(",");
 
                     return CalResponseDto.EventDayInfo.builder()
@@ -67,6 +70,4 @@ public class DayServiceImpl implements DayService {
 
         return Optional.ofNullable(day);
     }
-
-
 }
