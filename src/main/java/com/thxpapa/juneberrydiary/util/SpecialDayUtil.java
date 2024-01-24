@@ -6,7 +6,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.thxpapa.juneberrydiary.dto.cal.SpecialDayDto;
+import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class SpecialDayUtil {
     @Value("${datago.api.ekey}")
     private String eKey;
 
-    public List<SpecialDayDto> getHoliDeInfo(String solYear) {
+    public List<CalRequestDto.SpecialDayDto> getHoliDeInfo(String solYear) {
         try {
             HttpURLConnection conn = null;
             JsonParser jsonParser = new JsonParser();
@@ -59,7 +59,7 @@ public class SpecialDayUtil {
                 JsonObject json = (JsonObject) jsonParser.parse(jsonString);
                 JsonArray list = ((JsonObject) json.get("body")).getAsJsonObject("items").getAsJsonArray("item");
 
-                return Arrays.asList(new ObjectMapper().readValue(list.toString(), SpecialDayDto[].class));
+                return Arrays.asList(new ObjectMapper().readValue(list.toString(), CalRequestDto.SpecialDayDto[].class));
             }
             return null;
         } catch(Exception e) {
@@ -68,7 +68,7 @@ public class SpecialDayUtil {
         }
     }
 
-    public List<SpecialDayDto> getAnniversaryInfo(String solYear) {
+    public List<CalRequestDto.SpecialDayDto> getAnniversaryInfo(String solYear) {
         try {
             HttpURLConnection conn = null;
             JsonParser jsonParser = new JsonParser();
@@ -100,7 +100,7 @@ public class SpecialDayUtil {
                 JsonObject json = (JsonObject) jsonParser.parse(jsonString);
                 JsonArray list = ((JsonObject) json.get("body")).getAsJsonObject("items").getAsJsonArray("item");
 
-                return Arrays.asList(new ObjectMapper().readValue(list.toString(), SpecialDayDto[].class));
+                return Arrays.asList(new ObjectMapper().readValue(list.toString(), CalRequestDto.SpecialDayDto[].class));
             }
             return null;
         } catch(Exception e) {
@@ -109,7 +109,7 @@ public class SpecialDayUtil {
         }
     }
 
-    public List<SpecialDayDto> get24DivisionsInfo(String solYear) {
+    public List<CalRequestDto.SpecialDayDto> get24DivisionsInfo(String solYear) {
         try {
             HttpURLConnection conn = null;
             JsonParser jsonParser = new JsonParser();
@@ -141,7 +141,7 @@ public class SpecialDayUtil {
                 JsonObject json = (JsonObject) jsonParser.parse(jsonString);
                 JsonArray list = ((JsonObject) json.get("body")).getAsJsonObject("items").getAsJsonArray("item");
 
-                return Arrays.asList(new ObjectMapper().readValue(list.toString(), SpecialDayDto[].class));
+                return Arrays.asList(new ObjectMapper().readValue(list.toString(), CalRequestDto.SpecialDayDto[].class));
             }
             return null;
         } catch(Exception e) {

@@ -5,10 +5,9 @@ import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
 import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
-import com.thxpapa.juneberrydiary.dto.cal.TagDto;
 import com.thxpapa.juneberrydiary.service.cal.DayService;
 import com.thxpapa.juneberrydiary.service.cal.SpecialDayService;
-import com.thxpapa.juneberrydiary.service.cal.TaskService;
+import com.thxpapa.juneberrydiary.service.cal.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/cal")
 public class CalController {
-    private final TaskService taskService;
+    private final TodoService todoService;
     private final DayService dayService;
     private final SpecialDayService specialDayService;
     private final ResponseDto responseDto;
@@ -43,26 +42,26 @@ public class CalController {
             LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
             LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
-            List<TagDto> tagList = new ArrayList<>();
+            List<CalResponseDto.TagDto> tagList = new ArrayList<>();
             List<CalResponseDto.SpecialDayInfo> specialDayInfoList = specialDayService.getSpecialDaysByMonth(startDate, endDate);
 
             // convert SpecialDay to TagDto
             tagList.addAll(specialDayInfoList.stream().map(specialDayInfo -> {
                 if (specialDayInfo.getDatStId().equals("24DIVISIONS")) {
-                    return TagDto.builder()
+                    return CalResponseDto.TagDto.builder()
                             .date(specialDayInfo.getDate())
                             .name(specialDayInfo.getDateName())
                             .tagType("division")
                             .build();
                 } else if (!specialDayInfo.getHolidayCd()) {
-                    return TagDto.builder()
+                    return CalResponseDto.TagDto.builder()
                             .date(specialDayInfo.getDate())
                             .name(specialDayInfo.getDateName())
                             .tagType("anniversary")
                             .build();
                 }
 
-                return TagDto.builder()
+                return CalResponseDto.TagDto.builder()
                         .date(specialDayInfo.getDate())
                         .name(specialDayInfo.getDateName())
                         .tagType("holiday")
@@ -105,6 +104,34 @@ public class CalController {
             } else {
                 return responseDto.fail("Day not found", HttpStatus.NOT_FOUND);
             }
+        } catch (Exception e) {
+            log.debug("addEventTagList error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/getTodosByDay", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTodosByDay(@RequestParam("date") String date, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            LocalDate targetDate = LocalDate.parse(date, formatter);
+
+            return null;
+        } catch (Exception e) {
+            log.debug("getTodosByDay error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/addOneTodo", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addOneTodo(@RequestBody CalRequestDto.TodoLine calTodoLineRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            LocalDate date = LocalDate.parse(calTodoLineRequestDto.getDate(), formatter);
+
+            return null;
         } catch (Exception e) {
             log.debug("addEventTagList error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

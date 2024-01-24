@@ -1,8 +1,6 @@
 package com.thxpapa.juneberrydiary.dto.cal;
 
 import lombok.*;
-
-import java.time.LocalDate;
 import java.util.List;
 
 public class CalRequestDto {
@@ -13,5 +11,31 @@ public class CalRequestDto {
     public static class SetEventTags {
         private String date;
         private List<String> eventTagList;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SpecialDayDto {
+        private String dateKind;
+        private String dateName;
+        private String isHoliday;
+        private String kst;
+        private String locdate;
+        private String remarks;
+        private String seq;
+        private String sunLongitude;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TodoLine {
+        private String date;
+        private String group;
+        private String content;
+        private int position;
+        private boolean doneCd;
     }
 }

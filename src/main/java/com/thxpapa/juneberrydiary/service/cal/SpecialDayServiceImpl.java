@@ -1,8 +1,8 @@
 package com.thxpapa.juneberrydiary.service.cal;
 
 import com.thxpapa.juneberrydiary.domain.cal.SpecialDay;
+import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
 import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
-import com.thxpapa.juneberrydiary.dto.cal.SpecialDayDto;
 import com.thxpapa.juneberrydiary.repository.calRepository.SpecialDayRepository;
 import com.thxpapa.juneberrydiary.util.SpecialDayUtil;
 import lombok.RequiredArgsConstructor;
@@ -64,9 +64,9 @@ public class SpecialDayServiceImpl implements SpecialDayService {
 
                 log.info(solYear + " year holiday data is being stored..");
 
-                List<SpecialDayDto> specialDayList = specialDayUtil.getHoliDeInfo(String.valueOf(solYear));
+                List<CalRequestDto.SpecialDayDto> specialDayList = specialDayUtil.getHoliDeInfo(String.valueOf(solYear));
 
-                for (SpecialDayDto element: specialDayList) {
+                for (CalRequestDto.SpecialDayDto element: specialDayList) {
                     LocalDate date = LocalDate.parse(element.getLocdate(), formatter);
 
                     if (ld != null && !date.isAfter(ld)) {
@@ -130,13 +130,13 @@ public class SpecialDayServiceImpl implements SpecialDayService {
 
                 log.info(solYear + " year anniversary data is being stored..");
 
-                List<SpecialDayDto> anniversaryDayList = specialDayUtil.getAnniversaryInfo(String.valueOf(solYear));
+                List<CalRequestDto.SpecialDayDto> anniversaryDayList = specialDayUtil.getAnniversaryInfo(String.valueOf(solYear));
 
-                List<SpecialDayDto> annivList = anniversaryDayList.stream().filter(anniversaryDay -> {
+                List<CalRequestDto.SpecialDayDto> annivList = anniversaryDayList.stream().filter(anniversaryDay -> {
                     return importantAnniversaryList.contains(anniversaryDay.getDateName());
                 }).collect(Collectors.toList());
 
-                for (SpecialDayDto element: annivList) {
+                for (CalRequestDto.SpecialDayDto element: annivList) {
                     LocalDate date = LocalDate.parse(element.getLocdate(), formatter);
 
                     if (ld != null && !date.isAfter(ld)) {
@@ -198,9 +198,9 @@ public class SpecialDayServiceImpl implements SpecialDayService {
 
                 log.info(solYear + " year 24divisions data is being stored..");
 
-                List<SpecialDayDto> specialDayList = specialDayUtil.get24DivisionsInfo(String.valueOf(solYear));
+                List<CalRequestDto.SpecialDayDto> specialDayList = specialDayUtil.get24DivisionsInfo(String.valueOf(solYear));
 
-                for (SpecialDayDto element: specialDayList) {
+                for (CalRequestDto.SpecialDayDto element: specialDayList) {
                     LocalDate date = LocalDate.parse(element.getLocdate(), formatter);
 
                     if (ld != null && !date.isAfter(ld)) {

@@ -1,7 +1,7 @@
 package com.thxpapa.juneberrydiary.domain.cal;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
-import com.thxpapa.juneberrydiary.dto.cal.TaskUpdateDto;
+import com.thxpapa.juneberrydiary.dto.cal.TodoUpdateDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -9,15 +9,20 @@ import org.hibernate.annotations.Comment;
 
 @Getter
 @Entity
-@Table(name="task", schema="datamart")
+@Table(name="todo", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = "taskUid", callSuper=false)
+@EqualsAndHashCode(of = "todoUid", callSuper=false)
 @ToString
-public class Task extends BaseEntity {
+public class Todo extends BaseEntity {
     @Id
-    @Column(name="task_uid")
+    @Column(name="todo_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int taskUid;
+    private int todoUid;
+
+    @Comment("위치")
+    @Column(name="position")
+    @ColumnDefault("0")
+    private int position;
 
     @Comment("내용")
     @Column(name="content", length = 45, nullable = false)
@@ -27,11 +32,6 @@ public class Task extends BaseEntity {
     @Column(name="reward")
     @ColumnDefault("0")
     private int reward;
-
-    @Comment("이벤트 유무")
-    @Column(name="event_cd", length = 2, nullable = false)
-    @ColumnDefault("'00'")
-    private String eventCd;
 
     @Comment("완료 유무")
     @Column(name="done_cd")
@@ -47,27 +47,29 @@ public class Task extends BaseEntity {
     @JoinColumn(name="dayId")
     private Day day;
 
+    @ManyToOne
+    @JoinColumn(name="todoGroupId")
+    private TodoGroup todoGroup;
+
     @Builder
-    public Task(String content, int reward, Day day, String eventCd, String statusCd) {
+    public Todo(String content, int position, int reward, Day day, TodoGroup todoGroup, String statusCd) {
         this.content = content;
+        this.position = position;
         this.reward = reward;
-        this.eventCd = eventCd;
         this.statusCd = statusCd;
         this.day = day;
+        this.todoGroup = todoGroup;
     }
 
-    public Task updateTask(EntityManager em, TaskUpdateDto taskUpdateDto) {
-        if (taskUpdateDto.getContent() != null) {
-            this.content = taskUpdateDto.getContent();
+    public Todo updateTodo(EntityManager em, TodoUpdateDto todoUpdateDto) {
+        if (todoUpdateDto.getContent() != null) {
+            this.content = todoUpdateDto.getContent();
         }
-        if (taskUpdateDto.getReward() != null) {
-            this.reward = taskUpdateDto.getReward();
+        if (todoUpdateDto.getReward() != null) {
+            this.reward = todoUpdateDto.getReward();
         }
-        if (taskUpdateDto.getEventCd() != null) {
-            this.eventCd = taskUpdateDto.getEventCd();
-        }
-        if (taskUpdateDto.getDoneCd() != null) {
-            this.doneCd = taskUpdateDto.getDoneCd();
+        if (todoUpdateDto.getDoneCd() != null) {
+            this.doneCd = todoUpdateDto.getDoneCd();
         }
 
         em.merge(this);

@@ -1,22 +1,16 @@
 package com.thxpapa.juneberrydiary.web;
 
-import com.thxpapa.juneberrydiary.domain.cal.Day;
-import com.thxpapa.juneberrydiary.domain.cal.Task;
 import com.thxpapa.juneberrydiary.dto.ErrorResponse;
-import com.thxpapa.juneberrydiary.dto.cal.TaskUpdateDto;
 import com.thxpapa.juneberrydiary.service.geo.GeoService;
 import com.thxpapa.juneberrydiary.service.cal.DayService;
-import com.thxpapa.juneberrydiary.service.cal.TaskService;
+import com.thxpapa.juneberrydiary.service.cal.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +24,7 @@ public class ApiController {
 
     private final GeoService geoService;
     private final DayService dayService;
-    private final TaskService taskService;
+    private final TodoService todoService;
 
     /* MT1 대형마트 / CS2 편의점 / PS3 어린이집, 유치원 / SC4 학교 / AC5 학원 / PK6 주차장 / OL7 주유소, 충전소 / SW8 지하철역
     * BK9 은행 / CT1 문화시설 / AG2 중개업소 / PO3 공공기관 / AT4 관광명소 / AD5 숙박 / FD6 음식점 / CE7 카페 / HP8 병원 / PM9 약국 */
