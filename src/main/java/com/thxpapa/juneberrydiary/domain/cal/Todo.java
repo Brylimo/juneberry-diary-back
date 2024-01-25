@@ -1,7 +1,7 @@
 package com.thxpapa.juneberrydiary.domain.cal;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
-import com.thxpapa.juneberrydiary.dto.cal.TodoUpdateDto;
+import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -38,11 +38,6 @@ public class Todo extends BaseEntity {
     @ColumnDefault("false")
     private boolean doneCd;
 
-    @Comment("상태정보")
-    @Column(name="status_cd", length = 3, nullable = false)
-    @ColumnDefault("'01'")
-    private String statusCd;
-
     @ManyToOne
     @JoinColumn(name="dayId")
     private Day day;
@@ -52,27 +47,18 @@ public class Todo extends BaseEntity {
     private TodoGroup todoGroup;
 
     @Builder
-    public Todo(String content, int position, int reward, Day day, TodoGroup todoGroup, String statusCd) {
+    public Todo(String content, int position, int reward, boolean doneCd, Day day, TodoGroup todoGroup) {
         this.content = content;
         this.position = position;
         this.reward = reward;
-        this.statusCd = statusCd;
+        this.doneCd = doneCd;
         this.day = day;
         this.todoGroup = todoGroup;
     }
 
-    public Todo updateTodo(EntityManager em, TodoUpdateDto todoUpdateDto) {
-        if (todoUpdateDto.getContent() != null) {
-            this.content = todoUpdateDto.getContent();
-        }
-        if (todoUpdateDto.getReward() != null) {
-            this.reward = todoUpdateDto.getReward();
-        }
-        if (todoUpdateDto.getDoneCd() != null) {
-            this.doneCd = todoUpdateDto.getDoneCd();
-        }
-
-        em.merge(this);
+    public Todo updateTodoByTodoLine(CalRequestDto.TodoLine todoLine, TodoGroup todoGroup) {
+        this.content = todoLine.getContent();
+        this.todoGroup = todoGroup;
         return this;
     }
 }

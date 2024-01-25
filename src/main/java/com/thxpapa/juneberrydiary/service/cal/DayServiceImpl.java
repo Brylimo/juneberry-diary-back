@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -24,24 +25,25 @@ public class DayServiceImpl implements DayService {
 
     @Override
     @Transactional
-    public Optional<Day> createDay(JuneberryUser user, LocalDate date) {
+    public Day createDay(JuneberryUser user, LocalDate date) {
         Day createdDay = dayRepository.save(Day.builder()
                                 .date(date)
+                                .eventTagList("")
                                 .juneberryUser(user)
                                 .build());
 
-        return Optional.ofNullable(createdDay);
+        return createdDay;
     }
 
     @Override
     @Transactional
     public Optional<Day> findOneDay(JuneberryUser user, LocalDate date) {
-        return dayRepository.findDayByDateAndJuneberryUser(date, user);
+        return dayRepository.findFirstDayByDateAndJuneberryUser(date, user);
     }
 
     @Override
     @Transactional
-    public Optional<List<CalResponseDto.EventDayInfo>> findEventDayByMonth(JuneberryUser user, LocalDate startDate, LocalDate endDate) {
+    public List<CalResponseDto.EventDayInfo> findEventDayByMonth(JuneberryUser user, LocalDate startDate, LocalDate endDate) {
         Optional<List<Day>> optionalDays = dayRepository.findDayByJuneberryUserAndDateBetween(user, startDate, endDate);
 
         Optional<List<CalResponseDto.EventDayInfo>> eventTagsInfoList = optionalDays.map(days ->
@@ -57,17 +59,17 @@ public class DayServiceImpl implements DayService {
                             .build();
                 }).collect(Collectors.toList()));
 
-        return eventTagsInfoList;
+        return eventTagsInfoList.orElseGet(()->new ArrayList<>());
     }
 
     @Override
     @Transactional
-    public Optional<Day> storeEventTagList(JuneberryUser user, LocalDate date, List<String> eventTagList) {
+    public Day storeEventTagList(JuneberryUser user, LocalDate date, List<String> eventTagList) {
         Optional<Day> optionalDay = findOneDay(user, date);
 
-        Day day = optionalDay.orElseGet(() -> createDay(user, date).orElseThrow());
+        Day day = optionalDay.orElseGet(() -> createDay(user, date));
         day.updateEventTagList(Optional.ofNullable(eventTagList));
 
-        return Optional.ofNullable(day);
+        return day;
     }
 }

@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface DayRepository extends JpaRepository<Day, Integer> {
     Optional<List<Day>> findDayByJuneberryUserAndDateBetween(JuneberryUser user, LocalDate start, LocalDate end);
-    Optional<Day> findDayByDateAndJuneberryUser(LocalDate date, JuneberryUser user);
+    Optional<Day> findFirstDayByDateAndJuneberryUser(LocalDate date, JuneberryUser user);
 }

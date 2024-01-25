@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.web;
 
 import com.thxpapa.juneberrydiary.domain.cal.Day;
+import com.thxpapa.juneberrydiary.domain.cal.Todo;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
@@ -81,10 +82,10 @@ public class CalController {
             LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
             LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
-            Optional<List<CalResponseDto.EventDayInfo>> eventDayInfoList = dayService.findEventDayByMonth(juneberryUser, startDate, endDate);
-            return responseDto.success(eventDayInfoList.orElse(new ArrayList<>()));
+            List<CalResponseDto.EventDayInfo> eventDayInfoList = dayService.findEventDayByMonth(juneberryUser, startDate, endDate);
+            return responseDto.success(eventDayInfoList);
         } catch (Exception e) {
-            log.debug("getTagByMonth error occurred!");
+            log.debug("getEventTagsByMonth error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -97,13 +98,8 @@ public class CalController {
             LocalDate date = LocalDate.parse(calSetEventTagsRequestDto.getDate(), formatter);
             List<String> eventTagList = calSetEventTagsRequestDto.getEventTagList();
 
-            Optional<Day> dayOptional = dayService.storeEventTagList(juneberryUser, date, eventTagList);
-
-            if (dayOptional.isPresent()) {
-                return responseDto.success(dayOptional.get());
-            } else {
-                return responseDto.fail("Day not found", HttpStatus.NOT_FOUND);
-            }
+            Day day = dayService.storeEventTagList(juneberryUser, date, eventTagList);
+            return responseDto.success(day);
         } catch (Exception e) {
             log.debug("addEventTagList error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -116,8 +112,9 @@ public class CalController {
 
         try {
             LocalDate targetDate = LocalDate.parse(date, formatter);
+            List<CalResponseDto.TodoInfo> todoList = todoService.getTodosByDate(juneberryUser, targetDate);
 
-            return null;
+            return responseDto.success(todoList);
         } catch (Exception e) {
             log.debug("getTodosByDay error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -130,10 +127,21 @@ public class CalController {
 
         try {
             LocalDate date = LocalDate.parse(calTodoLineRequestDto.getDate(), formatter);
-
-            return null;
+            Optional<Todo> todo = todoService.createTodoByTodoLine(juneberryUser, date, calTodoLineRequestDto);
+            if (todo.isEmpty()) {
+                return responseDto.success("todo가 비어있습니다.");
+            } else {
+                return responseDto.success(CalResponseDto.TodoInfo.builder()
+                        .position(todo.get().getPosition())
+                        .content(todo.get().getContent())
+                        .doneCd(todo.get().isDoneCd())
+                        .reward(todo.get().getReward())
+                        .color(todo.get().getTodoGroup().getColor())
+                        .groupName(todo.get().getTodoGroup().getName())
+                        .build());
+            }
         } catch (Exception e) {
-            log.debug("addEventTagList error occurred!");
+            log.debug("addOneTodo error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

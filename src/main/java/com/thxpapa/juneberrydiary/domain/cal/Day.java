@@ -3,6 +3,7 @@ package com.thxpapa.juneberrydiary.domain.cal;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ public class Day {
     private LocalDate date;
 
     @Comment("이벤트 태그 목록")
-    @Column(name="event_tags")
+    @Column(name="event_tags", columnDefinition = "varchar(255) default ''")
     private String eventTags;
 
     @ManyToOne
@@ -36,7 +37,6 @@ public class Day {
     public void updateEventTagList(Optional<List<String>> optEventTagList) {
         optEventTagList.ifPresent(eventTagList->{
             this.eventTags = String.join(",", eventTagList);
-            System.out.println("this.eventTags = " + this.eventTags);
         });
     }
 

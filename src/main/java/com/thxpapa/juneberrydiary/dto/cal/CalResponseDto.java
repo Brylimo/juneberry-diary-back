@@ -41,6 +41,9 @@ public class CalResponseDto {
         private int position;
         private String content;
         private boolean doneCd;
+        private int reward;
+        private String color;
+        private String groupName;
     }
 
     @Getter

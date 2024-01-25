@@ -8,10 +8,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TodoRepository extends JpaRepository<Todo, Integer> {
-
-    List<Todo> findTodosByDayOrderByModDtAsc(Day day);
+    Optional<List<Todo>> findTodoByDayOrderByPositionAsc(Day day);
+    Optional<Todo> findFirstTodoByDayAndPosition(Day day, int position);
 
 /*    @Query("SELECT t FROM Todo t JOIN FETCH t.day WHERE t.eventCd= :eventCd AND t.day.date BETWEEN :startDate AND :endDate ORDER BY t.modDt ASC")
     List<Todo> findAllEventsByDate(@Param("eventCd") String eventCd, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);

@@ -28,12 +28,12 @@ public class CalRequestDto {
     }
 
     @Builder
-    @Getter
+    @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TodoLine {
         private String date;
-        private String group;
+        private String groupName;
         private String content;
         private int position;
         private boolean doneCd;

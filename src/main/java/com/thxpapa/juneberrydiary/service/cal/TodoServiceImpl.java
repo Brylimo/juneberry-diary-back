@@ -2,7 +2,10 @@ package com.thxpapa.juneberrydiary.service.cal;
 
 import com.thxpapa.juneberrydiary.domain.cal.Day;
 import com.thxpapa.juneberrydiary.domain.cal.Todo;
-import com.thxpapa.juneberrydiary.dto.cal.TodoUpdateDto;
+import com.thxpapa.juneberrydiary.domain.cal.TodoGroup;
+import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
+import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
+import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
 import com.thxpapa.juneberrydiary.repository.calRepository.TodoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -12,39 +15,86 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TodoServiceImpl implements TodoService {
-
     @PersistenceContext
     private EntityManager em;
+
+    private final DayService dayService;
+    private final TodoGroupService todoGroupService;
     private final TodoRepository todoRepository;
 
     @Override
-    public Todo createTodo(Day day, String content, int reward) {
-        Todo createdTask = todoRepository.save(Todo.builder()
-                                .content(content)
-                                .reward(reward)
-                                .day(day)
-                                .statusCd("01")
-                                .build());
+    @Transactional
+    public Optional<Todo> createTodoByTodoLine(JuneberryUser user, LocalDate date, CalRequestDto.TodoLine todoLine) {
+        TodoGroup todoGroup;
+        Day day = dayService.findOneDay(user, date).orElseGet(() -> dayService.createDay(user, date));
 
-        return createdTask;
-    }
+        if (todoLine.getGroupName() == null || todoLine.getGroupName().equals("")) {
+            getTodoByPosition(day, todoLine.getPosition() - 1)
+                    .ifPresent((todo)->{
+                            todoLine.setGroupName(todo.getTodoGroup().getName());
+                    });
+        }
 
-    @Override
-    public List<Todo> getTodosByDay(Day day) {
-        return todoRepository.findTodosByDayOrderByModDtAsc(day);
+        todoGroup = todoGroupService.getTodoGroupByName(user, todoLine.getGroupName())
+                .orElseGet(()->todoGroupService.createTodoGroup(user, todoLine.getGroupName(), "red"));
+
+        if (todoLine.getContent() != null && !todoLine.getContent().equals("")) { // content에 값이 쓰여져 있음
+            // position을 기준으로 존재여부 확인
+            Optional<Todo> optionalTodo = getTodoByPosition(day, todoLine.getPosition());
+
+            if (optionalTodo.isPresent()) { // todo가 이미 존재
+                Todo existedTodo = optionalTodo.get();
+                existedTodo.updateTodoByTodoLine(todoLine, todoGroup);
+                return Optional.of(existedTodo);
+            } else { // todo가 존재하지 않음
+                Todo createdTodo = todoRepository.save(Todo.builder()
+                        .todoGroup(todoGroup)
+                        .content(todoLine.getContent())
+                        .position(todoLine.getPosition())
+                        .doneCd(todoLine.isDoneCd())
+                        .day(day)
+                        .build());
+                return Optional.of(createdTodo);
+            }
+        }
+        // 투두 content에 값이 쓰여져 있지 않음
+        return Optional.empty();
     }
 
     @Override
     @Transactional
-    public Todo updateTodo(TodoUpdateDto todoUpdateDto) {
-        Todo task = todoRepository.findById(todoUpdateDto.getTaskId()).orElse(null);
-        return task.updateTodo(em, todoUpdateDto);
+    public List<CalResponseDto.TodoInfo> getTodosByDate(JuneberryUser user, LocalDate date) {
+        Day day = dayService.findOneDay(user, date).orElseGet(() -> dayService.createDay(user, date));
+        List<Todo> todoList = todoRepository.findTodoByDayOrderByPositionAsc(day).orElseGet(()->new ArrayList<>());
+
+        List<CalResponseDto.TodoInfo> todoInfoList = todoList.stream()
+                .map(todo -> {
+                   return CalResponseDto.TodoInfo.builder()
+                               .content(todo.getContent())
+                               .position(todo.getPosition())
+                               .doneCd(todo.isDoneCd())
+                               .reward(todo.getReward())
+                               .groupName(todo.getTodoGroup().getName())
+                               .color(todo.getTodoGroup().getColor())
+                               .build();
+                }).collect(Collectors.toList());
+
+        return todoInfoList;
+    }
+
+    @Override
+    @Transactional
+    public Optional<Todo> getTodoByPosition(Day day, int position) {
+        return todoRepository.findFirstTodoByDayAndPosition(day, position);
     }
 
     @Override

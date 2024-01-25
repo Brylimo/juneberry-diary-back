@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DayService {
-    Optional<Day> createDay(JuneberryUser user, LocalDate date);
-
+    Day createDay(JuneberryUser user, LocalDate date);
     Optional<Day> findOneDay(JuneberryUser user, LocalDate date);
-    Optional<List<CalResponseDto.EventDayInfo>> findEventDayByMonth(JuneberryUser user, LocalDate startDate, LocalDate endDate);
-    Optional<Day> storeEventTagList(JuneberryUser user, LocalDate date, List<String> eventTagList);
+    List<CalResponseDto.EventDayInfo> findEventDayByMonth(JuneberryUser user, LocalDate startDate, LocalDate endDate);
+    Day storeEventTagList(JuneberryUser user, LocalDate date, List<String> eventTagList);
 }
