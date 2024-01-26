@@ -47,7 +47,8 @@ public class TodoServiceImpl implements TodoService {
         todoGroup = todoGroupService.getTodoGroupByName(user, todoLine.getGroupName())
                 .orElseGet(()->todoGroupService.createTodoGroup(user, todoLine.getGroupName(), "red"));
 
-        if (todoLine.getContent() != null && !todoLine.getContent().equals("")) { // content에 값이 쓰여져 있음
+        if ((todoLine.getGroupName() != null && !todoLine.getGroupName().equals("")) ||
+                (todoLine.getContent() != null && !todoLine.getContent().equals(""))) { // content나 group에 값이 쓰여져 있음
             // position을 기준으로 존재여부 확인
             Optional<Todo> optionalTodo = getTodoByPosition(day, todoLine.getPosition());
 
@@ -73,12 +74,13 @@ public class TodoServiceImpl implements TodoService {
     @Override
     @Transactional
     public List<CalResponseDto.TodoInfo> getTodosByDate(JuneberryUser user, LocalDate date) {
-        Day day = dayService.findOneDay(user, date).orElseGet(() -> dayService.createDay(user, date));
+        Day day = dayService.findOneDay(user, date).orElseThrow();
         List<Todo> todoList = todoRepository.findTodoByDayOrderByPositionAsc(day).orElseGet(()->new ArrayList<>());
 
         List<CalResponseDto.TodoInfo> todoInfoList = todoList.stream()
                 .map(todo -> {
                    return CalResponseDto.TodoInfo.builder()
+                               .date(date.toString())
                                .content(todo.getContent())
                                .position(todo.getPosition())
                                .doneCd(todo.isDoneCd())

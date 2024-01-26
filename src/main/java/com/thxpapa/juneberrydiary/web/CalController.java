@@ -21,10 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -115,6 +112,8 @@ public class CalController {
             List<CalResponseDto.TodoInfo> todoList = todoService.getTodosByDate(juneberryUser, targetDate);
 
             return responseDto.success(todoList);
+        } catch(NoSuchElementException e) {
+            return responseDto.success();
         } catch (Exception e) {
             log.debug("getTodosByDay error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -132,6 +131,7 @@ public class CalController {
                 return responseDto.success("todo가 비어있습니다.");
             } else {
                 return responseDto.success(CalResponseDto.TodoInfo.builder()
+                        .date(date.toString())
                         .position(todo.get().getPosition())
                         .content(todo.get().getContent())
                         .doneCd(todo.get().isDoneCd())
