@@ -37,13 +37,6 @@ public class TodoServiceImpl implements TodoService {
         TodoGroup todoGroup;
         Day day = dayService.findOneDay(user, date).orElseGet(() -> dayService.createDay(user, date));
 
-        if (todoLine.getGroupName() == null || todoLine.getGroupName().equals("")) {
-            getTodoByPosition(day, todoLine.getPosition() - 1)
-                    .ifPresent((todo)->{
-                            todoLine.setGroupName(todo.getTodoGroup().getName());
-                    });
-        }
-
         todoGroup = todoGroupService.getTodoGroupByName(user, todoLine.getGroupName())
                 .orElseGet(()->todoGroupService.createTodoGroup(user, todoLine.getGroupName(), "red"));
 
