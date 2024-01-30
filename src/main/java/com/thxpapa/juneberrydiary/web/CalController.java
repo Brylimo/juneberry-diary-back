@@ -146,6 +146,20 @@ public class CalController {
         }
     }
 
+    @PostMapping(value = "/updateTodayTxt", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateTodayTxt(@RequestBody CalRequestDto.TodayTxt calTodayTxtRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            LocalDate date = LocalDate.parse(calTodayTxtRequestDto.getDate(), formatter);
+
+            return null;
+        } catch (Exception e) {
+            log.debug("updateTodayTxt error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/calendar")
     public String main(Model model) {
         List<String> week = new ArrayList<>(

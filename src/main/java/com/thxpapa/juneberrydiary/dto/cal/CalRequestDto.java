@@ -38,4 +38,13 @@ public class CalRequestDto {
         private int position;
         private boolean doneCd;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TodayTxt {
+        private String date;
+        private String todayTxt;
+    }
 }
