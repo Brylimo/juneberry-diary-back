@@ -1,8 +1,8 @@
 FROM openjdk:17
 
-COPY merci-0.1.jar /c/Users/jinwoosi/merci/merci.jar
-RUN chmod +x /c/Users/jinwoosi/merci/merci.jar
+COPY juneberry-diary.jar /home/ubuntu/juneberry-diary-back/build/libs/juneberry-diary.jar
+RUN chmod +x /home/ubuntu/juneberry-diary-back/build/libs/juneberry-diary.jar
 
 EXPOSE 8081
 
-ENTRYPOINT ["java","-jar","/c/Users/jinwoosi/merci/merci.jar"]
+ENTRYPOINT ["java","-jar","/home/ubuntu/juneberry-diary-back/build/libs/juneberry-diary.jar"]
