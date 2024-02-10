@@ -1,8 +1,8 @@
 FROM openjdk:17
 
-COPY juneberry-diary.jar /root/juneberry-diary-back/build/libs/juneberry\ diary-0.1.jar
-RUN chmod +x /root/juneberry-diary-back/build/libs/juneberry\ diary-0.1.jar
+COPY juneberry-diary-0.1.jar /root/juneberry-diary-back/build/libs/juneberry-diary-0.1.jar
+RUN chmod +x /root/juneberry-diary-back/build/libs/juneberry-diary-0.1.jar
 
-EXPOSE 8080
+EXPOSE 8081
 
-ENTRYPOINT ["java","-jar","/root/juneberry-diary-back/build/libs/juneberry\ diary-0.1.jar"]
+ENTRYPOINT ["java","-jar","/root/juneberry-diary-back/build/libs/juneberry-diary-0.1.jar"]
