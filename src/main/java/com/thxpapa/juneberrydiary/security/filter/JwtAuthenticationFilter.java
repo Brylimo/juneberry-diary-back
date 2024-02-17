@@ -21,11 +21,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.http.ResponseCookie;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -78,11 +77,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         securityContext.setAuthentication(authenticationToken);
                         SecurityContextHolder.setContext(securityContext);
 
-                        Cookie cookie = new Cookie("access_token", newAccessToken);
-                        cookie.setMaxAge(7 * 24 * 60 * 60 * 1000);
-                        cookie.setPath("/");
-                        cookie.setHttpOnly(true);
-                        response.addCookie(cookie);
+                        ResponseCookie cookie = ResponseCookie.from("access_token", newAccessToken)
+                                .path("/")
+                                .sameSite("None")
+                                .httpOnly(true)
+                                .secure(true)
+                                .maxAge(7 * 24 * 60 * 60 * 1000)
+                                .build();
+                        response.addHeader("Set-Cookie", cookie.toString());
                     }
                 }
             }

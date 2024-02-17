@@ -14,10 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
 
 @Slf4j
 @RestController
@@ -67,11 +70,14 @@ public class AuthController {
                 return responseDto.fail("login failed.", HttpStatus.BAD_REQUEST);
             }
 
-            Cookie cookie = new Cookie("access_token", tokenInfo.getAccessToken());
-            cookie.setMaxAge(7 * 24 * 60 * 60 * 1000);
-            cookie.setPath("/");
-            cookie.setHttpOnly(true);
-            response.addCookie(cookie);
+            ResponseCookie cookie = ResponseCookie.from("access_token", tokenInfo.getAccessToken())
+                            .path("/")
+                            .sameSite("None")
+                            .httpOnly(true)
+                            .secure(true)
+                            .maxAge(7 * 24 * 60 * 60 * 1000)
+                            .build();
+            response.addHeader("Set-Cookie", cookie.toString());
 
             return responseDto.success("login success");
         } catch (Exception e) {
@@ -81,13 +87,19 @@ public class AuthController {
     }
 
     @GetMapping(value="/logout", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> logout(@CookieValue("access_token") Cookie atkCookie, HttpServletResponse response) {
-        if (atkCookie != null) {
-            refreshTokenService.removeRefreshToken(atkCookie.getValue());
+    public ResponseEntity<?> logout(@CookieValue(name="access_token", required = false) String atkCookieValue, HttpServletResponse response) {
+        if (atkCookieValue != null) {
+            refreshTokenService.removeRefreshToken(atkCookieValue);
 
-            atkCookie.setMaxAge(0);
-            atkCookie.setPath("/");
-            response.addCookie(atkCookie);;
+            ResponseCookie atkCookie = ResponseCookie.from("access_token", atkCookieValue)
+                            .maxAge(Duration.ZERO)
+                            .path("/")
+                            .httpOnly(true)
+                            .secure(true)
+                            .sameSite("None")
+                            .build();
+            response.addHeader("Set-Cookie", atkCookie.toString());
+
             return responseDto.success("logout success ");
         }
 
