@@ -73,7 +73,7 @@ public class AuthController {
                             .path("/")
                             .sameSite("None")
                             .httpOnly(true)
-                            .secure(false)
+                            .secure(true)
                             .maxAge(7 * 24 * 60 * 60 * 1000)
                             .build();
             response.addHeader("Set-Cookie", cookie.toString());
@@ -94,7 +94,7 @@ public class AuthController {
                             .maxAge(Duration.ZERO)
                             .path("/")
                             .httpOnly(true)
-                            .secure(false)
+                            .secure(true)
                             .sameSite("None")
                             .build();
             response.addHeader("Set-Cookie", atkCookie.toString());
