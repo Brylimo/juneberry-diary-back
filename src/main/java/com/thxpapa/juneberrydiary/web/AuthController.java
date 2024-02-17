@@ -7,7 +7,6 @@ import com.thxpapa.juneberrydiary.dto.user.UserResponseDto;
 import com.thxpapa.juneberrydiary.service.auth.RefreshTokenService;
 import com.thxpapa.juneberrydiary.service.user.JuneberryUserService;
 import com.thxpapa.juneberrydiary.util.ErrorUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +73,7 @@ public class AuthController {
                             .path("/")
                             .sameSite("None")
                             .httpOnly(true)
-                            .secure(true)
+                            .secure(false)
                             .maxAge(7 * 24 * 60 * 60 * 1000)
                             .build();
             response.addHeader("Set-Cookie", cookie.toString());
@@ -95,7 +94,7 @@ public class AuthController {
                             .maxAge(Duration.ZERO)
                             .path("/")
                             .httpOnly(true)
-                            .secure(true)
+                            .secure(false)
                             .sameSite("None")
                             .build();
             response.addHeader("Set-Cookie", atkCookie.toString());
