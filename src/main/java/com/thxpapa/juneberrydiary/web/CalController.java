@@ -152,8 +152,11 @@ public class CalController {
 
         try {
             LocalDate date = LocalDate.parse(calTodayTxtRequestDto.getDate(), formatter);
+            String todayTxt = calTodayTxtRequestDto.getTodayTxt();
 
-            return null;
+            Day day = dayService.storeTodayTxt(juneberryUser, date, todayTxt);
+
+            return responseDto.success(day);
         } catch (Exception e) {
             log.debug("updateTodayTxt error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

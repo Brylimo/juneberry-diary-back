@@ -37,6 +37,12 @@ public class Day {
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
 
+    public void updateTodayTxt(Optional<String> optTodayTxt) {
+        optTodayTxt.ifPresent(todayTxt->{
+            this.todayTxt = todayTxt;
+        });
+    }
+
     public void updateEventTagList(Optional<List<String>> optEventTagList) {
         optEventTagList.ifPresent(eventTagList->{
             this.eventTags = String.join(",", eventTagList);

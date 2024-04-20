@@ -72,4 +72,15 @@ public class DayServiceImpl implements DayService {
 
         return day;
     }
+
+    @Override
+    @Transactional
+    public Day storeTodayTxt(JuneberryUser user, LocalDate date, String todayTxt) {
+        Optional<Day> optionalDay = findOneDay(user, date);
+
+        Day day = optionalDay.orElseGet(() -> createDay(user, date));
+        day.updateTodayTxt(Optional.ofNullable(todayTxt));
+
+        return day;
+    }
 }
