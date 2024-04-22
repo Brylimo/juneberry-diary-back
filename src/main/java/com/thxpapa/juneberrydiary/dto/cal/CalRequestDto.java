@@ -47,4 +47,14 @@ public class CalRequestDto {
         private String date;
         private String todayTxt;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TodoChk {
+        private String date;
+        private int position;
+        private String check;
+    }
 }
