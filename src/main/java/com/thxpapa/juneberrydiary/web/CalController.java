@@ -120,6 +120,27 @@ public class CalController {
         }
     }
 
+    @GetMapping(value = "/getTodayTxt", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTodayTxt(@RequestParam("date") String date, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            LocalDate targetDate = LocalDate.parse(date, formatter);
+            Optional<String> todoTxt = dayService.findTodayTxt(juneberryUser, targetDate);
+
+            CalResponseDto.TodayTxtInfo todayTxtObj = CalResponseDto.TodayTxtInfo.builder()
+                    .todayTxt(todoTxt.orElse(""))
+                    .date(targetDate)
+                    .build();
+            return responseDto.success(todayTxtObj);
+        } catch(NoSuchElementException e) {
+            return responseDto.success();
+        } catch (Exception e) {
+            log.debug("getTodayTxt error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping(value = "/addOneTodo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addOneTodo(@RequestBody CalRequestDto.TodoLine calTodoLineRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -159,6 +180,20 @@ public class CalController {
             return responseDto.success(day);
         } catch (Exception e) {
             log.debug("updateTodayTxt error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/updateTodoChk", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateTodoChk(@RequestBody CalRequestDto.TodoChk calTodoChkDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            LocalDate date = LocalDate.parse(calTodoChkDto.getDate(), formatter);
+
+            return null;
+        } catch (Exception e) {
+            log.debug("updateTodoChk error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

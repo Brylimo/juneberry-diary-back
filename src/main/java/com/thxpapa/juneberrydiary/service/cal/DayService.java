@@ -14,4 +14,5 @@ public interface DayService {
     List<CalResponseDto.EventDayInfo> findEventDayByMonth(JuneberryUser user, LocalDate startDate, LocalDate endDate);
     Day storeEventTagList(JuneberryUser user, LocalDate date, List<String> eventTagList);
     Day storeTodayTxt(JuneberryUser user, LocalDate date, String todayTxt);
+    Optional<String> findTodayTxt(JuneberryUser user, LocalDate date);
 }

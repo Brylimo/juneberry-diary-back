@@ -37,6 +37,15 @@ public class CalResponseDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class TodayTxtInfo {
+        private LocalDate date;
+        private String todayTxt;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class TodoInfo {
         private String date;
         private int position;

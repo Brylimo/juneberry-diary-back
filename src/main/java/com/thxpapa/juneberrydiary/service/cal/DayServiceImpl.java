@@ -64,6 +64,12 @@ public class DayServiceImpl implements DayService {
 
     @Override
     @Transactional
+    public Optional<String> findTodayTxt(JuneberryUser user, LocalDate date) {
+        return findOneDay(user, date).map(Day::getTodayTxt);
+    }
+
+    @Override
+    @Transactional
     public Day storeEventTagList(JuneberryUser user, LocalDate date, List<String> eventTagList) {
         Optional<Day> optionalDay = findOneDay(user, date);
 
