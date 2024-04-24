@@ -36,7 +36,7 @@ public class CalRequestDto {
         private String groupName;
         private String content;
         private int position;
-        private boolean doneCd;
+        private int chk;
     }
 
     @Builder
@@ -55,6 +55,6 @@ public class CalRequestDto {
     public static class TodoChk {
         private String date;
         private int position;
-        private String check;
+        private int chk;
     }
 }

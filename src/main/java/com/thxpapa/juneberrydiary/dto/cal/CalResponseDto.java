@@ -50,7 +50,7 @@ public class CalResponseDto {
         private String date;
         private int position;
         private String content;
-        private boolean doneCd;
+        private int chk;
         private int reward;
         private String color;
         private String groupName;

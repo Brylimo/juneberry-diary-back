@@ -155,7 +155,7 @@ public class CalController {
                         .date(date.toString())
                         .position(todo.get().getPosition())
                         .content(todo.get().getContent())
-                        .doneCd(todo.get().isDoneCd())
+                        .chk(todo.get().getChk())
                         .reward(todo.get().getReward())
                         .color(todo.get().getTodoGroup().getColor())
                         .groupName(todo.get().getTodoGroup().getName())
@@ -190,8 +190,9 @@ public class CalController {
 
         try {
             LocalDate date = LocalDate.parse(calTodoChkDto.getDate(), formatter);
+            todoService.updateTodoChk(juneberryUser, date, calTodoChkDto);
 
-            return null;
+            return responseDto.success();
         } catch (Exception e) {
             log.debug("updateTodoChk error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

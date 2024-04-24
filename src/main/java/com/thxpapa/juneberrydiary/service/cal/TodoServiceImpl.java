@@ -54,7 +54,7 @@ public class TodoServiceImpl implements TodoService {
                         .todoGroup(todoGroup)
                         .content(todoLine.getContent())
                         .position(todoLine.getPosition())
-                        .doneCd(todoLine.isDoneCd())
+                        .chk(todoLine.getChk())
                         .day(day)
                         .build());
                 return Optional.of(createdTodo);
@@ -76,7 +76,7 @@ public class TodoServiceImpl implements TodoService {
                                .date(date.toString())
                                .content(todo.getContent())
                                .position(todo.getPosition())
-                               .doneCd(todo.isDoneCd())
+                               .chk(todo.getChk())
                                .reward(todo.getReward())
                                .groupName(todo.getTodoGroup().getName())
                                .color(todo.getTodoGroup().getColor())
@@ -90,6 +90,15 @@ public class TodoServiceImpl implements TodoService {
     @Transactional
     public Optional<Todo> getTodoByPosition(Day day, int position) {
         return todoRepository.findFirstTodoByDayAndPosition(day, position);
+    }
+
+    @Override
+    @Transactional
+    public void updateTodoChk(JuneberryUser user, LocalDate date, CalRequestDto.TodoChk calTodoChkDto) {
+        Day day = dayService.findOneDay(user, date).orElseGet(() -> dayService.createDay(user, date));
+        Optional<Todo> optionalTodo = getTodoByPosition(day, calTodoChkDto.getPosition());
+
+        optionalTodo.ifPresent(todo -> todo.updateTodoByCheck(calTodoChkDto));
     }
 
     @Override

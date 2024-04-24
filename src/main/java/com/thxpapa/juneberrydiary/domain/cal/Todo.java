@@ -33,10 +33,10 @@ public class Todo extends BaseEntity {
     @ColumnDefault("0")
     private int reward;
 
-    @Comment("완료 유무")
-    @Column(name="done_cd")
-    @ColumnDefault("false")
-    private boolean doneCd;
+    @Comment("체크 값")
+    @Column(name="chk")
+    @ColumnDefault("0")
+    private int chk; // 0: 초기, 1: O, 2: X, 3: 세모
 
     @ManyToOne
     @JoinColumn(name="dayId")
@@ -47,11 +47,11 @@ public class Todo extends BaseEntity {
     private TodoGroup todoGroup;
 
     @Builder
-    public Todo(String content, int position, int reward, boolean doneCd, Day day, TodoGroup todoGroup) {
+    public Todo(String content, int position, int reward, int chk, Day day, TodoGroup todoGroup) {
         this.content = content;
         this.position = position;
         this.reward = reward;
-        this.doneCd = doneCd;
+        this.chk = chk;
         this.day = day;
         this.todoGroup = todoGroup;
     }
@@ -59,6 +59,11 @@ public class Todo extends BaseEntity {
     public Todo updateTodoByTodoLine(CalRequestDto.TodoLine todoLine, TodoGroup todoGroup) {
         this.content = todoLine.getContent();
         this.todoGroup = todoGroup;
+        return this;
+    }
+
+    public Todo updateTodoByCheck(CalRequestDto.TodoChk todoChk) {
+        this.chk = todoChk.getChk();
         return this;
     }
 }
