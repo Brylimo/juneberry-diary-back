@@ -190,9 +190,21 @@ public class CalController {
 
         try {
             LocalDate date = LocalDate.parse(calTodoChkDto.getDate(), formatter);
-            todoService.updateTodoChk(juneberryUser, date, calTodoChkDto);
+            Optional<Todo> todo = todoService.updateTodoChk(juneberryUser, date, calTodoChkDto);
 
-            return responseDto.success();
+            if (todo.isEmpty()) {
+                return responseDto.success("todo가 비어있습니다.");
+            } else {
+                return responseDto.success(CalResponseDto.TodoInfo.builder()
+                        .date(date.toString())
+                        .position(todo.get().getPosition())
+                        .content(todo.get().getContent())
+                        .chk(todo.get().getChk())
+                        .reward(todo.get().getReward())
+                        .color(todo.get().getTodoGroup().getColor())
+                        .groupName(todo.get().getTodoGroup().getName())
+                        .build());
+            }
         } catch (Exception e) {
             log.debug("updateTodoChk error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -94,11 +94,14 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     @Transactional
-    public void updateTodoChk(JuneberryUser user, LocalDate date, CalRequestDto.TodoChk calTodoChkDto) {
+    public Optional<Todo> updateTodoChk(JuneberryUser user, LocalDate date, CalRequestDto.TodoChk calTodoChkDto) {
         Day day = dayService.findOneDay(user, date).orElseGet(() -> dayService.createDay(user, date));
         Optional<Todo> optionalTodo = getTodoByPosition(day, calTodoChkDto.getPosition());
 
-        optionalTodo.ifPresent(todo -> todo.updateTodoByCheck(calTodoChkDto));
+        return optionalTodo.map(todo -> {
+            todo.updateTodoByCheck(calTodoChkDto);
+            return todo;
+        });
     }
 
     @Override
