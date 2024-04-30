@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class TokenProvider {
-    @Value("${jwt.secret}")
+    @Value("${app.jwt.secret}")
     private String key;
     private static final String AUTHORITIES_KEY = "auth";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분

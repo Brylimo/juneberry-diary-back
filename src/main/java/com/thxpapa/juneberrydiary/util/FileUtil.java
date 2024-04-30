@@ -13,7 +13,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class FileUtil {
-    @Value("${file.upload.dir}")
+    @Value("${app.filepath.common}")
     private String fileDir;
 
     public String getJuneberryFilePath(String filename) {

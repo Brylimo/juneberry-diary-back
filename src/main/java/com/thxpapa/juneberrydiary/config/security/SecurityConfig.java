@@ -3,6 +3,7 @@ package com.thxpapa.juneberrydiary.config.security;
 import com.thxpapa.juneberrydiary.security.filter.JwtAuthenticationFilter;
 import com.thxpapa.juneberrydiary.security.provider.JuneberryAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -32,6 +33,9 @@ import java.util.Arrays;
 @ConditionalOnDefaultWebSecurity
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SecurityConfig {
+    @Value("${app.front.url}")
+    private String frontUrl;
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -58,7 +62,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(Arrays.asList("https://juneberry-diary.vercel.app"));
+        configuration.setAllowedOrigins(Arrays.asList(frontUrl));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("*"));

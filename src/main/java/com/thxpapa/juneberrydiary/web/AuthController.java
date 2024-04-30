@@ -10,6 +10,7 @@ import com.thxpapa.juneberrydiary.util.ErrorUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,11 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/auth")
 public class AuthController {
+    @Value("${app.cookie.secure}")
+    private boolean cookieSecure;
+    @Value("${app.cookie.sameSite:null}")
+    private String cookieSameSite;
+
     private final JuneberryUserService juneberryUserService;
     private final RefreshTokenService refreshTokenService;
     private final ErrorUtil errorUtil;
@@ -69,13 +75,20 @@ public class AuthController {
                 return responseDto.fail("login failed.", HttpStatus.BAD_REQUEST);
             }
 
-            ResponseCookie cookie = ResponseCookie.from("access_token", tokenInfo.getAccessToken())
+            ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from("access_token", tokenInfo.getAccessToken())
                             .path("/")
-                            .sameSite("None")
                             .httpOnly(true)
-                            .secure(true)
-                            .maxAge(7 * 24 * 60 * 60 * 1000)
-                            .build();
+                            .maxAge(7 * 24 * 60 * 60 * 1000);
+
+            if (cookieSecure) {
+                builder = builder.secure(true);
+            }
+
+            if (!cookieSameSite.equals("null") && cookieSameSite != null && !cookieSameSite.isEmpty()) {
+                builder = builder.sameSite(cookieSameSite);
+            }
+
+            ResponseCookie cookie = builder.build();
             response.addHeader("Set-Cookie", cookie.toString());
 
             return responseDto.success("login success");
@@ -90,13 +103,20 @@ public class AuthController {
         if (atkCookieValue != null) {
             refreshTokenService.removeRefreshToken(atkCookieValue);
 
-            ResponseCookie atkCookie = ResponseCookie.from("access_token", atkCookieValue)
+            ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from("access_token", atkCookieValue)
                             .maxAge(Duration.ZERO)
                             .path("/")
-                            .httpOnly(true)
-                            .secure(true)
-                            .sameSite("None")
-                            .build();
+                            .httpOnly(true);
+
+            if (cookieSecure) {
+                builder = builder.secure(true);
+            }
+
+            if (!cookieSameSite.equals("null") && cookieSameSite != null && !cookieSameSite.isEmpty()) {
+                builder = builder.sameSite(cookieSameSite);
+            }
+
+            ResponseCookie atkCookie = builder.build();
             response.addHeader("Set-Cookie", atkCookie.toString());
 
             return responseDto.success("logout success ");

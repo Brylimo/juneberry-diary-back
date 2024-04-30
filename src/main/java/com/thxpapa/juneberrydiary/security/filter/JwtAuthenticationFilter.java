@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -30,6 +31,11 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    @Value("${app.cookie.secure}")
+    private boolean cookieSecure;
+    @Value("${app.cookie.sameSite:null}")
+    private String cookieSameSite;
+
     private final JuneberryUserDetailsService juneberryUserDetailsService;
     private final RefreshTokenService refreshTokenService;
     private final JuneberryUserRepository juneberryUserRepository;
@@ -77,13 +83,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         securityContext.setAuthentication(authenticationToken);
                         SecurityContextHolder.setContext(securityContext);
 
-                        ResponseCookie cookie = ResponseCookie.from("access_token", newAccessToken)
+                        ResponseCookie.ResponseCookieBuilder builder  = ResponseCookie.from("access_token", newAccessToken)
                                 .path("/")
-                                .sameSite("None")
                                 .httpOnly(true)
-                                .secure(true)
-                                .maxAge(7 * 24 * 60 * 60 * 1000)
-                                .build();
+                                .maxAge(7 * 24 * 60 * 60 * 1000);
+
+                        if (cookieSecure) {
+                            builder = builder.secure(true);
+                        }
+
+                        if (!cookieSameSite.equals("null") && cookieSameSite != null && !cookieSameSite.isEmpty()) {
+                            builder = builder.sameSite(cookieSameSite);
+                        }
+
+                        ResponseCookie cookie = builder.build();
                         response.addHeader("Set-Cookie", cookie.toString());
                     }
                 }
