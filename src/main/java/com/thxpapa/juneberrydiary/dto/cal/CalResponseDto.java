@@ -60,9 +60,18 @@ public class CalResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TagDto {
+    public static class TagInfo {
         private LocalDate date;
         private String name;
         private String tagType;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmojiInfo {
+        private LocalDate date;
+        private List<String> emojiCodeArray;
     }
 }

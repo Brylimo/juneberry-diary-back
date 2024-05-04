@@ -40,26 +40,26 @@ public class CalController {
             LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
             LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
-            List<CalResponseDto.TagDto> tagList = new ArrayList<>();
+            List<CalResponseDto.TagInfo> tagList = new ArrayList<>();
             List<CalResponseDto.SpecialDayInfo> specialDayInfoList = specialDayService.getSpecialDaysByMonth(startDate, endDate);
 
-            // convert SpecialDay to TagDto
+            // convert SpecialDay to TagInfo
             tagList.addAll(specialDayInfoList.stream().map(specialDayInfo -> {
                 if (specialDayInfo.getDatStId().equals("24DIVISIONS")) {
-                    return CalResponseDto.TagDto.builder()
+                    return CalResponseDto.TagInfo.builder()
                             .date(specialDayInfo.getDate())
                             .name(specialDayInfo.getDateName())
                             .tagType("division")
                             .build();
                 } else if (!specialDayInfo.getHolidayCd()) {
-                    return CalResponseDto.TagDto.builder()
+                    return CalResponseDto.TagInfo.builder()
                             .date(specialDayInfo.getDate())
                             .name(specialDayInfo.getDateName())
                             .tagType("anniversary")
                             .build();
                 }
 
-                return CalResponseDto.TagDto.builder()
+                return CalResponseDto.TagInfo.builder()
                         .date(specialDayInfo.getDate())
                         .name(specialDayInfo.getDateName())
                         .tagType("holiday")
@@ -87,6 +87,20 @@ public class CalController {
         }
     }
 
+    @GetMapping(value = "/getEmojisByMonth", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getEmojisByMonth(@RequestParam("year") String year, @RequestParam("month") String month, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        try {
+            LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
+            LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+
+            List<CalResponseDto.EmojiInfo> emojiInfoList = dayService.findEmojiByMonth(juneberryUser, startDate, endDate);
+            return responseDto.success(emojiInfoList);
+        } catch (Exception e) {
+            log.debug("getEmojisByMonth error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping(value = "/addEventTagList", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addEventTagList(@RequestBody CalRequestDto.SetEventTags calSetEventTagsRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -99,6 +113,22 @@ public class CalController {
             return responseDto.success(day);
         } catch (Exception e) {
             log.debug("addEventTagList error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/addDayEmoji", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addDayEmoji(@RequestBody CalRequestDto.DayEmoji calDayEmojiRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            LocalDate date = LocalDate.parse(calDayEmojiRequestDto.getDate(), formatter);
+            List<String> emojiCodeList = calDayEmojiRequestDto.getEmojiCodeArray();
+
+            Day day = dayService.storeDayEmoji(juneberryUser, date, emojiCodeList);
+            return responseDto.success(day);
+        } catch (Exception e) {
+            log.debug("addDayEmoji error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

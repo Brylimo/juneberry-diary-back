@@ -57,4 +57,13 @@ public class CalRequestDto {
         private int position;
         private int chk;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DayEmoji {
+        private String date;
+        private List<String> emojiCodeArray;
+    }
 }

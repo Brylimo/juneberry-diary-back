@@ -48,7 +48,7 @@ public class DayServiceImpl implements DayService {
 
         Optional<List<CalResponseDto.EventDayInfo>> eventTagsInfoList = optionalDays.map(days ->
                 days.stream().filter(day -> {
-                    if (!day.getEventTags().isEmpty()) return true;
+                    if (day.getEventTags() != null && !day.getEventTags().isEmpty()) return true;
                     else return false;
                 }).map(day -> {
                     String[] tags = day.getEventTags().split(",");
@@ -60,6 +60,27 @@ public class DayServiceImpl implements DayService {
                 }).collect(Collectors.toList()));
 
         return eventTagsInfoList.orElseGet(()->new ArrayList<>());
+    }
+
+    @Override
+    @Transactional
+    public List<CalResponseDto.EmojiInfo> findEmojiByMonth(JuneberryUser user, LocalDate startDate, LocalDate endDate) {
+        Optional<List<Day>> optionalDays = dayRepository.findDayByJuneberryUserAndDateBetween(user, startDate, endDate);
+
+        Optional<List<CalResponseDto.EmojiInfo>> emojiInfoList = optionalDays.map(days ->
+                days.stream().filter(day -> {
+                    if (day.getEmojiCodes() != null && !day.getEmojiCodes().isEmpty()) return true;
+                    else return false;
+                }).map(day -> {
+                    String[] emojiCodes = day.getEmojiCodes().split(",");
+
+                    return CalResponseDto.EmojiInfo.builder()
+                            .date(day.getDate())
+                            .emojiCodeArray(Arrays.asList(emojiCodes))
+                            .build();
+                }).collect(Collectors.toList()));
+
+        return emojiInfoList.orElseGet(()->new ArrayList<>());
     }
 
     @Override
@@ -86,6 +107,17 @@ public class DayServiceImpl implements DayService {
 
         Day day = optionalDay.orElseGet(() -> createDay(user, date));
         day.updateTodayTxt(Optional.ofNullable(todayTxt));
+
+        return day;
+    }
+
+    @Override
+    @Transactional
+    public Day storeDayEmoji(JuneberryUser user, LocalDate date, List<String> emojiCodeList) {
+        Optional<Day> optionalDay = findOneDay(user, date);
+
+        Day day = optionalDay.orElseGet(() -> createDay(user, date));
+        day.updateEmojiCodes(Optional.ofNullable(emojiCodeList));
 
         return day;
     }

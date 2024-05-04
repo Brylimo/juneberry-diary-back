@@ -25,6 +25,10 @@ public class Day {
     @Column(name="date")
     private LocalDate date;
 
+    @Comment("오늘의 이모지")
+    @Column(name="emoji_codes")
+    private String emojiCodes;
+
     @Comment("오늘의 텍스트")
     @Column(name="today_txt")
     private String todayTxt;
@@ -43,6 +47,12 @@ public class Day {
         });
     }
 
+    public void updateEmojiCodes(Optional<List<String>> optEmojiCodeList) {
+        optEmojiCodeList.ifPresent(emojiCodeList->{
+            this.emojiCodes = String.join(",", emojiCodeList);
+        });
+    }
+
     public void updateEventTagList(Optional<List<String>> optEventTagList) {
         optEventTagList.ifPresent(eventTagList->{
             this.eventTags = String.join(",", eventTagList);
@@ -50,8 +60,9 @@ public class Day {
     }
 
     @Builder
-    public Day(LocalDate date, String todayTxt, String eventTagList, JuneberryUser juneberryUser) {
+    public Day(LocalDate date, String emojiCodes, String todayTxt, String eventTagList, JuneberryUser juneberryUser) {
         this.date = date;
+        this.emojiCodes = emojiCodes;
         this.todayTxt = todayTxt;
         this.eventTags = eventTagList;
         this.juneberryUser = juneberryUser;
