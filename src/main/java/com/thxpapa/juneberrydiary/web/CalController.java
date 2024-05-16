@@ -240,15 +240,4 @@ public class CalController {
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @GetMapping("/calendar")
-    public String main(Model model) {
-        List<String> week = new ArrayList<>(
-                Arrays.asList("Sun", "Mon", "Thu", "Wed", "Thurs", "Fri", "Sat")
-        );
-
-        model.addAttribute("week", week);
-
-        return "score/calendar";
-    }
 }
