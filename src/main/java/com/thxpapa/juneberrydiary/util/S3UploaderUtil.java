@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.util;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class S3UploaderUtil {
     @Value("${aws.s3.bucket}")
     private String bucket;
 
-    private final AmazonS3Client amazonS3Client;
+    private final AmazonS3 amazonS3Client;
 
     public JuneberryFile storeFile(MultipartFile multipartFile) {
         if (multipartFile.isEmpty() || Objects.isNull(multipartFile.getOriginalFilename())) {
