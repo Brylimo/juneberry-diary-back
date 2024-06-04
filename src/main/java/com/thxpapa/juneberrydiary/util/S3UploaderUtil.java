@@ -1,6 +1,8 @@
 package com.thxpapa.juneberrydiary.util;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,13 +26,43 @@ public class S3UploaderUtil {
 
     private final AmazonS3 amazonS3Client;
 
-    public JuneberryFile storeFile(MultipartFile multipartFile) {
-        if (multipartFile.isEmpty() || Objects.isNull(multipartFile.getOriginalFilename())) {
-            return null;
-        }
+    public JuneberryFile uploadFile(MultipartFile multipartFile) throws IOException {
+        File uploadFile = convert(multipartFile)
+                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
 
-        String originalFileName = multipartFile.getOriginalFilename();
-        return null;
+        return upload(uploadFile);
+    }
+
+    private JuneberryFile upload(File uploadFile) {
+        String uuid = UUID.randomUUID().toString();
+        String uploadImageUrl = putS3(uploadFile, createS3FileName(uploadFile.getName(), uuid));
+        removeNewFile(uploadFile);
+
+        return JuneberryFile.builder()
+                .name(uuid)
+                .type("image")
+                .path(uploadImageUrl)
+                .build();
+    }
+
+    private String putS3(File uploadFile, String fileName) {
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        return amazonS3Client.getUrl(bucket, fileName).toString();
+    }
+
+    private void removeNewFile(File targetFile) {
+        if (targetFile.delete()) {
+            log.info("파일이 삭제되었습니다.");
+        } else {
+            log.info("파일이 삭제되지 못했습니다.");
+        }
+    }
+
+    private String createS3FileName(String originalFileName, String uuid) {
+        int pos = originalFileName.lastIndexOf(".");
+        String ext = originalFileName.substring(pos + 1);
+
+        return uuid + "." + ext;
     }
 
     private Optional<File> convert(MultipartFile file) throws IOException {

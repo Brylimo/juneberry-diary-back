@@ -27,11 +27,12 @@ public class FileUtil {
         String newFileName = createStoreFileName(originalFileName);
         multipartFile.transferTo(new File(getJuneberryFilePath(newFileName)));
 
-        return JuneberryFile.builder()
+        return null;
+        /*return JuneberryFile.builder()
                         .uploadName(originalFileName)
                         .storeName(newFileName)
                         .statusCd("01")
-                        .build();
+                        .build();*/
     }
 
     private String createStoreFileName(String originalFileName) {

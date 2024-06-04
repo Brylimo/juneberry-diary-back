@@ -18,23 +18,22 @@ public class JuneberryFile extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int juneberryFileUid;
 
-    @Comment("업로드 파일 이름")
-    @Column(name="upload_name", length = 255)
-    private String uploadName;
+    @Comment("파일 타입")
+    @Column(name="type")
+    private String type;
 
-    @Comment("저장된 파일 이름")
-    @Column(name="store_name", length = 255)
-    private String storeName;
+    @Comment("파일 이름")
+    @Column(name="name", length = 255)
+    private String name;
 
-    @Comment("상태정보")
-    @Column(name="status_cd", length = 3, nullable = false)
-    @ColumnDefault("'01'")
-    private String statusCd;
+    @Comment("파일 경로")
+    @Column(name="path", length = 255)
+    private String path;
 
     @Builder
-    public JuneberryFile(String uploadName, String storeName, String statusCd) {
-        this.uploadName = uploadName;
-        this.storeName = storeName;
-        this.statusCd = statusCd;
+    public JuneberryFile(String name, String type, String path) {
+        this.name = name;
+        this.type = type;
+        this.path = path;
     }
 }
