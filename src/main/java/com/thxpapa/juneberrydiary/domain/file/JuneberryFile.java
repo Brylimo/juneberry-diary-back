@@ -26,14 +26,19 @@ public class JuneberryFile extends BaseEntity {
     @Column(name="name", length = 255)
     private String name;
 
+    @Comment("파일 확장자")
+    @Column(name="ext")
+    private String ext;
+
     @Comment("파일 경로")
     @Column(name="path", length = 255)
     private String path;
 
     @Builder
-    public JuneberryFile(String name, String type, String path) {
-        this.name = name;
+    public JuneberryFile(String type, String name, String ext, String path) {
         this.type = type;
+        this.name = name;
+        this.ext = ext;
         this.path = path;
     }
 }

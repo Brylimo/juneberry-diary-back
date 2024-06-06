@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,25 +22,32 @@ import java.util.UUID;
 public class S3UploaderUtil {
     @Value("${aws.s3.bucket}")
     private String bucket;
+    @Value("${aws.s3.publicUrl}")
+    private String publicUrl;
 
     private final AmazonS3 amazonS3Client;
 
-    public JuneberryFile uploadFile(MultipartFile multipartFile) throws IOException {
+    public JuneberryFile uploadFile(MultipartFile multipartFile, String type) throws IOException {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
 
-        return upload(uploadFile);
+        return upload(uploadFile, type);
     }
 
-    private JuneberryFile upload(File uploadFile) {
+    private JuneberryFile upload(File uploadFile, String type) {
         String uuid = UUID.randomUUID().toString();
-        String uploadImageUrl = putS3(uploadFile, createS3FileName(uploadFile.getName(), uuid));
-        removeNewFile(uploadFile);
+        String ext = getFileExt(uploadFile.getName());
 
+        String fileName = uuid + '.' + ext;
+        String path = publicUrl + fileName;
+
+        putS3(uploadFile, fileName);
+        removeNewFile(uploadFile);
         return JuneberryFile.builder()
                 .name(uuid)
-                .type("image")
-                .path(uploadImageUrl)
+                .ext(ext)
+                .type(type)
+                .path(path)
                 .build();
     }
 
@@ -58,11 +64,11 @@ public class S3UploaderUtil {
         }
     }
 
-    private String createS3FileName(String originalFileName, String uuid) {
+    private String getFileExt(String originalFileName) {
         int pos = originalFileName.lastIndexOf(".");
         String ext = originalFileName.substring(pos + 1);
 
-        return uuid + "." + ext;
+        return ext;
     }
 
     private Optional<File> convert(MultipartFile file) throws IOException {

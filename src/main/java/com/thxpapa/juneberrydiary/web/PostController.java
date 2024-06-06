@@ -3,6 +3,7 @@ package com.thxpapa.juneberrydiary.web;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
+import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
 import com.thxpapa.juneberrydiary.service.post.PublishService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,9 @@ public class PostController {
         try {
             JuneberryFile juneberryFile = publishService.uploadImage(juneberryUser, file);
 
-            return responseDto.success();
+            return responseDto.success(PostResponseDto.imageInfo.builder()
+                            .imagePath(juneberryFile.getPath())
+                            .build());
         } catch (Exception e) {
             log.debug("uploadImage error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

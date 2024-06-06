@@ -26,7 +26,7 @@ public class PublishServiceImpl implements PublishService {
             JuneberryFile res = null;
 
             if (multipartFile != null && !multipartFile.isEmpty() && !Objects.isNull(multipartFile.getOriginalFilename())) {
-                JuneberryFile file = s3UploaderUtil.uploadFile(multipartFile);
+                JuneberryFile file = s3UploaderUtil.uploadFile(multipartFile, "post");
                 res = juneberryFileRepository.save(file);
             }
             return res;
