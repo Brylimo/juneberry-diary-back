@@ -1,8 +1,10 @@
 package com.thxpapa.juneberrydiary.web;
 
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
+import com.thxpapa.juneberrydiary.domain.post.Post;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
+import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
 import com.thxpapa.juneberrydiary.service.post.PublishService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,23 @@ public class PostController {
                             .build());
         } catch (Exception e) {
             log.debug("uploadImage error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/addPost", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addPost(@RequestBody PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        try {
+            Post post = publishService.storePost(juneberryUser, writePost);
+            return responseDto.success(PostResponseDto.postInfo.builder()
+                            .id(post.getPostUid().toString())
+                            .title(post.getTitle())
+                            .content(post.getContent())
+                            .isTemp(post.getIsTemp())
+                            .date(post.getDate())
+                            .build());
+        } catch (Exception e) {
+            log.debug("addPost error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

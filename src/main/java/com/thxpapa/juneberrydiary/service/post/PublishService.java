@@ -10,4 +10,5 @@ import java.util.Optional;
 
 public interface PublishService {
     JuneberryFile uploadImage(JuneberryUser user, MultipartFile file);
+    Post storePost(JuneberryUser user, PostRequestDto.WritePost writePost);
 }
