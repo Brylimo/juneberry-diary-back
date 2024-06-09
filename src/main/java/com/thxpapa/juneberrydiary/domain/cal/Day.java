@@ -1,5 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.cal;
 
+import com.thxpapa.juneberrydiary.domain.BaseEntity;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +16,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "dayUid", callSuper=false)
 @ToString
-public class Day {
+public class Day extends BaseEntity {
     @Id
     @Column(name="day_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,8 @@
 package com.thxpapa.juneberrydiary.domain.file;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.post.Post;
+import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

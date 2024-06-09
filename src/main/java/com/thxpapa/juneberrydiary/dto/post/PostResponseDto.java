@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class PostResponseDto {
     @Getter
@@ -22,7 +23,7 @@ public class PostResponseDto {
     @AllArgsConstructor
     public static class postInfo {
         private String id;
-        private LocalDate date;
+        private LocalDateTime updatedDateTime;
         private String title;
         private String content;
         private Boolean isTemp;

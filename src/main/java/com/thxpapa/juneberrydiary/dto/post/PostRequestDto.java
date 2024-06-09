@@ -14,6 +14,18 @@ public class PostRequestDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class WritePost {
+        private String postId;
+        private String date;
+        private String title;
+        private String content;
+        private Boolean isTemp;
+    }
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PostDto {
+        private String postId;
         private String date;
         private String title;
         private String content;

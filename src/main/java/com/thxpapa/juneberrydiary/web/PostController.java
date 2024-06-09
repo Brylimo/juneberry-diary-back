@@ -16,6 +16,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -23,16 +26,42 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostController {
     private final PublishService publishService;
     private final ResponseDto responseDto;
-    @PostMapping(value = "/uploadImage", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> uploadImage(@RequestPart("editorImg") MultipartFile file, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    @PostMapping(value = "/uploadPostImage", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> uploadPostImage(
+            @RequestParam("postId") String postId,
+            @RequestPart("editorImg") MultipartFile file,
+            @AuthenticationPrincipal JuneberryUser juneberryUser)
+    {
         try {
-            JuneberryFile juneberryFile = publishService.uploadImage(juneberryUser, file);
+            JuneberryFile juneberryFile = publishService.uploadImage(juneberryUser, postId, file);
 
             return responseDto.success(PostResponseDto.imageInfo.builder()
                             .imagePath(juneberryFile.getPath())
                             .build());
         } catch (Exception e) {
-            log.debug("uploadImage error occurred!");
+            log.debug("uploadPostImage error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/getTempPost", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTempPost(@RequestParam("id") String id, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        try {
+            Optional<Post> post = publishService.getTempPostById(juneberryUser, UUID.fromString(id));
+
+            if (post.isEmpty()) {
+                return responseDto.success("해당 post를 찾을 수 없습니다.");
+            } else {
+                return responseDto.success(PostResponseDto.postInfo.builder()
+                        .id(post.get().getPostUid().toString())
+                        .title(post.get().getTitle())
+                        .content(post.get().getContent())
+                        .isTemp(post.get().getIsTemp())
+                        .updatedDateTime(post.get().getModDt())
+                        .build());
+            }
+        } catch (Exception e) {
+            log.debug("getTempPost erorr occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -46,10 +75,27 @@ public class PostController {
                             .title(post.getTitle())
                             .content(post.getContent())
                             .isTemp(post.getIsTemp())
-                            .date(post.getDate())
+                            .updatedDateTime(post.getModDt())
                             .build());
         } catch (Exception e) {
             log.debug("addPost error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/updatePost", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updatePost(@RequestBody PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+        try {
+            Post post = publishService.updatePost(juneberryUser, writePost);
+            return responseDto.success(PostResponseDto.postInfo.builder()
+                    .id(post.getPostUid().toString())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .isTemp(post.getIsTemp())
+                    .updatedDateTime(post.getModDt())
+                    .build());
+        } catch (Exception e) {
+            log.debug("updatePost error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

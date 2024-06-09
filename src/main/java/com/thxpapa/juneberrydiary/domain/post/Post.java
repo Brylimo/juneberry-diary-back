@@ -1,9 +1,10 @@
 package com.thxpapa.juneberrydiary.domain.post;
 
+import com.thxpapa.juneberrydiary.domain.BaseEntity;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
+import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "postUid", callSuper=false)
 @ToString
-public class Post {
+public class Post extends BaseEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -50,5 +51,11 @@ public class Post {
         this.content = content;
         this.isTemp = isTemp;
         this.juneberryUser = juneberryUser;
+    }
+
+    public Post updatePostByWritePost(PostRequestDto.WritePost writePost) {
+        this.title = writePost.getTitle();
+        this.content = writePost.getContent();
+        return this;
     }
 }
