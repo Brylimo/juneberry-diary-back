@@ -14,6 +14,7 @@ import lombok.*;
 public class PostFile extends BaseEntity {
     @Id
     @Column(name="post_file_uid")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int postFileUid;
 
     @ManyToOne(fetch = FetchType.LAZY)
