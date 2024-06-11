@@ -33,12 +33,14 @@ public class S3UploaderUtil {
 
         // image compression
         int targetWidth = Math.min(bi.getWidth(), 2048);
-        bi = resizeImage(bi, targetWidth, targetWidth);
+
+        if (bi.getWidth() > 2048) {
+            bi = resizeImage(bi, targetWidth, targetWidth);
+        }
 
         File uploadFile = convert(bi, multipartFile.getOriginalFilename())
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
 
-        System.out.println("c");
         return upload(uploadFile, type);
     }
 
@@ -49,9 +51,7 @@ public class S3UploaderUtil {
         String fileName = uuid + '.' + ext;
         String path = publicUrl + fileName;
 
-        System.out.println("d");
         putS3(uploadFile, fileName);
-        System.out.println("e");
         removeNewFile(uploadFile);
         return JuneberryFile.builder()
                 .name(uuid)
@@ -79,17 +79,6 @@ public class S3UploaderUtil {
         String ext = originalFileName.substring(pos + 1);
 
         return ext;
-    }
-
-    private Optional<File> convertFile(MultipartFile file) throws IOException {
-        File convertFile = new File(file.getOriginalFilename());
-        if (convertFile.createNewFile()) {
-            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                fos.write(file.getBytes());
-            }
-            return Optional.of(convertFile);
-        }
-        return Optional.empty();
     }
 
     private Optional<File> convert(BufferedImage image, String originalFilename) {
