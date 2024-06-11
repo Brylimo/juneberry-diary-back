@@ -38,8 +38,9 @@ public class PublishServiceImpl implements PublishService {
             JuneberryFile res = null;
 
             UUID id = UUID.fromString(postId);
+            System.out.println("a");
             Post post = postRepository.findPostByJuneberryUserAndPostUid(user, id).orElseGet(null);
-
+            System.out.println("b");
             if (multipartFile != null && post != null && !multipartFile.isEmpty() && !Objects.isNull(multipartFile.getOriginalFilename())) {
                 JuneberryFile file = s3UploaderUtil.uploadFile(multipartFile, "post");
                 res = juneberryFileRepository.save(file);

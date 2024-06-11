@@ -39,7 +39,7 @@ public class PostController {
                             .imagePath(juneberryFile.getPath())
                             .build());
         } catch (Exception e) {
-            log.debug("uploadPostImage error occurred!");
+            log.debug("uploadPostImage error occurred!", e);
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -38,6 +38,7 @@ public class S3UploaderUtil {
         File uploadFile = convert(bi, multipartFile.getOriginalFilename())
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
 
+        System.out.println("c");
         return upload(uploadFile, type);
     }
 
@@ -48,7 +49,9 @@ public class S3UploaderUtil {
         String fileName = uuid + '.' + ext;
         String path = publicUrl + fileName;
 
+        System.out.println("d");
         putS3(uploadFile, fileName);
+        System.out.println("e");
         removeNewFile(uploadFile);
         return JuneberryFile.builder()
                 .name(uuid)
