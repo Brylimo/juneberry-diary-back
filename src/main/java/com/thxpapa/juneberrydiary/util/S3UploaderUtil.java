@@ -6,12 +6,12 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Optional;
@@ -35,7 +35,7 @@ public class S3UploaderUtil {
         int targetWidth = Math.min(bi.getWidth(), 2048);
 
         if (bi.getWidth() > 2048) {
-            bi = resizeImage(bi, targetWidth, targetWidth);
+            bi = resizeImage(bi, targetWidth);
         }
 
         File uploadFile = convert(bi, multipartFile.getOriginalFilename())
@@ -96,11 +96,7 @@ public class S3UploaderUtil {
         return Optional.empty();
     }
 
-    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
-        BufferedImage outputImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = outputImage.createGraphics();
-        g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-        g2d.dispose();
-        return outputImage;
+    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth) throws IOException {
+        return Scalr.resize(originalImage, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, targetWidth, Scalr.OP_ANTIALIAS);
     }
 }
