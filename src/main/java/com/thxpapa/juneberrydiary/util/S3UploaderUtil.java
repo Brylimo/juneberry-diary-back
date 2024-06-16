@@ -3,6 +3,9 @@ package com.thxpapa.juneberrydiary.util;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,16 +32,44 @@ public class S3UploaderUtil {
     private final AmazonS3 amazonS3Client;
 
     public JuneberryFile uploadFile(MultipartFile multipartFile, String type) throws IOException {
+        InputStream inputStream = multipartFile.getInputStream();
         BufferedImage bi = ImageIO.read(multipartFile.getInputStream());
 
-        // image compression
-        int targetWidth = Math.min(bi.getWidth(), 2048);
+        int orientation = 1; // Default orientation
 
-        if (bi.getWidth() > 2048) {
-            bi = resizeImage(bi, targetWidth);
+        try {
+            // Read the EXIF metadata
+            Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
+            ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+
+            if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+                orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        File uploadFile = convert(bi, multipartFile.getOriginalFilename())
+        // Rotate image based on orientation
+        BufferedImage rotatedImage = bi;
+        switch (orientation) {
+            case 6: // 90 degrees cw
+                rotatedImage = Scalr.rotate(bi, Scalr.Rotation.CW_90);
+                break;
+            case 3: // 180 degrees
+                rotatedImage = Scalr.rotate(bi, Scalr.Rotation.CW_180);
+                break;
+            case 8: // 90 degrees CCW
+                rotatedImage = Scalr.rotate(bi, Scalr.Rotation.CW_270);
+                break;
+        }
+
+        // image compression
+        int targetWidth = Math.min(rotatedImage.getWidth(), 2048);
+        if (rotatedImage.getWidth() > 2048) {
+            rotatedImage = resizeImage(rotatedImage, targetWidth);
+        }
+
+        File uploadFile = convert(rotatedImage, multipartFile.getOriginalFilename())
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
 
         return upload(uploadFile, type);
