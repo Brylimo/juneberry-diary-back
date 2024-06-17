@@ -8,16 +8,18 @@ import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import com.thxpapa.juneberrydiary.repository.fileRepository.JuneberryFileRepository;
 import com.thxpapa.juneberrydiary.repository.postRepository.PostFileRepository;
 import com.thxpapa.juneberrydiary.repository.postRepository.PostRepository;
-import com.thxpapa.juneberrydiary.util.FileUtil;
 import com.thxpapa.juneberrydiary.util.S3UploaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -93,5 +95,18 @@ public class PublishServiceImpl implements PublishService {
     public Optional<Post> getTempPostById(JuneberryUser user, UUID id) {
         Optional<Post> optionalPost = postRepository.findTempPostByJuneberryUserAndId(user, id);
         return optionalPost;
+    }
+
+    @Override
+    @Transactional
+    public List<Post> getTempPostList(JuneberryUser user, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return postRepository.findPostByJuneberryUserAndIsTemp(user, true, pageable);
+    }
+
+    @Override
+    @Transactional
+    public long getTempPostCnt(JuneberryUser user) {
+        return postRepository.countByIsTemp(true);
     }
 }

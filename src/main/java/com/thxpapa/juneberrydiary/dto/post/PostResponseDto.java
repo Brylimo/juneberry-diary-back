@@ -13,7 +13,7 @@ public class PostResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class imageInfo {
+    public static class ImageInfo {
         private String imagePath;
     }
 
@@ -21,7 +21,7 @@ public class PostResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class postInfo {
+    public static class PostInfo {
         private String id;
         private LocalDateTime updatedDateTime;
         private String title;

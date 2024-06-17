@@ -16,8 +16,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -35,7 +37,7 @@ public class PostController {
         try {
             JuneberryFile juneberryFile = publishService.uploadImage(juneberryUser, postId, file);
 
-            return responseDto.success(PostResponseDto.imageInfo.builder()
+            return responseDto.success(PostResponseDto.ImageInfo.builder()
                             .imagePath(juneberryFile.getPath())
                             .build());
         } catch (Exception e) {
@@ -52,7 +54,7 @@ public class PostController {
             if (post.isEmpty()) {
                 return responseDto.success("해당 post를 찾을 수 없습니다.");
             } else {
-                return responseDto.success(PostResponseDto.postInfo.builder()
+                return responseDto.success(PostResponseDto.PostInfo.builder()
                         .id(post.get().getPostUid().toString())
                         .title(post.get().getTitle())
                         .content(post.get().getContent())
@@ -66,11 +68,46 @@ public class PostController {
         }
     }
 
+    @GetMapping(value = "getTempPostList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTempPostList(
+            @RequestParam(value = "page", defaultValue = "0") int pageNumber,
+            @RequestParam(value = "size", defaultValue = "10") int pageSize,
+            @AuthenticationPrincipal JuneberryUser juneberryUser)
+    {
+        try {
+            List<Post> postList = publishService.getTempPostList(juneberryUser, pageNumber, pageSize);
+
+            List<PostResponseDto.PostInfo> postInfoList = postList.stream()
+                    .map(post -> PostResponseDto.PostInfo.builder()
+                            .title(post.getTitle())
+                            .content(post.getContent())
+                            .updatedDateTime(post.getModDt())
+                            .build())
+                    .collect(Collectors.toList());
+            return responseDto.success(postInfoList);
+        } catch (Exception e) {
+            log.debug("getTempPostList erorr occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/getTempPostCnt", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTempPostCnt(@AuthenticationPrincipal JuneberryUser juneberryUser) {
+        try {
+            long tempCnt = publishService.getTempPostCnt(juneberryUser);
+
+            return responseDto.success(tempCnt);
+        } catch (Exception e) {
+            log.debug("getTempPostCnt error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping(value = "/addPost", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addPost(@RequestBody PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
             Post post = publishService.storePost(juneberryUser, writePost);
-            return responseDto.success(PostResponseDto.postInfo.builder()
+            return responseDto.success(PostResponseDto.PostInfo.builder()
                             .id(post.getPostUid().toString())
                             .title(post.getTitle())
                             .content(post.getContent())
@@ -87,7 +124,7 @@ public class PostController {
     public ResponseEntity<?> updatePost(@RequestBody PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
             Post post = publishService.updatePost(juneberryUser, writePost);
-            return responseDto.success(PostResponseDto.postInfo.builder()
+            return responseDto.success(PostResponseDto.PostInfo.builder()
                     .id(post.getPostUid().toString())
                     .title(post.getTitle())
                     .content(post.getContent())
