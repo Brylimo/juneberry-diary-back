@@ -1,11 +1,11 @@
 package com.thxpapa.juneberrydiary.dto.post;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class PostResponseDto {
@@ -23,6 +23,7 @@ public class PostResponseDto {
     @AllArgsConstructor
     public static class PostInfo {
         private String id;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd. HH:mm", timezone = "Asia/Seoul")
         private LocalDateTime updatedDateTime;
         private String title;
         private String content;

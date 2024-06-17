@@ -12,11 +12,12 @@ import com.thxpapa.juneberrydiary.util.S3UploaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -100,7 +101,7 @@ public class PublishServiceImpl implements PublishService {
     @Override
     @Transactional
     public List<Post> getTempPostList(JuneberryUser user, int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("modDt").descending());
         return postRepository.findPostByJuneberryUserAndIsTemp(user, true, pageable);
     }
 

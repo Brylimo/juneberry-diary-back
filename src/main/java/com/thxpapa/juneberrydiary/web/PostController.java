@@ -79,6 +79,8 @@ public class PostController {
 
             List<PostResponseDto.PostInfo> postInfoList = postList.stream()
                     .map(post -> PostResponseDto.PostInfo.builder()
+                            .id(post.getPostUid().toString())
+                            .isTemp(post.getIsTemp())
                             .title(post.getTitle())
                             .content(post.getContent())
                             .updatedDateTime(post.getModDt())
