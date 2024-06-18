@@ -32,6 +32,7 @@ public class Post extends BaseEntity {
     @Column(name="title")
     private String title;
 
+    @Lob
     @Comment("내용")
     @Column(name="content")
     private String content;

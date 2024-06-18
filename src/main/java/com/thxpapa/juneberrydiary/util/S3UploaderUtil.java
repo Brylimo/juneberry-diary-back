@@ -114,10 +114,14 @@ public class S3UploaderUtil {
 
     private Optional<File> convert(BufferedImage image, String originalFilename) {
         File file = new File(originalFilename);
+        String ext = "jpeg";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+        }
         try {
             if (file.createNewFile()) {
                 try (OutputStream os = new FileOutputStream(file)) {
-                    ImageIO.write(image, "jpg", os);
+                    ImageIO.write(image, ext, os);
                 }
                 return Optional.of(file);
             }
