@@ -26,7 +26,10 @@ public class PostResponseDto {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd. HH:mm", timezone = "Asia/Seoul")
         private LocalDateTime updatedDateTime;
         private String title;
+        private String description;
         private String content;
         private Boolean isTemp;
+        private Boolean isPublic;
+        private String thumbnailPath;
     }
 }

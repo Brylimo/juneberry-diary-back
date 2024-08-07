@@ -1,24 +1,24 @@
 package com.thxpapa.juneberrydiary.dto.post;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
 public class PostRequestDto {
-    @Builder
-    @Getter
+    @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class WritePost {
         private String postId;
         private String date;
         private String title;
+        private String description;
         private String content;
+        private String thumbnailPath;
         private Boolean isTemp;
+        private Boolean isPublic;
+        private MultipartFile thumbnailImg;
     }
     @Builder
     @Getter

@@ -65,6 +65,14 @@ public class PublishServiceImpl implements PublishService {
 
         try {
             LocalDate date = LocalDate.parse(writePost.getDate(), formatter);
+            MultipartFile thumbnail = writePost.getThumbnailImg();
+
+            // 썸네일 저장
+            JuneberryFile resFile = null;
+            if (thumbnail != null) {
+                JuneberryFile file = s3UploaderUtil.uploadFile(thumbnail, "post-thumbnail");
+                resFile = juneberryFileRepository.save(file);
+            }
 
             Post createdPost = postRepository.save(Post.builder()
                     .title(writePost.getTitle())
@@ -72,6 +80,7 @@ public class PublishServiceImpl implements PublishService {
                     .isTemp(writePost.getIsTemp())
                     .date(date)
                     .juneberryUser(user)
+                    .juneberryFile(resFile)
                     .build());
 
             return createdPost;
@@ -84,17 +93,36 @@ public class PublishServiceImpl implements PublishService {
     @Override
     @Transactional
     public Post updatePost(JuneberryUser user, PostRequestDto.WritePost writePost) {
-        UUID id = UUID.fromString(writePost.getPostId());
-        Post post = postRepository.findPostByJuneberryUserAndPostUid(user, id).orElseGet(() -> storePost(user, writePost));
-        post.updatePostByWritePost(writePost);
+        try {
+            UUID id = UUID.fromString(writePost.getPostId());
+            MultipartFile thumbnail = writePost.getThumbnailImg();
 
-        return post;
+            Post post = postRepository.findPostByJuneberryUserAndPostUid(user, id).orElseGet(() -> storePost(user, writePost));
+            if (post.getJuneberryFile() != null && !post.getJuneberryFile().getPath().equals(writePost.getThumbnailPath())) { // thumbnail이 존재하면 삭제
+                s3UploaderUtil.deleteFile(post.getJuneberryFile().getPath());
+                juneberryFileRepository.deleteById(post.getJuneberryFile().getJuneberryFileUid());
+            }
+
+            // 썸네일 저장
+            JuneberryFile resFile = null;
+            if (thumbnail != null) {
+                JuneberryFile file = s3UploaderUtil.uploadFile(thumbnail, "post-thumbnail");
+                resFile = juneberryFileRepository.save(file);
+            }
+
+            post.updatePostByWritePost(writePost, resFile);
+
+            return post;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     @Transactional
-    public Optional<Post> getTempPostById(JuneberryUser user, UUID id) {
-        Optional<Post> optionalPost = postRepository.findTempPostByJuneberryUserAndId(user, id);
+    public Optional<Post> getPostById(JuneberryUser user, UUID id) {
+        Optional<Post> optionalPost = postRepository.findPostByJuneberryUserAndPostUid(user, id);
         return optionalPost;
     }
 

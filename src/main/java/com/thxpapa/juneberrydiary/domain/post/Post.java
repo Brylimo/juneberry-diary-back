@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.domain.post;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import jakarta.persistence.*;
@@ -33,6 +34,11 @@ public class Post extends BaseEntity {
     private String title;
 
     @Lob
+    @Comment("대표 설명")
+    @Column(name="description")
+    private String description;
+
+    @Lob
     @Comment("내용")
     @Column(name="content")
     private String content;
@@ -41,22 +47,41 @@ public class Post extends BaseEntity {
     @Column(name="is_temp")
     private Boolean isTemp;
 
+    @Comment("전체공개 여부")
+    @Column(name="is_public")
+    private Boolean isPublic;
+
     @ManyToOne
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="thumbnailId")
+    private JuneberryFile juneberryFile;
+
     @Builder
-    public Post(LocalDate date, String title, String content, Boolean isTemp, JuneberryUser juneberryUser) {
+    public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, JuneberryUser juneberryUser, JuneberryFile juneberryFile) {
         this.date = date;
         this.title = title;
+        this.description = description;
         this.content = content;
         this.isTemp = isTemp;
+        this.isPublic = isPublic;
         this.juneberryUser = juneberryUser;
+        this.juneberryFile = juneberryFile;
     }
 
-    public Post updatePostByWritePost(PostRequestDto.WritePost writePost) {
+    public Post updatePostByWritePost(PostRequestDto.WritePost writePost, JuneberryFile thumbnailFile) {
+        if (thumbnailFile != null) {
+            this.juneberryFile = thumbnailFile;
+        } else if (writePost.getThumbnailPath() == null) {
+            this.juneberryFile = null;
+        }
         this.title = writePost.getTitle();
+        this.description = writePost.getDescription();
         this.content = writePost.getContent();
+        this.isTemp = writePost.getIsTemp();
+        this.isPublic = writePost.getIsPublic();
         return this;
     }
 }

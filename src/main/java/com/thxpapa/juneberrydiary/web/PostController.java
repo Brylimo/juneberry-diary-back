@@ -46,20 +46,29 @@ public class PostController {
         }
     }
 
-    @GetMapping(value = "/getTempPost", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getTempPost(@RequestParam("id") String id, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    @GetMapping(value = "/getPost", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPost(@RequestParam("id") String id, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
-            Optional<Post> post = publishService.getTempPostById(juneberryUser, UUID.fromString(id));
+            Optional<Post> post = publishService.getPostById(juneberryUser, UUID.fromString(id));
 
             if (post.isEmpty()) {
                 return responseDto.success("해당 post를 찾을 수 없습니다.");
             } else {
+                Post foundPost = post.get();
+                String thumbnailPath = null;
+                if (foundPost.getJuneberryFile() != null) {
+                    thumbnailPath = foundPost.getJuneberryFile().getPath();
+                }
+
                 return responseDto.success(PostResponseDto.PostInfo.builder()
-                        .id(post.get().getPostUid().toString())
-                        .title(post.get().getTitle())
-                        .content(post.get().getContent())
-                        .isTemp(post.get().getIsTemp())
-                        .updatedDateTime(post.get().getModDt())
+                        .id(foundPost.getPostUid().toString())
+                        .title(foundPost.getTitle())
+                        .description(foundPost.getDescription())
+                        .content(foundPost.getContent())
+                        .isTemp(foundPost.getIsTemp())
+                        .isPublic(foundPost.getIsPublic())
+                        .updatedDateTime(foundPost.getModDt())
+                        .thumbnailPath(thumbnailPath)
                         .build());
             }
         } catch (Exception e) {
@@ -81,7 +90,9 @@ public class PostController {
                     .map(post -> PostResponseDto.PostInfo.builder()
                             .id(post.getPostUid().toString())
                             .isTemp(post.getIsTemp())
+                            .isPublic(post.getIsPublic())
                             .title(post.getTitle())
+                            .description(post.getDescription())
                             .content(post.getContent())
                             .updatedDateTime(post.getModDt())
                             .build())
@@ -106,14 +117,16 @@ public class PostController {
     }
 
     @PostMapping(value = "/addPost", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addPost(@RequestBody PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    public ResponseEntity<?> addPost(@ModelAttribute PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
             Post post = publishService.storePost(juneberryUser, writePost);
             return responseDto.success(PostResponseDto.PostInfo.builder()
                             .id(post.getPostUid().toString())
                             .title(post.getTitle())
+                            .description(post.getDescription())
                             .content(post.getContent())
                             .isTemp(post.getIsTemp())
+                            .isPublic(post.getIsPublic())
                             .updatedDateTime(post.getModDt())
                             .build());
         } catch (Exception e) {
@@ -123,14 +136,16 @@ public class PostController {
     }
 
     @PostMapping(value = "/updatePost", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePost(@RequestBody PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    public ResponseEntity<?> updatePost(@ModelAttribute PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
             Post post = publishService.updatePost(juneberryUser, writePost);
             return responseDto.success(PostResponseDto.PostInfo.builder()
                     .id(post.getPostUid().toString())
                     .title(post.getTitle())
+                    .description(post.getDescription())
                     .content(post.getContent())
                     .isTemp(post.getIsTemp())
+                    .isPublic(post.getIsPublic())
                     .updatedDateTime(post.getModDt())
                     .build());
         } catch (Exception e) {

@@ -2,6 +2,7 @@ package com.thxpapa.juneberrydiary.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
@@ -30,6 +31,15 @@ public class S3UploaderUtil {
     private String publicUrl;
 
     private final AmazonS3 amazonS3Client;
+
+    public void deleteFile(String filepath) {
+        try {
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, filepath));
+            log.info(String.format("[%s] file deletion complete"), filepath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public JuneberryFile uploadFile(MultipartFile multipartFile, String type) throws IOException {
         InputStream inputStream = multipartFile.getInputStream();

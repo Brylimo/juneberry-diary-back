@@ -14,7 +14,7 @@ public interface PublishService {
     JuneberryFile uploadImage(JuneberryUser user, String postId, MultipartFile file);
     Post storePost(JuneberryUser user, PostRequestDto.WritePost writePost);
     Post updatePost(JuneberryUser user, PostRequestDto.WritePost writePost);
-    Optional<Post> getTempPostById(JuneberryUser user, UUID id);
+    Optional<Post> getPostById(JuneberryUser user, UUID id);
     List<Post> getTempPostList(JuneberryUser user, int pageNumber, int pageSize);
     long getTempPostCnt(JuneberryUser user);
 }
