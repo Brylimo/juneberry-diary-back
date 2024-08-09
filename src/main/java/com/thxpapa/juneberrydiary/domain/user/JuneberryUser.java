@@ -35,6 +35,10 @@ public class JuneberryUser extends BaseEntity implements UserDetails {
     @Column(name="email", length = 45, nullable = false)
     private String email;
 
+    @Comment("포스트 이름")
+    @Column(name="postname")
+    private String postname;
+
     @Comment("유저이름")
     @Column(name="username", length = 45, nullable = false)
     private String username;
@@ -93,9 +97,10 @@ public class JuneberryUser extends BaseEntity implements UserDetails {
     private List<Spot> spots = new ArrayList<Spot>();
 
     @Builder
-    public JuneberryUser(String name, String email, String username, String password, List<String> roles, String intro, String statusCd) {
+    public JuneberryUser(String name, String email, String postname, String username, String password, List<String> roles, String intro, String statusCd) {
         this.name = name;
         this.email = email;
+        this.postname = postname;
         this.username = username;
         this.password = password;
         this.roles = roles;

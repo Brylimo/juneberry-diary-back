@@ -13,6 +13,11 @@ public class UserResponseDto {
         private String refreshToken;
         private Long accessTokenExpirationTime;
         private Long refreshTokenExpirationTime;
+        private UserInfo userInfo;
+
+        public void setUserInfo(UserInfo userInfo) {
+            this.userInfo = userInfo;
+        }
     }
 
     @Builder
@@ -20,6 +25,7 @@ public class UserResponseDto {
     @AllArgsConstructor
     public static class UserInfo {
         private String name;
+        private String postname;
         private String email;
         private String username;
         private String intro;

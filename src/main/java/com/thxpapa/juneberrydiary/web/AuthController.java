@@ -52,6 +52,7 @@ public class AuthController {
 
             return responseDto.success(UserResponseDto.UserInfo.builder()
                             .name(juneberryUser.getName())
+                            .postname(juneberryUser.getPostname())
                             .username(juneberryUser.getUsername())
                             .email(juneberryUser.getEmail())
                             .intro(juneberryUser.getIntro())
@@ -91,7 +92,7 @@ public class AuthController {
             ResponseCookie cookie = builder.build();
             response.addHeader("Set-Cookie", cookie.toString());
 
-            return responseDto.success("login success");
+            return responseDto.success(tokenInfo.getUserInfo());
         } catch (Exception e) {
             log.debug("login error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -129,6 +130,7 @@ public class AuthController {
     public ResponseEntity<?> validate(@AuthenticationPrincipal JuneberryUser juneberryUser) {
         return responseDto.success(UserResponseDto.UserInfo.builder()
                         .name(juneberryUser.getName())
+                        .postname(juneberryUser.getPostname())
                         .username(juneberryUser.getUsername())
                         .email(juneberryUser.getEmail())
                         .intro(juneberryUser.getIntro())
