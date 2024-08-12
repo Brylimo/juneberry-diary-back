@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.domain.user;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.blog.BlogUser;
 import com.thxpapa.juneberrydiary.domain.geo.Spot;
 import jakarta.persistence.*;
 import lombok.*;
@@ -93,8 +94,11 @@ public class JuneberryUser extends BaseEntity implements UserDetails {
         return true;
     }
 
-    @OneToMany(mappedBy = "juneberryUser", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "juneberryUser", fetch=FetchType.LAZY)
     private List<Spot> spots = new ArrayList<Spot>();
+
+    @OneToMany(mappedBy = "juneberryUser", fetch=FetchType.LAZY)
+    private List<BlogUser> blogUsers = new ArrayList<BlogUser>();
 
     @Builder
     public JuneberryUser(String name, String email, String postname, String username, String password, List<String> roles, String intro, String statusCd) {

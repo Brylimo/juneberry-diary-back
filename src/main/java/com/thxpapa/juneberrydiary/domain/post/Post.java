@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.domain.post;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.blog.Blog;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
@@ -55,12 +56,16 @@ public class Post extends BaseEntity {
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
 
+    @ManyToOne
+    @JoinColumn(name="blogId")
+    private Blog blog;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="thumbnailId")
     private JuneberryFile juneberryFile;
 
     @Builder
-    public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, JuneberryUser juneberryUser, JuneberryFile juneberryFile) {
+    public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, JuneberryUser juneberryUser, Blog blog, JuneberryFile juneberryFile) {
         this.date = date;
         this.title = title;
         this.description = description;
@@ -68,6 +73,7 @@ public class Post extends BaseEntity {
         this.isTemp = isTemp;
         this.isPublic = isPublic;
         this.juneberryUser = juneberryUser;
+        this.blog = blog;
         this.juneberryFile = juneberryFile;
     }
 

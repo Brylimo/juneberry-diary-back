@@ -47,8 +47,8 @@ public class SecurityConfig {
                 .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorizeRequests->
                         authorizeRequests
-                                .requestMatchers("/api/auth/login", "/api/auth/register", "/api/cal/getTagsByMonth").permitAll()
-                                .requestMatchers("/api/auth/validate", "/api/cal/**", "/api/post/**")
+                                .requestMatchers("/api/auth/login", "/api/auth/register", "/api/cal/getTagsByMonth", "/api/blog/getBlogById").permitAll()
+                                .requestMatchers("/api/auth/validate", "/api/cal/**", "/api/post/**", "/api/blog/**")
                                 .hasAnyRole("USER", "ADMIN")
                                 .anyRequest().authenticated()
                 )
