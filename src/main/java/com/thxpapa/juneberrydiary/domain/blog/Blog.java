@@ -23,12 +23,18 @@ public class Blog extends BaseEntity {
     @Column(name="blog_name")
     private String blogName;
 
+    @Lob
+    @Comment("블로그 소개")
+    @Column(name="intro", nullable = true)
+    private String intro;
+
     @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY)
     private List<BlogUser> blogUsers = new ArrayList<BlogUser>();
 
     @Builder
-    public Blog(String blogId, String blogName) {
+    public Blog(String blogId, String blogName, String intro) {
         this.blogId = blogId;
         this.blogName = blogName;
+        this.intro = intro;
     }
 }

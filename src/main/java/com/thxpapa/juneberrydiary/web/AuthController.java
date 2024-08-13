@@ -52,7 +52,6 @@ public class AuthController {
 
             return responseDto.success(UserResponseDto.UserInfo.builder()
                             .name(juneberryUser.getName())
-                            .postname(juneberryUser.getPostname())
                             .username(juneberryUser.getUsername())
                             .email(juneberryUser.getEmail())
                             .intro(juneberryUser.getIntro())
@@ -128,12 +127,15 @@ public class AuthController {
 
     @GetMapping(value = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> validate(@AuthenticationPrincipal JuneberryUser juneberryUser) {
+        Boolean hasBlog = false;
+        if (juneberryUser.getBlogUsers().size() > 0) hasBlog = true;
+
         return responseDto.success(UserResponseDto.UserInfo.builder()
                         .name(juneberryUser.getName())
-                        .postname(juneberryUser.getPostname())
                         .username(juneberryUser.getUsername())
                         .email(juneberryUser.getEmail())
                         .intro(juneberryUser.getIntro())
+                        .hasBlog(hasBlog)
                         .build());
     }
 }

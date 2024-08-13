@@ -72,11 +72,14 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken); // 실제 검증
         UserResponseDto.TokenInfo tokenInfo = tokenProvider.generateTokens(authentication);
 
+        Boolean hasBlog = false;
+        if (user.getBlogUsers().size() > 0) hasBlog = true;
+
         tokenInfo.setUserInfo(UserResponseDto.UserInfo.builder()
                         .name(user.getName())
-                        .postname(user.getPostname())
                         .username(user.getUsername())
                         .intro(user.getIntro())
+                        .hasBlog(hasBlog)
                         .build());
 
         refreshTokenService.writeTokenInfo(user.getUsername(), tokenInfo.getRefreshToken(), tokenInfo.getAccessToken());

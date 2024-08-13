@@ -45,6 +45,16 @@ public class BlogController {
         }
     }
 
+    @GetMapping(value = "/getAllBlogsByUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllBlogsByUser(@AuthenticationPrincipal JuneberryUser juneberryUser) {
+        try {
+            return null;
+        } catch (Exception e) {
+            log.debug("getAllBlogsByUser error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping(value="/createBlog", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createBlog(@RequestBody BlogRequestDto.CreateBlog blogCreateBlogRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {

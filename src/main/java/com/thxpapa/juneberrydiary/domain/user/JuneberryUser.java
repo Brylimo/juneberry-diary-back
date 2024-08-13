@@ -94,10 +94,10 @@ public class JuneberryUser extends BaseEntity implements UserDetails {
         return true;
     }
 
-    @OneToMany(mappedBy = "juneberryUser", fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "juneberryUser", fetch=FetchType.EAGER)
     private List<Spot> spots = new ArrayList<Spot>();
 
-    @OneToMany(mappedBy = "juneberryUser", fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "juneberryUser", fetch=FetchType.EAGER)
     private List<BlogUser> blogUsers = new ArrayList<BlogUser>();
 
     @Builder
