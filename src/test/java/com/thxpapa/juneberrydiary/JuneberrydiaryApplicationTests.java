@@ -7,7 +7,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 class JuneberrydiaryApplicationTests {
 
 	@Test
-	void contextLoads() {
-	}
-
+	void contextLoads() { System.out.println("준베리다이어리 테스트"); }
 }

@@ -62,6 +62,8 @@ dependencies {
 	implementation 'org.imgscalr:imgscalr-lib:4.2'
 	implementation 'com.drewnoakes:metadata-extractor:2.18.0'
 
+	// encryption
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 }
