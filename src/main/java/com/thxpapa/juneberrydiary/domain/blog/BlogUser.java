@@ -15,7 +15,7 @@ public class BlogUser extends BaseEntity {
     @Id
     @Column(name="blog_user_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int blogUserUid;
+    private Long blogUserUid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blogId")

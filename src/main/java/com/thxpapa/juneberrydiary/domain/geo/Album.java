@@ -16,7 +16,7 @@ public class Album extends BaseEntity {
     @Id
     @Column(name="album_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int albumUid;
+    private Long albumUid;
 
     @Comment("앨범이름")
     @Column(name="name", length = 45, nullable = true)

@@ -20,7 +20,7 @@ public class Day extends BaseEntity {
     @Id
     @Column(name="day_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int dayUid;
+    private Long dayUid;
 
     @Comment("날짜")
     @Column(name="date")

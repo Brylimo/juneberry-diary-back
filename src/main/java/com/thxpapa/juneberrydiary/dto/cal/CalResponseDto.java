@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.thxpapa.juneberrydiary.enums.CheckStatus;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -50,7 +51,7 @@ public class CalResponseDto {
         private String date;
         private int position;
         private String content;
-        private int chk;
+        private CheckStatus chkStatus;
         private int reward;
         private String color;
         private String groupName;

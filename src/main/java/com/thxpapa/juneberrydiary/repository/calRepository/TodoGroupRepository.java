@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface TodoGroupRepository extends JpaRepository<TodoGroup, Integer> {
+public interface TodoGroupRepository extends JpaRepository<TodoGroup, Long> {
     Optional<TodoGroup> findFirstByNameAndJuneberryUser(String name, JuneberryUser user);
 }

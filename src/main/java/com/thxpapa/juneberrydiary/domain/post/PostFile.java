@@ -15,7 +15,7 @@ public class PostFile extends BaseEntity {
     @Id
     @Column(name="post_file_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int postFileUid;
+    private Long postFileUid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postId")

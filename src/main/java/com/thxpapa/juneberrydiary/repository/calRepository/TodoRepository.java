@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface TodoRepository extends JpaRepository<Todo, Integer> {
+public interface TodoRepository extends JpaRepository<Todo, Long> {
     Optional<List<Todo>> findTodoByDayOrderByPositionAsc(Day day);
     Optional<Todo> findFirstTodoByDayAndPosition(Day day, int position);
 

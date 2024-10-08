@@ -18,7 +18,7 @@ public class Spot extends BaseEntity {
     @Id
     @Column(name="spot_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int spotUid;
+    private Long spotUid;
 
     @Comment("장소이름")
     @Column(name="name", length = 45, nullable = true)

@@ -15,7 +15,7 @@ public interface TodoService {
     List<CalResponseDto.TodoInfo> getTodosByDate(JuneberryUser user, LocalDate date);
     Optional<Todo> getTodoByPosition(Day day, int position);
     Optional<Todo> updateTodoChk(JuneberryUser user, LocalDate date, CalRequestDto.TodoChk calTodoChkDto);
-    void deleteById(int id);
+    void deleteById(Long id);
     List<Todo> getEventsByMonth(LocalDate startDate, LocalDate endDate);
     Integer getTodayScore(Day day);
 }

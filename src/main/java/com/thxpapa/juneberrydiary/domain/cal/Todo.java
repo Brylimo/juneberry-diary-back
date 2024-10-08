@@ -2,6 +2,7 @@ package com.thxpapa.juneberrydiary.domain.cal;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
 import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
+import com.thxpapa.juneberrydiary.enums.CheckStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -17,7 +18,7 @@ public class Todo extends BaseEntity {
     @Id
     @Column(name="todo_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int todoUid;
+    private Long todoUid;
 
     @Comment("위치")
     @Column(name="position")
@@ -30,13 +31,12 @@ public class Todo extends BaseEntity {
 
     @Comment("보상")
     @Column(name="reward")
-    @ColumnDefault("0")
-    private int reward;
+    private int reward = 0;
 
     @Comment("체크 값")
-    @Column(name="chk")
-    @ColumnDefault("0")
-    private int chk; // 0: 초기, 1: O, 2: X, 3: 세모
+    @Column(name="chk_status")
+    @Enumerated(EnumType.STRING)
+    private CheckStatus chkStatus = CheckStatus.NONE;
 
     @ManyToOne
     @JoinColumn(name="dayId")
@@ -47,11 +47,11 @@ public class Todo extends BaseEntity {
     private TodoGroup todoGroup;
 
     @Builder
-    public Todo(String content, int position, int reward, int chk, Day day, TodoGroup todoGroup) {
+    public Todo(String content, int position, int reward, String chkStatus, Day day, TodoGroup todoGroup) {
         this.content = content;
         this.position = position;
         this.reward = reward;
-        this.chk = chk;
+        this.chkStatus = CheckStatus.fromValue(chkStatus);
         this.day = day;
         this.todoGroup = todoGroup;
     }
@@ -63,7 +63,7 @@ public class Todo extends BaseEntity {
     }
 
     public Todo updateTodoByCheck(CalRequestDto.TodoChk todoChk) {
-        this.chk = todoChk.getChk();
+        this.chkStatus = CheckStatus.fromValue(todoChk.getChkStatus());
         return this;
     }
 }

@@ -54,7 +54,7 @@ public class TodoServiceImpl implements TodoService {
                         .todoGroup(todoGroup)
                         .content(todoLine.getContent())
                         .position(todoLine.getPosition())
-                        .chk(todoLine.getChk())
+                        .chkStatus(todoLine.getChkStatus())
                         .day(day)
                         .build());
                 return Optional.of(createdTodo);
@@ -76,7 +76,7 @@ public class TodoServiceImpl implements TodoService {
                                .date(date.toString())
                                .content(todo.getContent())
                                .position(todo.getPosition())
-                               .chk(todo.getChk())
+                               .chkStatus(todo.getChkStatus())
                                .reward(todo.getReward())
                                .groupName(todo.getTodoGroup().getName())
                                .color(todo.getTodoGroup().getColor())
@@ -105,7 +105,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         todoRepository.deleteById(id);
     }
 

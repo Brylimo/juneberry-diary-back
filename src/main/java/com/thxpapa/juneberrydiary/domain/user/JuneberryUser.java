@@ -26,7 +26,7 @@ public class JuneberryUser extends BaseEntity implements UserDetails {
     @Id
     @Column(name="juneberry_user_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int juneberryUserUid;
+    private Long juneberryUserUid;
 
     @Comment("이름")
     @Column(name="name", length = 45, nullable = false)

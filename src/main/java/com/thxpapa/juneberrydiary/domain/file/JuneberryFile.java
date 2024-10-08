@@ -18,7 +18,7 @@ public class JuneberryFile extends BaseEntity {
     @Id
     @Column(name="juneberry_file_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int juneberryFileUid;
+    private Long juneberryFileUid;
 
     @Comment("파일 타입")
     @Column(name="type")

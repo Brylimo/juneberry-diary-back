@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface DayRepository extends JpaRepository<Day, Integer> {
+public interface DayRepository extends JpaRepository<Day, Long> {
     Optional<List<Day>> findDayByJuneberryUserAndDateBetween(JuneberryUser user, LocalDate start, LocalDate end);
     Optional<Day> findFirstDayByDateAndJuneberryUser(LocalDate date, JuneberryUser user);
 }

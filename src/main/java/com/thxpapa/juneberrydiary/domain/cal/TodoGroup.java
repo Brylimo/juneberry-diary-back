@@ -16,7 +16,7 @@ public class TodoGroup extends BaseEntity {
     @Id
     @Column(name="todo_group_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int todoGroupUid;
+    private Long todoGroupUid;
 
     @Comment("그룹 이름")
     @Column(name="name", length = 45, nullable = false)

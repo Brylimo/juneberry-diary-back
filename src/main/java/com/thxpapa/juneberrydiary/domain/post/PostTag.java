@@ -9,13 +9,13 @@ import org.hibernate.annotations.Comment;
 @Entity
 @Table(name="post_tag", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = "postUid", callSuper=false)
+@EqualsAndHashCode(of = "postTagUid", callSuper=false)
 @ToString
 public class PostTag extends BaseEntity {
     @Id
     @Column(name="post_tag_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int postTagUid;
+    private Long postTagUid;
 
     @Comment("태그 이름")
     @Column(name="name")
