@@ -38,11 +38,11 @@ public class Todo extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CheckStatus chkStatus = CheckStatus.NONE;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="dayId")
     private Day day;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="todoGroupId")
     private TodoGroup todoGroup;
 

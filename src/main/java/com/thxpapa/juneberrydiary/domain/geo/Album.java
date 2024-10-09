@@ -37,7 +37,7 @@ public class Album extends BaseEntity {
     @ColumnDefault("'01'")
     private String statusCd;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="spotId")
     private Spot spot;
 

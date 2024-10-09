@@ -46,11 +46,11 @@ public class Spot extends BaseEntity {
     @ColumnDefault("'01'")
     private String statusCd;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="juneberryFileId")
     private JuneberryFile juneberryFile;
 

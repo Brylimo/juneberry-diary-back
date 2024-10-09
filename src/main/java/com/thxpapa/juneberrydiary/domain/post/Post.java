@@ -52,11 +52,11 @@ public class Post extends BaseEntity {
     @Column(name="is_public")
     private Boolean isPublic;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="blogId")
     private Blog blog;
 

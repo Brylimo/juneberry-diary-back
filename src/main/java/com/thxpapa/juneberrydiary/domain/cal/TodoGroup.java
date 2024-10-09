@@ -26,7 +26,7 @@ public class TodoGroup extends BaseEntity {
     @Column(name="color", length = 45, nullable = false)
     private String color;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
 
