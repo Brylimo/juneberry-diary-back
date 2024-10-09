@@ -13,7 +13,7 @@ import org.hibernate.annotations.Comment;
 @Table(name="todo", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "todoUid", callSuper=false)
-@ToString
+@ToString(of = {"todoUid", "position", "content", "reward", "chkStatus"})
 public class Todo extends BaseEntity {
     @Id
     @Column(name="todo_uid")

@@ -13,7 +13,7 @@ import java.util.List;
 @Table(name="blog", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "blogId", callSuper=false)
-@ToString
+@ToString(of = {"blogId", "blogName", "intro"})
 public class Blog extends BaseEntity {
     @Id
     @Comment("블로그 아이디")

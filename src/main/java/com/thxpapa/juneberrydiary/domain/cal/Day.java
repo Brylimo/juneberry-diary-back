@@ -15,7 +15,7 @@ import java.util.Optional;
 @Table(name="day", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "dayUid", callSuper=false)
-@ToString
+@ToString(of = {"dayUid", "date", "emojiCodes", "todayTxt", "eventTags"})
 public class Day extends BaseEntity {
     @Id
     @Column(name="day_uid")

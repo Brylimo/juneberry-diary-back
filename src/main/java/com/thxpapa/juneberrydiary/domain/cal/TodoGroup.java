@@ -11,7 +11,7 @@ import org.hibernate.annotations.Comment;
 @Table(name="todo_group", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "todoGroupUid", callSuper=false)
-@ToString
+@ToString(of = {"todoGroupUid", "name", "color"})
 public class TodoGroup extends BaseEntity {
     @Id
     @Column(name="todo_group_uid")

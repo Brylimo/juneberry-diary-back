@@ -10,7 +10,6 @@ import lombok.*;
 @Table(name="post_file", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "postFileUid", callSuper=false)
-@ToString
 public class PostFile extends BaseEntity {
     @Id
     @Column(name="post_file_uid")

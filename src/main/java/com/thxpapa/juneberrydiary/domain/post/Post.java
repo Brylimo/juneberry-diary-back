@@ -18,7 +18,7 @@ import java.util.UUID;
 @Table(name="post", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "postUid", callSuper=false)
-@ToString
+@ToString(of = {"postUid", "date", "title", "description", "content", "isTemp", "isPublic"})
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(generator = "UUID")

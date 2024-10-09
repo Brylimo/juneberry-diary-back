@@ -10,7 +10,7 @@ import lombok.*;
 @Table(name="blog_user", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "blogUserUid", callSuper=false)
-@ToString
+@ToString(of = {"blogUserUid"})
 public class BlogUser extends BaseEntity {
     @Id
     @Column(name="blog_user_uid")
@@ -25,9 +25,22 @@ public class BlogUser extends BaseEntity {
     @JoinColumn(name = "juneberryUserId")
     private JuneberryUser juneberryUser;
 
+    public void changeBlog(Blog blog) {
+        this.blog = blog;
+        blog.getBlogUsers().add(this);
+    }
+    public void changeJuneberryUser(JuneberryUser user) {
+        this.juneberryUser = user;
+        user.getBlogUsers().add(this);
+    }
+
     @Builder
     public BlogUser(Blog blog, JuneberryUser juneberryUser) {
-        this.blog = blog;
-        this.juneberryUser = juneberryUser;
+        if (blog != null) {
+            changeBlog(blog);
+        }
+        if (juneberryUser != null) {
+            changeJuneberryUser(juneberryUser);
+        }
     }
 }

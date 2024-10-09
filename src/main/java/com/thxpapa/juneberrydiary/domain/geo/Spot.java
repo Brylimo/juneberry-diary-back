@@ -13,7 +13,7 @@ import org.hibernate.annotations.Comment;
 @Table(name="spot", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "spotUid", callSuper=false)
-@ToString
+@ToString(of = {"spotUid", "name", "loc", "exp", "lon", "lat"})
 public class Spot extends BaseEntity {
     @Id
     @Column(name="spot_uid")
@@ -54,8 +54,13 @@ public class Spot extends BaseEntity {
     @JoinColumn(name="juneberryFileId")
     private JuneberryFile juneberryFile;
 
+    public void changeJuneberryUser(JuneberryUser user) {
+        this.juneberryUser = user;
+        user.getSpots().add(this);
+    }
+
     @Builder
-    public Spot(String name, String loc, String exp, Double lon, Double lat, JuneberryFile juneberryFile, String statusCd) {
+    public Spot(String name, String loc, String exp, Double lon, Double lat, JuneberryFile juneberryFile, JuneberryUser user, String statusCd) {
         this.name = name;
         this.loc = loc;
         this.exp = exp;
@@ -63,5 +68,8 @@ public class Spot extends BaseEntity {
         this.lat = lat;
         this.statusCd = statusCd;
         this.juneberryFile = juneberryFile;
+        if (user != null) {
+            changeJuneberryUser(user);
+        }
     }
 }

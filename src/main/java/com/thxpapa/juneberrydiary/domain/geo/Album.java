@@ -11,7 +11,7 @@ import org.hibernate.annotations.Comment;
 @Table(name="album", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "albumUid", callSuper=false)
-@ToString
+@ToString(of = {"albumUid", "name", "likeCnt", "exp"})
 public class Album extends BaseEntity {
     @Id
     @Column(name="album_uid")
@@ -24,8 +24,7 @@ public class Album extends BaseEntity {
 
     @Comment("좋아요 개수")
     @Column(name="like_cnt")
-    @ColumnDefault("0")
-    private int likeCnt;
+    private int likeCnt = 0;
 
     @Lob
     @Comment("앨범설명")

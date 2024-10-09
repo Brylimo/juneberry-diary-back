@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Table(name="juneberry_user", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "juneberryUserUid", callSuper=false)
-@ToString
 public class JuneberryUser extends BaseEntity implements UserDetails {
     @Id
     @Column(name="juneberry_user_uid")
