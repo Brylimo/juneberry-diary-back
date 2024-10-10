@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.cal;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "todoGroupUid", callSuper=false)
 @ToString(of = {"todoGroupUid", "name", "color"})
-public class TodoGroup extends BaseEntity {
+public class TodoGroup extends BaseTimeEntity {
     @Id
     @Column(name="todo_group_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

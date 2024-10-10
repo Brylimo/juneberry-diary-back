@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.cal;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import com.thxpapa.juneberrydiary.dto.cal.CalRequestDto;
 import com.thxpapa.juneberrydiary.enums.CheckStatus;
 import jakarta.persistence.*;
@@ -14,7 +14,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "todoUid", callSuper=false)
 @ToString(of = {"todoUid", "position", "content", "reward", "chkStatus"})
-public class Todo extends BaseEntity {
+public class Todo extends BaseTimeEntity {
     @Id
     @Column(name="todo_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.domain.user;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import com.thxpapa.juneberrydiary.domain.blog.BlogUser;
 import com.thxpapa.juneberrydiary.domain.geo.Spot;
 import jakarta.persistence.*;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 @Table(name="juneberry_user", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "juneberryUserUid", callSuper=false)
-public class JuneberryUser extends BaseEntity implements UserDetails {
+public class JuneberryUser extends BaseTimeEntity implements UserDetails {
     @Id
     @Column(name="juneberry_user_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.post;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -11,7 +11,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "postTagUid", callSuper=false)
 @ToString
-public class PostTag extends BaseEntity {
+public class PostTag extends BaseTimeEntity {
     @Id
     @Column(name="post_tag_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

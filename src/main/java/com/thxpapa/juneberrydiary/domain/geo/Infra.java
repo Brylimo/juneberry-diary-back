@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.geo;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -12,7 +12,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "infraUid", callSuper=false)
 @ToString
-public class Infra extends BaseEntity {
+public class Infra extends BaseTimeEntity {
     @Id
     @Column(name="infra_uid")
     private String infraUid;

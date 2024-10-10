@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.post;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +10,7 @@ import lombok.*;
 @Table(name="post_file", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "postFileUid", callSuper=false)
-public class PostFile extends BaseEntity {
+public class PostFile extends BaseTimeEntity {
     @Id
     @Column(name="post_file_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

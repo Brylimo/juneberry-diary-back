@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.geo;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -12,7 +12,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "albumUid", callSuper=false)
 @ToString(of = {"albumUid", "name", "likeCnt", "exp"})
-public class Album extends BaseEntity {
+public class Album extends BaseTimeEntity {
     @Id
     @Column(name="album_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

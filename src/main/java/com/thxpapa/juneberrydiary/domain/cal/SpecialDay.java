@@ -1,10 +1,11 @@
 package com.thxpapa.juneberrydiary.domain.cal;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
+import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDate;
 
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "specialDayUid", callSuper=false)
 @ToString
-public class SpecialDay extends BaseEntity {
+public class SpecialDay extends BaseTimeEntity implements Persistable<String> {
     @Id
     @Column(name="special_day_uid")
     private String specialDayUid;
@@ -41,6 +42,16 @@ public class SpecialDay extends BaseEntity {
     private String statusCd;
 
     static public final String idSplitter = "::";
+
+    @Override
+    public String getId() {
+        return specialDayUid;
+    }
+
+    @Override
+    public boolean isNew() { // merge 사용 방지
+        return getRegDt() == null;
+    }
 
     @Builder
     public SpecialDay(String specialDayUid, String datStId, LocalDate date, String dateName, Boolean holidayCd, String statusCd) {

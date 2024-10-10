@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.post;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import com.thxpapa.juneberrydiary.domain.blog.Blog;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "postUid", callSuper=false)
 @ToString(of = {"postUid", "date", "title", "description", "content", "isTemp", "isPublic"})
-public class Post extends BaseEntity {
+public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")

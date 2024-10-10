@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.geo;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
@@ -14,7 +14,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "spotUid", callSuper=false)
 @ToString(of = {"spotUid", "name", "loc", "exp", "lon", "lat"})
-public class Spot extends BaseEntity {
+public class Spot extends BaseTimeEntity {
     @Id
     @Column(name="spot_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

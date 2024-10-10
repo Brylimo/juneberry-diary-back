@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.domain.blog;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "blogUserUid", callSuper=false)
 @ToString(of = {"blogUserUid"})
-public class BlogUser extends BaseEntity {
+public class BlogUser extends BaseTimeEntity {
     @Id
     @Column(name="blog_user_uid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
