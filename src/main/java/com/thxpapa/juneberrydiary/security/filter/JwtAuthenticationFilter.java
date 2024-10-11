@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.http.ResponseCookie;
 
@@ -47,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = parseCookieToken(request);
 
-            if (token != null && !token.equalsIgnoreCase("null")) {
+            if (StringUtils.hasText(token) && !token.equalsIgnoreCase("null")) {
                 if (tokenProvider.validateToken(token)) {
                     String username = tokenProvider.validateAndGetUsername(token);
                     JuneberryUser juneberryUser = juneberryUserDetailsService.loadUserByUsername(username);
@@ -92,7 +93,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             builder = builder.secure(true);
                         }
 
-                        if (!cookieSameSite.equals("null") && cookieSameSite != null && !cookieSameSite.isEmpty()) {
+                        if (!cookieSameSite.equals("null") && StringUtils.hasText(cookieSameSite)) {
                             builder = builder.sameSite(cookieSameSite);
                         }
 

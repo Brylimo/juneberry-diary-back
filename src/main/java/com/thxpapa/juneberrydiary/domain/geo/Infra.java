@@ -3,7 +3,6 @@ package com.thxpapa.juneberrydiary.domain.geo;
 import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
 @Getter
@@ -61,15 +60,10 @@ public class Infra extends BaseTimeEntity {
     @Column(name="lat")
     private Double lat;
 
-    @Comment("상태정보")
-    @Column(name="status_cd", length = 3, nullable = false)
-    @ColumnDefault("'01'")
-    private String statusCd;
-
     @Builder
     public Infra(String placeName, String distance, String placeUrl, String categoryName,
                  String addressName, String roadAddressName, String phone, String categoryGroupCode,
-                 String categoryGroupName, Double lon, Double lat, String statusCd)
+                 String categoryGroupName, Double lon, Double lat)
     {
         this.placeName = placeName;
         this.distance = distance;
@@ -82,6 +76,5 @@ public class Infra extends BaseTimeEntity {
         this.categoryGroupName = categoryGroupName;
         this.lon = lon;
         this.lat = lat;
-        this.statusCd = statusCd;
     }
 }

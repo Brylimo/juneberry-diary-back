@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -125,7 +126,7 @@ public class S3UploaderUtil {
     private Optional<File> convert(BufferedImage image, String originalFilename) {
         File file = new File(originalFilename);
         String ext = "jpeg";
-        if (originalFilename != null && originalFilename.contains(".")) {
+        if (StringUtils.hasText(originalFilename) && originalFilename.contains(".")) {
             ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
         }
         try {

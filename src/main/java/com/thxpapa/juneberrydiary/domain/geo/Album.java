@@ -3,7 +3,6 @@ package com.thxpapa.juneberrydiary.domain.geo;
 import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
 @Getter
@@ -31,20 +30,14 @@ public class Album extends BaseTimeEntity {
     @Column(name="exp", nullable = true)
     private String exp;
 
-    @Comment("상태정보")
-    @Column(name="status_cd", length = 3, nullable = false)
-    @ColumnDefault("'01'")
-    private String statusCd;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="spotId")
     private Spot spot;
 
     @Builder
-    public Album(String name, int likeCnt, String exp, String statusCd) {
+    public Album(String name, int likeCnt, String exp) {
         this.name = name;
         this.likeCnt = likeCnt;
         this.exp = exp;
-        this.statusCd = statusCd;
     }
 }

@@ -13,9 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,8 +40,8 @@ public class TodoServiceImpl implements TodoService {
         todoGroup = todoGroupService.getTodoGroupByName(user, todoLine.getGroupName())
                 .orElseGet(()->todoGroupService.createTodoGroup(user, todoLine.getGroupName(), "red"));
 
-        if ((todoLine.getGroupName() != null && !todoLine.getGroupName().equals("")) ||
-                (todoLine.getContent() != null && !todoLine.getContent().equals(""))) { // content나 group에 값이 쓰여져 있음
+        if (StringUtils.hasText(todoLine.getGroupName()) ||
+                StringUtils.hasText(todoLine.getContent())) { // content나 group에 값이 쓰여져 있음
             // position을 기준으로 존재여부 확인
             Optional<Todo> optionalTodo = getTodoByPosition(day, todoLine.getPosition());
 
@@ -68,7 +68,7 @@ public class TodoServiceImpl implements TodoService {
     @Transactional
     public List<CalResponseDto.TodoInfo> getTodosByDate(JuneberryUser user, LocalDate date) {
         Day day = dayService.findOneDay(user, date).orElseThrow();
-        List<Todo> todoList = todoRepository.findTodoByDayOrderByPositionAsc(day).orElseGet(()->new ArrayList<>());
+        List<Todo> todoList = todoRepository.findTodoByDayOrderByPositionAsc(day);
 
         List<CalResponseDto.TodoInfo> todoInfoList = todoList.stream()
                 .map(todo -> {

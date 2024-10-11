@@ -81,7 +81,6 @@ public class SpecialDayServiceImpl implements SpecialDayService {
                             .dateName(element.getDateName())
                             .holidayCd(isHoliday)
                             .date(date)
-                            .statusCd("01")
                             .build());
                 }
             }
@@ -151,7 +150,6 @@ public class SpecialDayServiceImpl implements SpecialDayService {
                             .dateName(element.getDateName())
                             .holidayCd(isHoliday)
                             .date(date)
-                            .statusCd("01")
                             .build());
                 }
             }
@@ -215,7 +213,6 @@ public class SpecialDayServiceImpl implements SpecialDayService {
                             .dateName(element.getDateName())
                             .holidayCd(isHoliday)
                             .date(date)
-                            .statusCd("01")
                             .build());
                 }
             }

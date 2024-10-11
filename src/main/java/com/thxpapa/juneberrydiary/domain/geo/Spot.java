@@ -5,7 +5,6 @@ import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
 @Getter
@@ -41,11 +40,6 @@ public class Spot extends BaseTimeEntity {
     @Column(name="lat")
     private Double lat;
 
-    @Comment("상태정보")
-    @Column(name="status_cd", length = 3, nullable = false)
-    @ColumnDefault("'01'")
-    private String statusCd;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="juneberryUserId")
     private JuneberryUser juneberryUser;
@@ -60,13 +54,12 @@ public class Spot extends BaseTimeEntity {
     }
 
     @Builder
-    public Spot(String name, String loc, String exp, Double lon, Double lat, JuneberryFile juneberryFile, JuneberryUser user, String statusCd) {
+    public Spot(String name, String loc, String exp, Double lon, Double lat, JuneberryFile juneberryFile, JuneberryUser user) {
         this.name = name;
         this.loc = loc;
         this.exp = exp;
         this.lon = lon;
         this.lat = lat;
-        this.statusCd = statusCd;
         this.juneberryFile = juneberryFile;
         if (user != null) {
             changeJuneberryUser(user);

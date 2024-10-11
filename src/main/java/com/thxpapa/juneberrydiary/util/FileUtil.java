@@ -31,7 +31,6 @@ public class FileUtil {
         /*return JuneberryFile.builder()
                         .uploadName(originalFileName)
                         .storeName(newFileName)
-                        .statusCd("01")
                         .build();*/
     }
 

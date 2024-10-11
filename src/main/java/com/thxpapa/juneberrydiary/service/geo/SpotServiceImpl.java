@@ -34,7 +34,6 @@ public class SpotServiceImpl implements SpotService {
                     .lon(spotRegisterRequestDto.getSpotLon())
                     .lat(spotRegisterRequestDto.getSpotLat())
                     .juneberryFile(file)
-                    .statusCd("01")
                     .build());
 
             return storedSpot;

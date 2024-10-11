@@ -3,7 +3,6 @@ package com.thxpapa.juneberrydiary.domain.cal;
 import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 import org.springframework.data.domain.Persistable;
 
@@ -36,11 +35,6 @@ public class SpecialDay extends BaseTimeEntity implements Persistable<String> {
     @Column(name="holiday_cd")
     private Boolean holidayCd;
 
-    @Comment("상태정보")
-    @Column(name="status_cd", length = 3, nullable = false)
-    @ColumnDefault("'01'")
-    private String statusCd;
-
     static public final String idSplitter = "::";
 
     @Override
@@ -54,12 +48,11 @@ public class SpecialDay extends BaseTimeEntity implements Persistable<String> {
     }
 
     @Builder
-    public SpecialDay(String specialDayUid, String datStId, LocalDate date, String dateName, Boolean holidayCd, String statusCd) {
+    public SpecialDay(String specialDayUid, String datStId, LocalDate date, String dateName, Boolean holidayCd) {
         this.specialDayUid = specialDayUid;
         this.datStId = datStId;
         this.date = date;
         this.dateName = dateName;
         this.holidayCd = holidayCd;
-        this.statusCd = statusCd;
     }
 }

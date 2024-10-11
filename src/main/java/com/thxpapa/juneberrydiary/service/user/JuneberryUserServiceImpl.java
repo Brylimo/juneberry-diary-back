@@ -55,7 +55,6 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
                                             .password(passwordEncoder.encode(userRegisterRequestDto.getPassword()))
                                             .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                                             .intro(userRegisterRequestDto.getIntro())
-                                            .statusCd("01")
                                             .build());
         return createdJuneberryUser;
     }

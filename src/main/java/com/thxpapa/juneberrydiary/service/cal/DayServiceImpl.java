@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -44,10 +43,10 @@ public class DayServiceImpl implements DayService {
     @Override
     @Transactional
     public List<CalResponseDto.EventDayInfo> findEventDayByMonth(JuneberryUser user, LocalDate startDate, LocalDate endDate) {
-        Optional<List<Day>> optionalDays = dayRepository.findDayByJuneberryUserAndDateBetween(user, startDate, endDate);
+        List<Day> dayList = dayRepository.findDayByJuneberryUserAndDateBetween(user, startDate, endDate);
 
-        Optional<List<CalResponseDto.EventDayInfo>> eventTagsInfoList = optionalDays.map(days ->
-                days.stream().filter(day -> {
+        List<CalResponseDto.EventDayInfo> eventTagsInfoList = dayList.stream()
+                .filter(day -> {
                     if (day.getEventTags() != null && !day.getEventTags().isEmpty()) return true;
                     else return false;
                 }).map(day -> {
@@ -57,18 +56,17 @@ public class DayServiceImpl implements DayService {
                             .date(day.getDate())
                             .eventTags(Arrays.asList(tags))
                             .build();
-                }).collect(Collectors.toList()));
+                }).collect(Collectors.toList());
 
-        return eventTagsInfoList.orElseGet(()->new ArrayList<>());
+        return eventTagsInfoList;
     }
 
     @Override
     @Transactional
     public List<CalResponseDto.EmojiInfo> findEmojiByMonth(JuneberryUser user, LocalDate startDate, LocalDate endDate) {
-        Optional<List<Day>> optionalDays = dayRepository.findDayByJuneberryUserAndDateBetween(user, startDate, endDate);
+        List<Day> dayList = dayRepository.findDayByJuneberryUserAndDateBetween(user, startDate, endDate);
 
-        Optional<List<CalResponseDto.EmojiInfo>> emojiInfoList = optionalDays.map(days ->
-                days.stream().filter(day -> {
+        List<CalResponseDto.EmojiInfo> emojiInfoList = dayList.stream().filter(day -> {
                     if (day.getEmojiCodes() != null && !day.getEmojiCodes().isEmpty()) return true;
                     else return false;
                 }).map(day -> {
@@ -78,9 +76,9 @@ public class DayServiceImpl implements DayService {
                             .date(day.getDate())
                             .emojiCodeArray(Arrays.asList(emojiCodes))
                             .build();
-                }).collect(Collectors.toList()));
+                }).collect(Collectors.toList());
 
-        return emojiInfoList.orElseGet(()->new ArrayList<>());
+        return emojiInfoList;
     }
 
     @Override

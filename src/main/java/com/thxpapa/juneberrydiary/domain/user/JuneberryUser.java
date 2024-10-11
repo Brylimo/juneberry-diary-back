@@ -1,12 +1,10 @@
 package com.thxpapa.juneberrydiary.domain.user;
 
-import com.thxpapa.juneberrydiary.domain.BaseEntity;
 import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
 import com.thxpapa.juneberrydiary.domain.blog.BlogUser;
 import com.thxpapa.juneberrydiary.domain.geo.Spot;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -53,11 +51,6 @@ public class JuneberryUser extends BaseTimeEntity implements UserDetails {
     @Column(name="intro", nullable = true)
     private String intro;
 
-    @Comment("상태정보")
-    @Column(name="status_cd", length = 3, nullable = false)
-    @ColumnDefault("'01'")
-    private String statusCd;
-
     @Column
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
@@ -101,7 +94,7 @@ public class JuneberryUser extends BaseTimeEntity implements UserDetails {
     private List<BlogUser> blogUsers = new ArrayList<BlogUser>();
 
     @Builder
-    public JuneberryUser(String name, String email, String postname, String username, String password, List<String> roles, String intro, String statusCd) {
+    public JuneberryUser(String name, String email, String postname, String username, String password, List<String> roles, String intro) {
         this.name = name;
         this.email = email;
         this.postname = postname;
@@ -109,6 +102,5 @@ public class JuneberryUser extends BaseTimeEntity implements UserDetails {
         this.password = password;
         this.roles = roles;
         this.intro = intro;
-        this.statusCd = statusCd;
     }
 }
