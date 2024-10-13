@@ -13,5 +13,6 @@ public class BlogResponseDto {
     public static class BlogInfo {
         private String blogId;
         private String blogName;
+        private String intro;
     }
 }

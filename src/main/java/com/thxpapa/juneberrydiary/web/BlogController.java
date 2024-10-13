@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -37,6 +39,7 @@ public class BlogController {
                 return responseDto.success(BlogResponseDto.BlogInfo.builder()
                         .blogId(foundBlog.getBlogId())
                         .blogName(foundBlog.getBlogName())
+                        .intro(foundBlog.getIntro())
                         .build());
             }
         } catch (Exception e) {
@@ -48,9 +51,16 @@ public class BlogController {
     @GetMapping(value = "/getAllBlogsByUser", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllBlogsByUser(@AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
-            blogService.getAllBlogsByUser(juneberryUser);
+            List<Blog> blogList = blogService.getAllBlogsByUser(juneberryUser);
 
-            return null;
+            List<BlogResponseDto.BlogInfo> blogInfoList = blogList.stream()
+                    .map(blog -> BlogResponseDto.BlogInfo.builder()
+                            .blogId(blog.getBlogId())
+                            .blogName(blog.getBlogName())
+                            .intro(blog.getIntro())
+                            .build())
+                    .collect(Collectors.toList());
+            return responseDto.success(blogInfoList);
         } catch (Exception e) {
             log.debug("getAllBlogsByUser error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -65,6 +75,7 @@ public class BlogController {
             return responseDto.success(BlogResponseDto.BlogInfo.builder()
                     .blogId(blog.getBlogId())
                     .blogName(blog.getBlogName())
+                    .intro(blog.getIntro())
                     .build());
         } catch (Exception e) {
             log.debug("createBlog error occurred!");

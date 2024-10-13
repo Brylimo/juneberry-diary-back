@@ -3,7 +3,6 @@ package com.thxpapa.juneberrydiary.repository.blogRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.thxpapa.juneberrydiary.domain.blog.Blog;
-import com.thxpapa.juneberrydiary.domain.blog.QBlog;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import jakarta.persistence.EntityManager;
 
