@@ -164,6 +164,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
     database: postgresql
 
+app:
+  front.url: http://localhost:3000
+  cookie.secure: false
+
 ---
 
 spring:

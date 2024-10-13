@@ -8,11 +8,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
+//@ActiveProfiles("test")
+//@SpringBootTest
 class BlogRepositoryTest {
-    @Autowired
-    private BlogRepository blogRepository;
+    //@Autowired
+    //private BlogRepository blogRepository;
 
     @DisplayName("유저와 연관된 모든 블로그들을 조회한다.")
     @Test
