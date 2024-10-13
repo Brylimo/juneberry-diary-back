@@ -1,13 +1,13 @@
 spring:
   profiles:
-    default: local
+    default: dev
 
   # Database
   datasource:
-    url: jdbc:h2:mem:~/jbd
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://localhost:5432/jbd?serverTimezone=Asia/Seoul&currentSchema=datamart
+    driver-class-name: org.postgresql.Driver
+    username: admin
+    password: ENC(Uq7K5KRhIpEo6a6pRpXsJg==)
 
   # JPA
   jpa:
@@ -103,12 +103,20 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
-      use_sql_comments: true
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        jdbc.lob.non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+    database: postgresql
 
-  h2:
-    console:
-      enabled: true
+app:
+  front.url: http://localhost:3000
+  cookie.secure: false
+
+server.port: 8081
 
 ---
 
@@ -119,7 +127,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
