@@ -34,7 +34,9 @@ dependencies {
 
 	// Spring JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.postgresql:postgresql:42.6.0'
+
+	runtimeOnly 'com.h2database:h2:2.3.232'
+	runtimeOnly 'org.postgresql:postgresql:42.6.0'
 	// implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
 	// QueryDSL

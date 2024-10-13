@@ -1,0 +1,181 @@
+spring:
+  profiles:
+    default: local
+
+  # Database
+  datasource:
+    url: jdbc:h2:mem:~/jbd
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: none
+      use_sql_comments: true
+    show-sql: true
+
+  # REDIS
+  cache:
+    type: redis
+  data:
+    redis:
+      host: juneberrydiary.store
+      port: 6379
+
+  # MULTIPART
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB
+      max-request-size: 215MB
+
+# S3/R2
+aws:
+  s3:
+    publicUrl: https://cdn.juneberrydiary.com/
+    endpointUrl: https://893ddb890911cb604dfcb67dbb99057c.r2.cloudflarestorage.com
+    bucket: juneberry-diary
+    region: APAC
+  accessKey: ENC(BOBjCZlQ7FDjicH05mL5sHPiHx+PIl74iboTBIfSR7LoGhIm4Po8fD51lbANY7FZ)
+  secretKey: ENC(XMv9y+az1LU4GkrAIuWL4/goC5kdBYMugTeaWBThhpkor9fyJpbPR46zacf+IP54SKzEnvmVfEyt0/F6PTz/4jm+Z5cWlTsOduBo1C0tljg=)
+
+app:
+  # FILE
+  filepath:
+    common: C:/Users/jinwoosi/file/
+
+  # JWT
+  jwt:
+    secret: ENC(zFFqR5Tb7Gz0lMqU7SryA/AOANMX/tFgbIHAA+jz2wIEo0WEDp10Q+AR9OxkGrlwJ8oe2fst0tqRf9IlSQYvxOBMGHzo5q1SQP9DOyA/xVC16zi/Y9AIjl80P3yXBCZk0AWiWLx6+v4se+DQN0hxOYT8kbVREQmopsw+imU9wUwkhmrLNe/zUJTdiXxDWNmB)
+
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.thxpapa: DEBUG
+    org.hibernate:
+      .sql: debug
+      .type.descriptor.sql.spi: trace
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+
+# VWORLD API
+vworld:
+  api:
+    akey: ENC(mf11wPxMGrTGekSqoObb+HvvCTfQsOLkl+bKMJLubU1Kb0oLe6zcpfchqvsqZ+6z)
+
+# KAKAO API
+kakao:
+  api:
+    akey: ENC(/wBJJCxB7UyPpKVQtD9rTaaZfnSixc3n+NGTbofTLIWmK2tH6J4FizwCHliVHhj1E2lGv8qZJJA=)
+    url: https://dapi.kakao.com
+
+# OPEN API
+datago:
+  api:
+    akey: ENC(5S5XyB+PYH6JQ7v91V6Y3xRUmza43DW5JBD2kSwp04XHpXL7rLTbcpugCWB4o9ae/M/8Fu4eR2iocwuacsLOFXdq0Z1u+ny7Zr4YN285uWzhwtEsdegzqFJODiWjaFYnXPvgrk1goFU=)
+    eKey: ENC(9kO+t9YeoNY66+nYZVf5/aRvnG0lw5z7IA3xPXlSRf/Azvm3YK7FPagca3idEIU6K8f/HBxNc5CT6Z+yNgsiFr8+lAeTgIVXWbEPgSnU7csZ2I6n14LdnD0RJ4xWzMzem428zk27bC7QFKP2tq7MFWkwOC8dEX6L)
+
+# TAGO DATA API
+tago:
+  api:
+    url: http://apis.data.go.kr/1613000
+
+# SPECIAL DAY DATA API
+special:
+  api:
+    url: http://apis.data.go.kr/B090041
+
+
+---
+
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+      use_sql_comments: true
+
+  h2:
+    console:
+      enabled: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        # use_sql_comments: true
+        jdbc.lob.non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+    database: postgresql
+
+  # Database
+  datasource:
+    url: jdbc:postgresql://juneberrydiary.store:5432/jdb?serverTimezone=Asia/Seoul&currentSchema=datamart
+    driver-class-name: org.postgresql.Driver
+    username: ENC(xcsy7h2bak01mQWhgd4cYfqQLlj8pBTW)
+    password: ENC(69KU39CrWR3XxcydpT3ZIP+zkIKRvEIwl155php4P0M=)
+
+app:
+  front.url: http://localhost:3000
+  cookie.secure: false
+
+server.port: 8081
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        # use_sql_comments: true
+        jdbc.lob.non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+    database: postgresql
+
+  # Database
+  datasource:
+    url: jdbc:postgresql://juneberrydiary.store:5432/jdb?serverTimezone=Asia/Seoul&currentSchema=datamart
+    driver-class-name: org.postgresql.Driver
+    username: ENC(xcsy7h2bak01mQWhgd4cYfqQLlj8pBTW)
+    password: ENC(69KU39CrWR3XxcydpT3ZIP+zkIKRvEIwl155php4P0M=)
+
+app:
+  front.url: https://juneberry-diary-front.pages.dev,https://juneberrydiary.com,https://www.juneberrydiary.com
+  cookie:
+    secure: true
+    sameSite: None
+
+server:
+  port: 8443
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
+    key-store-password: ENC(oabA5y2/qf9Ax87Eri69wQ==)
+    key-alias: bns-ssl

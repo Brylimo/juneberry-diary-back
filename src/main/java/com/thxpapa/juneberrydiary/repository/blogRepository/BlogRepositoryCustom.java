@@ -2,8 +2,9 @@ package com.thxpapa.juneberrydiary.repository.blogRepository;
 
 import com.thxpapa.juneberrydiary.domain.blog.Blog;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface BlogRepository extends JpaRepository<Blog, String>, BlogRepositoryCustom {}
+public interface BlogRepositoryCustom {
+    List<Blog> findBlogsByUser(JuneberryUser user);
+}

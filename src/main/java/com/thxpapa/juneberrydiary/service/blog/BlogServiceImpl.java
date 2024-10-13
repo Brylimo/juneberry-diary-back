@@ -31,7 +31,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Transactional
     public List<Blog> getAllBlogsByUser(JuneberryUser user) {
-        return null;
+        return blogRepository.findBlogsByUser(user);
     }
 
     @Override
