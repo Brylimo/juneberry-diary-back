@@ -2,7 +2,6 @@ package com.thxpapa.juneberrydiary.web;
 
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.post.Post;
-import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,12 +28,12 @@ public class PostController {
     private final ResponseDto responseDto;
     @PostMapping(value = "/uploadPostImage", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> uploadPostImage(
+            @RequestParam("blogId") String blogId,
             @RequestParam("postId") String postId,
-            @RequestPart("editorImg") MultipartFile file,
-            @AuthenticationPrincipal JuneberryUser juneberryUser)
+            @RequestPart("editorImg") MultipartFile file)
     {
         try {
-            JuneberryFile juneberryFile = publishService.uploadImage(juneberryUser, postId, file);
+            JuneberryFile juneberryFile = publishService.uploadImage(blogId, postId, file);
 
             return responseDto.success(PostResponseDto.ImageInfo.builder()
                             .imagePath(juneberryFile.getPath())
@@ -47,9 +45,9 @@ public class PostController {
     }
 
     @GetMapping(value = "/getPost", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPost(@RequestParam("id") String id, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    public ResponseEntity<?> getPost(@RequestParam("blogId") String blogId, @RequestParam("id") String id) {
         try {
-            Optional<Post> post = publishService.getPostById(juneberryUser, UUID.fromString(id));
+            Optional<Post> post = publishService.getPostById(blogId, UUID.fromString(id));
 
             if (post.isEmpty()) {
                 return responseDto.success("해당 post를 찾을 수 없습니다.");
@@ -72,19 +70,19 @@ public class PostController {
                         .build());
             }
         } catch (Exception e) {
-            log.debug("getTempPost erorr occurred!");
+            log.debug("getPost erorr occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping(value = "getTempPostList", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getTempPostList(
+            @RequestParam("blogId") String blogId,
             @RequestParam(value = "page", defaultValue = "0") int pageNumber,
-            @RequestParam(value = "size", defaultValue = "10") int pageSize,
-            @AuthenticationPrincipal JuneberryUser juneberryUser)
+            @RequestParam(value = "size", defaultValue = "10") int pageSize)
     {
         try {
-            List<Post> postList = publishService.getTempPostList(juneberryUser, pageNumber, pageSize);
+            List<Post> postList = publishService.getTempPostList(blogId, pageNumber, pageSize);
 
             List<PostResponseDto.PostInfo> postInfoList = postList.stream()
                     .map(post -> PostResponseDto.PostInfo.builder()
@@ -105,9 +103,9 @@ public class PostController {
     }
 
     @GetMapping(value = "/getTempPostCnt", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getTempPostCnt(@AuthenticationPrincipal JuneberryUser juneberryUser) {
+    public ResponseEntity<?> getTempPostCnt(@RequestParam("blogId") String blogId) {
         try {
-            long tempCnt = publishService.getTempPostCnt(juneberryUser);
+            long tempCnt = publishService.getTempPostCnt(blogId);
 
             return responseDto.success(tempCnt);
         } catch (Exception e) {
@@ -117,9 +115,9 @@ public class PostController {
     }
 
     @PostMapping(value = "/addPost", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addPost(@ModelAttribute PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    public ResponseEntity<?> addPost(@ModelAttribute PostRequestDto.WritePost writePost) {
         try {
-            Post post = publishService.storePost(juneberryUser, writePost);
+            Post post = publishService.storePost(writePost);
             return responseDto.success(PostResponseDto.PostInfo.builder()
                             .id(post.getPostUid().toString())
                             .title(post.getTitle())
@@ -136,9 +134,9 @@ public class PostController {
     }
 
     @PostMapping(value = "/updatePost", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePost(@ModelAttribute PostRequestDto.WritePost writePost, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    public ResponseEntity<?> updatePost(@ModelAttribute PostRequestDto.WritePost writePost) {
         try {
-            Post post = publishService.updatePost(juneberryUser, writePost);
+            Post post = publishService.updatePost(writePost);
             return responseDto.success(PostResponseDto.PostInfo.builder()
                     .id(post.getPostUid().toString())
                     .title(post.getTitle())

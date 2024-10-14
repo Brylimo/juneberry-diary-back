@@ -16,6 +16,7 @@ public class PostRequestDto {
         private String thumbnailPath;
         private Boolean isTemp;
         private Boolean isPublic;
+        private String blogId;
         private MultipartFile thumbnailImg;
     }
 }

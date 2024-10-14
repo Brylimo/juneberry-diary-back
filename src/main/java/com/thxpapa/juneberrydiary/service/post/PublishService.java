@@ -11,10 +11,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PublishService {
-    JuneberryFile uploadImage(JuneberryUser user, String postId, MultipartFile file);
-    Post storePost(JuneberryUser user, PostRequestDto.WritePost writePost);
-    Post updatePost(JuneberryUser user, PostRequestDto.WritePost writePost);
-    Optional<Post> getPostById(JuneberryUser user, UUID id);
-    List<Post> getTempPostList(JuneberryUser user, int pageNumber, int pageSize);
-    long getTempPostCnt(JuneberryUser user);
+    JuneberryFile uploadImage(String blogId, String postId, MultipartFile file);
+    Post storePost(PostRequestDto.WritePost writePost);
+    Post updatePost(PostRequestDto.WritePost writePost);
+    Optional<Post> getPostById(String blogId, UUID id);
+    List<Post> getTempPostList(String blogId, int pageNumber, int pageSize);
+    long getTempPostCnt(String blogId);
 }

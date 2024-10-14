@@ -1,10 +1,11 @@
 package com.thxpapa.juneberrydiary.service.post;
 
+import com.thxpapa.juneberrydiary.domain.blog.Blog;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.post.Post;
 import com.thxpapa.juneberrydiary.domain.post.PostFile;
-import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
+import com.thxpapa.juneberrydiary.repository.blogRepository.BlogRepository;
 import com.thxpapa.juneberrydiary.repository.fileRepository.JuneberryFileRepository;
 import com.thxpapa.juneberrydiary.repository.postRepository.PostFileRepository;
 import com.thxpapa.juneberrydiary.repository.postRepository.PostRepository;
@@ -33,17 +34,22 @@ public class PublishServiceImpl implements PublishService {
     private final JuneberryFileRepository juneberryFileRepository;
     private final PostRepository postRepository;
     private final PostFileRepository postFileRepository;
+    private final BlogRepository blogRepository;
 
     @Override
     @Transactional
-    public JuneberryFile uploadImage(JuneberryUser user, String postId, MultipartFile multipartFile) {
+    public JuneberryFile uploadImage(String blogId, String postId, MultipartFile multipartFile) {
         try {
             JuneberryFile res = null;
 
             UUID id = UUID.fromString(postId);
-            Post post = postRepository.findPostByJuneberryUserAndPostUid(user, id).orElseGet(null);
+            Post post = postRepository.findFirstByPostUid(id).orElseGet(null);
 
-            if (multipartFile != null && post != null && !multipartFile.isEmpty() && !Objects.isNull(multipartFile.getOriginalFilename())) {
+            if (multipartFile != null &&
+                    post != null &&
+                    !multipartFile.isEmpty() &&
+                    !Objects.isNull(multipartFile.getOriginalFilename()) &&
+                    post.getBlog().getBlogId().equals(blogId)) {
                 JuneberryFile file = s3UploaderUtil.uploadFile(multipartFile, "post");
                 res = juneberryFileRepository.save(file);
                 postFileRepository.save(PostFile.builder()
@@ -60,7 +66,7 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional
-    public Post storePost(JuneberryUser user, PostRequestDto.WritePost writePost) {
+    public Post storePost(PostRequestDto.WritePost writePost) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
@@ -74,12 +80,16 @@ public class PublishServiceImpl implements PublishService {
                 resFile = juneberryFileRepository.save(file);
             }
 
+            // 블로그 fetch
+            Blog blog = blogRepository.findById(writePost.getBlogId())
+                    .orElseThrow(() -> new NullPointerException("cannot find blog!"));
+
             Post createdPost = postRepository.save(Post.builder()
                     .title(writePost.getTitle())
                     .content(writePost.getContent())
+                    .blog(blog)
                     .isTemp(writePost.getIsTemp())
                     .date(date)
-                    .juneberryUser(user)
                     .juneberryFile(resFile)
                     .build());
 
@@ -92,12 +102,17 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional
-    public Post updatePost(JuneberryUser user, PostRequestDto.WritePost writePost) {
+    public Post updatePost(PostRequestDto.WritePost writePost) {
         try {
             UUID id = UUID.fromString(writePost.getPostId());
             MultipartFile thumbnail = writePost.getThumbnailImg();
 
-            Post post = postRepository.findPostByJuneberryUserAndPostUid(user, id).orElseGet(() -> storePost(user, writePost));
+            Post post = postRepository.findFirstByPostUid(id).orElseGet(() -> storePost(writePost));
+
+            if (!post.getBlog().getBlogId().equals(writePost.getBlogId())) {
+                throw new Exception("blogId doesn't match");
+            }
+
             if (post.getJuneberryFile() != null && !post.getJuneberryFile().getPath().equals(writePost.getThumbnailPath())) { // thumbnail이 존재하면 삭제
                 s3UploaderUtil.deleteFile(post.getJuneberryFile().getPath());
                 juneberryFileRepository.deleteById(post.getJuneberryFile().getJuneberryFileUid());
@@ -121,21 +136,26 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional
-    public Optional<Post> getPostById(JuneberryUser user, UUID id) {
-        Optional<Post> optionalPost = postRepository.findPostByJuneberryUserAndPostUid(user, id);
+    public Optional<Post> getPostById(String blogId, UUID id) {
+        Optional<Post> optionalPost = postRepository.findFirstByPostUid(id);
+
+        if (optionalPost.isPresent() && !optionalPost.get().getBlog().getBlogId().equals(blogId)) {
+            return Optional.empty();
+        }
+
         return optionalPost;
     }
 
     @Override
     @Transactional
-    public List<Post> getTempPostList(JuneberryUser user, int pageNumber, int pageSize) {
+    public List<Post> getTempPostList(String blogId, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("modDt").descending());
-        return postRepository.findPostByJuneberryUserAndIsTemp(user, true, pageable);
+        return postRepository.searchTempPost(blogId, pageable);
     }
 
     @Override
     @Transactional
-    public long getTempPostCnt(JuneberryUser user) {
-        return postRepository.countByIsTemp(true);
+    public long getTempPostCnt(String blogId) {
+        return postRepository.countByTempPost(blogId);
     }
 }

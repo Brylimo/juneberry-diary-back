@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.domain.blog;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
+import com.thxpapa.juneberrydiary.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -29,8 +30,11 @@ public class Blog extends BaseEntity implements Persistable<String> {
     @Column(name="intro", nullable = true)
     private String intro;
 
-    @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "blog")
     private List<BlogUser> blogUsers = new ArrayList<BlogUser>();
+
+    @OneToMany(mappedBy = "blog")
+    private List<Post> posts = new ArrayList<Post>();
 
     @Override
     public String getId() {

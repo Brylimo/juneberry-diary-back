@@ -26,7 +26,8 @@ public class BlogRepositoryImpl implements BlogRepositoryCustom {
     public List<Blog> findBlogsByUser(JuneberryUser user) {
         List<Blog> result = queryFactory
                 .selectFrom(blog)
-                .leftJoin(blog.blogUsers, blogUser).fetchJoin().leftJoin(blogUser.juneberryUser).fetchJoin()
+                .leftJoin(blog.blogUsers, blogUser).fetchJoin().leftJoin(blogUser.juneberryUser, juneberryUser).fetchJoin()
+                .where(juneberryUser.juneberryUserUid.eq(user.getJuneberryUserUid()))
                 .fetch();
 
         return result;
