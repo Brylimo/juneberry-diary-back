@@ -1,7 +1,9 @@
 package com.thxpapa.juneberrydiary.repository.postRepository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.thxpapa.juneberrydiary.domain.post.Post;
+import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 
@@ -33,16 +35,24 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public List<Post> searchTempPost(String blogId, Pageable pageable) {
+    public List<Post> searchPostList(PostRequestDto.SearchPostList searchPostList, Pageable pageable) {
         List<Post> result = queryFactory
                 .selectFrom(post)
                 .join(post.blog, blog).fetchJoin()
-                .where(blog.blogId.eq(blogId)
-                        .and(post.isTemp.eq(true)))
+                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(post.modDt.desc())
                 .fetch();
 
         return result;
+    }
+
+    private BooleanExpression isPublicEq(Boolean isPublic) {
+        return isPublic != null ? post.isPublic.eq(isPublic) : null;
+    }
+
+    private BooleanExpression isTempEq(Boolean isTemp) {
+        return isTemp != null ? post.isTemp.eq(isTemp) : null;
     }
 }

@@ -19,4 +19,13 @@ public class PostRequestDto {
         private String blogId;
         private MultipartFile thumbnailImg;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SearchPostList {
+        private String blogId;
+        private Boolean isTemp;
+        private Boolean isPublic;
+    }
 }

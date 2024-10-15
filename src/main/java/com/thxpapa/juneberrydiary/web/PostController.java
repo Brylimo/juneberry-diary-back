@@ -75,14 +75,14 @@ public class PostController {
         }
     }
 
-    @GetMapping(value = "getTempPostList", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getTempPostList(
-            @RequestParam("blogId") String blogId,
+    @GetMapping(value = "getPostList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPostList(
+            @ModelAttribute PostRequestDto.SearchPostList searchPostList,
             @RequestParam(value = "page", defaultValue = "0") int pageNumber,
             @RequestParam(value = "size", defaultValue = "10") int pageSize)
     {
         try {
-            List<Post> postList = publishService.getTempPostList(blogId, pageNumber, pageSize);
+            List<Post> postList = publishService.getPostList(searchPostList, pageNumber, pageSize);
 
             List<PostResponseDto.PostInfo> postInfoList = postList.stream()
                     .map(post -> PostResponseDto.PostInfo.builder()
@@ -97,7 +97,7 @@ public class PostController {
                     .collect(Collectors.toList());
             return responseDto.success(postInfoList);
         } catch (Exception e) {
-            log.debug("getTempPostList erorr occurred!");
+            log.debug("getPostList erorr occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

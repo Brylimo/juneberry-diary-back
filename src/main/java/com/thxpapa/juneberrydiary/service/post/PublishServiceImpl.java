@@ -89,6 +89,7 @@ public class PublishServiceImpl implements PublishService {
                     .content(writePost.getContent())
                     .blog(blog)
                     .isTemp(writePost.getIsTemp())
+                    .isPublic(writePost.getIsPublic())
                     .date(date)
                     .juneberryFile(resFile)
                     .build());
@@ -148,9 +149,9 @@ public class PublishServiceImpl implements PublishService {
 
     @Override
     @Transactional
-    public List<Post> getTempPostList(String blogId, int pageNumber, int pageSize) {
+    public List<Post> getPostList(PostRequestDto.SearchPostList searchPostList, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("modDt").descending());
-        return postRepository.searchTempPost(blogId, pageable);
+        return postRepository.searchPostList(searchPostList, pageable);
     }
 
     @Override

@@ -15,6 +15,6 @@ public interface PublishService {
     Post storePost(PostRequestDto.WritePost writePost);
     Post updatePost(PostRequestDto.WritePost writePost);
     Optional<Post> getPostById(String blogId, UUID id);
-    List<Post> getTempPostList(String blogId, int pageNumber, int pageSize);
+    List<Post> getPostList(PostRequestDto.SearchPostList searchPostList, int pageNumber, int pageSize);
     long getTempPostCnt(String blogId);
 }
