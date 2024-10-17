@@ -29,7 +29,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PublishServiceImpl implements PublishService {
+public class PostServiceImpl implements PostService {
     private final S3UploaderUtil s3UploaderUtil;
     private final JuneberryFileRepository juneberryFileRepository;
     private final PostRepository postRepository;
@@ -84,12 +84,22 @@ public class PublishServiceImpl implements PublishService {
             Blog blog = blogRepository.findById(writePost.getBlogId())
                     .orElseThrow(() -> new NullPointerException("cannot find blog!"));
 
+            Long nextPostIdx = null;
+            if (!writePost.getIsTemp()) { // 발행되는 포스트 -> index 저장
+                nextPostIdx = blog.getPostIdxCnt() + 1;
+
+                // 블로그 postIdxCnt 1 증가
+                blog.updatePostIdxCnt(nextPostIdx);
+            }
+
             Post createdPost = postRepository.save(Post.builder()
                     .title(writePost.getTitle())
                     .content(writePost.getContent())
+                    .description(writePost.getDescription())
                     .blog(blog)
                     .isTemp(writePost.getIsTemp())
                     .isPublic(writePost.getIsPublic())
+                    .index(nextPostIdx)
                     .date(date)
                     .juneberryFile(resFile)
                     .build());
@@ -126,6 +136,14 @@ public class PublishServiceImpl implements PublishService {
                 resFile = juneberryFileRepository.save(file);
             }
 
+            // index 처리
+            if (post.getIndex() == null && !writePost.getIsTemp()) {
+                Long nextPostIdx = post.getBlog().getPostIdxCnt() + 1;
+
+                post.updateIndex(nextPostIdx);
+                post.getBlog().updatePostIdxCnt(nextPostIdx);
+            }
+
             post.updatePostByWritePost(writePost, resFile);
 
             return post;
@@ -144,6 +162,13 @@ public class PublishServiceImpl implements PublishService {
             return Optional.empty();
         }
 
+        return optionalPost;
+    }
+
+    @Override
+    @Transactional
+    public Optional<Post> getPostByIndex(PostRequestDto.SearchPostByIndex searchPostByIndex) {
+        Optional<Post> optionalPost = postRepository.findPostByIndex(searchPostByIndex);
         return optionalPost;
     }
 

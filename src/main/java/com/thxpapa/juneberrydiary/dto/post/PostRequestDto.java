@@ -28,4 +28,12 @@ public class PostRequestDto {
         private Boolean isTemp;
         private Boolean isPublic;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SearchPostByIndex {
+        private String blogId;
+        private Long index;
+    }
 }

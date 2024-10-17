@@ -30,6 +30,10 @@ public class Blog extends BaseEntity implements Persistable<String> {
     @Column(name="intro", nullable = true)
     private String intro;
 
+    @Comment("포스트 idx 개수")
+    @Column(name="post_idx_cnt")
+    private long postIdxCnt;
+
     @OneToMany(mappedBy = "blog")
     private List<BlogUser> blogUsers = new ArrayList<BlogUser>();
 
@@ -46,10 +50,15 @@ public class Blog extends BaseEntity implements Persistable<String> {
         return getRegDt() == null;
     }
 
+    public void updatePostIdxCnt(long postIdxCnt) {
+        this.postIdxCnt = postIdxCnt;
+    }
+
     @Builder
-    public Blog(String blogId, String blogName, String intro) {
+    public Blog(String blogId, String blogName, String intro, long postIdxCnt) {
         this.blogId = blogId;
         this.blogName = blogName;
         this.intro = intro;
+        this.postIdxCnt = postIdxCnt;
     }
 }

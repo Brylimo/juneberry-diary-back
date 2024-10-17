@@ -8,8 +8,10 @@ import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.thxpapa.juneberrydiary.domain.blog.QBlog.*;
+import static com.thxpapa.juneberrydiary.domain.file.QJuneberryFile.*;
 import static com.thxpapa.juneberrydiary.domain.post.QPost.*;
 
 public class PostRepositoryImpl implements PostRepositoryCustom {
@@ -39,6 +41,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         List<Post> result = queryFactory
                 .selectFrom(post)
                 .join(post.blog, blog).fetchJoin()
+                .leftJoin(post.juneberryFile, juneberryFile).fetchJoin()
                 .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -46,6 +49,20 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetch();
 
         return result;
+    }
+
+    /**
+     * index를 통해 post를 가져오기
+     */
+    @Override
+    public Optional<Post> findPostByIndex(PostRequestDto.SearchPostByIndex searchPostByIndex) {
+        Post result = queryFactory
+                .selectFrom(post)
+                .join(post.blog, blog).fetchJoin()
+                .where(blog.blogId.eq(searchPostByIndex.getBlogId()), post.index.eq(searchPostByIndex.getIndex()))
+                .fetchFirst();
+
+        return Optional.ofNullable(result);
     }
 
     private BooleanExpression isPublicEq(Boolean isPublic) {

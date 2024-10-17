@@ -5,7 +5,7 @@ import com.thxpapa.juneberrydiary.domain.post.Post;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
-import com.thxpapa.juneberrydiary.service.post.PublishService;
+import com.thxpapa.juneberrydiary.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/post")
 public class PostController {
-    private final PublishService publishService;
+    private final PostService postService;
     private final ResponseDto responseDto;
     @PostMapping(value = "/uploadPostImage", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> uploadPostImage(
@@ -33,7 +33,7 @@ public class PostController {
             @RequestPart("editorImg") MultipartFile file)
     {
         try {
-            JuneberryFile juneberryFile = publishService.uploadImage(blogId, postId, file);
+            JuneberryFile juneberryFile = postService.uploadImage(blogId, postId, file);
 
             return responseDto.success(PostResponseDto.ImageInfo.builder()
                             .imagePath(juneberryFile.getPath())
@@ -47,7 +47,7 @@ public class PostController {
     @GetMapping(value = "/getPost", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPost(@RequestParam("blogId") String blogId, @RequestParam("id") String id) {
         try {
-            Optional<Post> post = publishService.getPostById(blogId, UUID.fromString(id));
+            Optional<Post> post = postService.getPostById(blogId, UUID.fromString(id));
 
             if (post.isEmpty()) {
                 return responseDto.success("해당 post를 찾을 수 없습니다.");
@@ -61,6 +61,7 @@ public class PostController {
                 return responseDto.success(PostResponseDto.PostInfo.builder()
                         .id(foundPost.getPostUid().toString())
                         .title(foundPost.getTitle())
+                        .index(foundPost.getIndex())
                         .description(foundPost.getDescription())
                         .content(foundPost.getContent())
                         .isTemp(foundPost.getIsTemp())
@@ -75,6 +76,38 @@ public class PostController {
         }
     }
 
+    @GetMapping(value = "/getPostByIndex", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPostByIndex(@ModelAttribute PostRequestDto.SearchPostByIndex searchPostByIndex) {
+        try {
+            Optional<Post> optionalPost = postService.getPostByIndex(searchPostByIndex);
+
+            if (optionalPost.isEmpty()) {
+                return responseDto.success("해당 post를 찾을 수 없습니다.");
+            } else {
+                Post foundPost = optionalPost.get();
+                String thumbnailPath = null;
+                if (foundPost.getJuneberryFile() != null) {
+                    thumbnailPath = foundPost.getJuneberryFile().getPath();
+                }
+
+                return responseDto.success(PostResponseDto.PostInfo.builder()
+                        .id(foundPost.getPostUid().toString())
+                        .title(foundPost.getTitle())
+                        .index(foundPost.getIndex())
+                        .description(foundPost.getDescription())
+                        .content(foundPost.getContent())
+                        .isTemp(foundPost.getIsTemp())
+                        .isPublic(foundPost.getIsPublic())
+                        .updatedDateTime(foundPost.getModDt())
+                        .thumbnailPath(thumbnailPath)
+                        .build());
+            }
+        } catch (Exception e) {
+            log.debug("getPostByIndex error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(value = "getPostList", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPostList(
             @ModelAttribute PostRequestDto.SearchPostList searchPostList,
@@ -82,7 +115,7 @@ public class PostController {
             @RequestParam(value = "size", defaultValue = "10") int pageSize)
     {
         try {
-            List<Post> postList = publishService.getPostList(searchPostList, pageNumber, pageSize);
+            List<Post> postList = postService.getPostList(searchPostList, pageNumber, pageSize);
 
             List<PostResponseDto.PostInfo> postInfoList = postList.stream()
                     .map(post -> PostResponseDto.PostInfo.builder()
@@ -90,9 +123,11 @@ public class PostController {
                             .isTemp(post.getIsTemp())
                             .isPublic(post.getIsPublic())
                             .title(post.getTitle())
+                            .index(post.getIndex())
                             .description(post.getDescription())
                             .content(post.getContent())
                             .updatedDateTime(post.getModDt())
+                            .thumbnailPath(post.getJuneberryFile() != null ? post.getJuneberryFile().getPath() : null)
                             .build())
                     .collect(Collectors.toList());
             return responseDto.success(postInfoList);
@@ -105,7 +140,7 @@ public class PostController {
     @GetMapping(value = "/getTempPostCnt", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getTempPostCnt(@RequestParam("blogId") String blogId) {
         try {
-            long tempCnt = publishService.getTempPostCnt(blogId);
+            long tempCnt = postService.getTempPostCnt(blogId);
 
             return responseDto.success(tempCnt);
         } catch (Exception e) {
@@ -117,7 +152,7 @@ public class PostController {
     @PostMapping(value = "/addPost", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addPost(@ModelAttribute PostRequestDto.WritePost writePost) {
         try {
-            Post post = publishService.storePost(writePost);
+            Post post = postService.storePost(writePost);
             return responseDto.success(PostResponseDto.PostInfo.builder()
                             .id(post.getPostUid().toString())
                             .title(post.getTitle())
@@ -136,7 +171,7 @@ public class PostController {
     @PostMapping(value = "/updatePost", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePost(@ModelAttribute PostRequestDto.WritePost writePost) {
         try {
-            Post post = publishService.updatePost(writePost);
+            Post post = postService.updatePost(writePost);
             return responseDto.success(PostResponseDto.PostInfo.builder()
                     .id(post.getPostUid().toString())
                     .title(post.getTitle())

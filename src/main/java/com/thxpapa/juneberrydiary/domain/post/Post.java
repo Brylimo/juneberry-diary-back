@@ -51,6 +51,10 @@ public class Post extends BaseEntity {
     @Column(name="is_public")
     private Boolean isPublic;
 
+    @Comment("인덱스")
+    @Column(name="index")
+    private Long index;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="blogId")
     private Blog blog;
@@ -60,15 +64,20 @@ public class Post extends BaseEntity {
     private JuneberryFile juneberryFile;
 
     @Builder
-    public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, Blog blog, JuneberryFile juneberryFile) {
+    public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, Long index, Blog blog, JuneberryFile juneberryFile) {
         this.date = date;
         this.title = title;
         this.description = description;
         this.content = content;
         this.isTemp = isTemp;
         this.isPublic = isPublic;
+        this.index = index;
         this.blog = blog;
         this.juneberryFile = juneberryFile;
+    }
+
+    public void updateIndex(Long index) {
+        this.index = index;
     }
 
     public Post updatePostByWritePost(PostRequestDto.WritePost writePost, JuneberryFile thumbnailFile) {
