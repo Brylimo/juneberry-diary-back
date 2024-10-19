@@ -1,11 +1,14 @@
 package com.thxpapa.juneberrydiary.repository.postRepository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.thxpapa.juneberrydiary.domain.post.Post;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,18 +30,19 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public long countByTempPost(String blogId) {
         long result = queryFactory
-                .selectFrom(post)
-                .join(post.blog, blog).fetchJoin()
+                .select(post.count())
+                .from(post)
+                .join(post.blog, blog)
                 .where(blog.blogId.eq(blogId)
                         .and(post.isTemp.eq(true)))
-                .fetchCount();
+                .fetchOne();
 
         return result;
     }
 
     @Override
-    public List<Post> searchPostList(PostRequestDto.SearchPostList searchPostList, Pageable pageable) {
-        List<Post> result = queryFactory
+    public Page<Post> searchPostList(PostRequestDto.SearchPostList searchPostList, Pageable pageable) {
+        List<Post> content = queryFactory
                 .selectFrom(post)
                 .join(post.blog, blog).fetchJoin()
                 .leftJoin(post.juneberryFile, juneberryFile).fetchJoin()
@@ -48,7 +52,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .orderBy(post.modDt.desc())
                 .fetch();
 
-        return result;
+        JPAQuery<Long> countQuery = queryFactory
+                .select(post.count())
+                .from(post)
+                .join(post.blog, blog)
+                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     /**

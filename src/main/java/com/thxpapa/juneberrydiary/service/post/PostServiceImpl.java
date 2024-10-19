@@ -12,6 +12,7 @@ import com.thxpapa.juneberrydiary.repository.postRepository.PostRepository;
 import com.thxpapa.juneberrydiary.util.S3UploaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -174,7 +174,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<Post> getPostList(PostRequestDto.SearchPostList searchPostList, int pageNumber, int pageSize) {
+    public Page<Post> getPostList(PostRequestDto.SearchPostList searchPostList, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("modDt").descending());
         return postRepository.searchPostList(searchPostList, pageable);
     }

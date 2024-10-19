@@ -8,6 +8,7 @@ import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
 import com.thxpapa.juneberrydiary.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -115,9 +116,9 @@ public class PostController {
             @RequestParam(value = "size", defaultValue = "10") int pageSize)
     {
         try {
-            List<Post> postList = postService.getPostList(searchPostList, pageNumber, pageSize);
+            Page<Post> page = postService.getPostList(searchPostList, pageNumber, pageSize);
 
-            List<PostResponseDto.PostInfo> postInfoList = postList.stream()
+            List<PostResponseDto.PostInfo> postInfoList = page.getContent().stream()
                     .map(post -> PostResponseDto.PostInfo.builder()
                             .id(post.getPostUid().toString())
                             .isTemp(post.getIsTemp())
@@ -130,7 +131,11 @@ public class PostController {
                             .thumbnailPath(post.getJuneberryFile() != null ? post.getJuneberryFile().getPath() : null)
                             .build())
                     .collect(Collectors.toList());
-            return responseDto.success(postInfoList);
+
+            return responseDto.success(PostResponseDto.PostListInfo.builder()
+                    .totalCount(page.getTotalElements())
+                    .postInfoList(postInfoList)
+                    .build());
         } catch (Exception e) {
             log.debug("getPostList erorr occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PostResponseDto {
     @Getter
@@ -32,5 +33,14 @@ public class PostResponseDto {
         private Boolean isTemp;
         private Boolean isPublic;
         private String thumbnailPath;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostListInfo {
+        private Long totalCount;
+        private List<PostResponseDto.PostInfo> postInfoList;
     }
 }
