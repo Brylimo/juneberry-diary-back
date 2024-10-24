@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -109,8 +108,8 @@ public class CalController {
             LocalDate date = LocalDate.parse(calSetEventTagsRequestDto.getDate(), formatter);
             List<String> eventTagList = calSetEventTagsRequestDto.getEventTagList();
 
-            Day day = dayService.storeEventTagList(juneberryUser, date, eventTagList);
-            return responseDto.success(day);
+            dayService.storeEventTagList(juneberryUser, date, eventTagList);
+            return responseDto.success();
         } catch (Exception e) {
             log.debug("addEventTagList error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -125,8 +124,8 @@ public class CalController {
             LocalDate date = LocalDate.parse(calDayEmojiRequestDto.getDate(), formatter);
             List<String> emojiCodeList = calDayEmojiRequestDto.getEmojiCodeArray();
 
-            Day day = dayService.storeDayEmoji(juneberryUser, date, emojiCodeList);
-            return responseDto.success(day);
+            dayService.storeDayEmoji(juneberryUser, date, emojiCodeList);
+            return responseDto.success();
         } catch (Exception e) {
             log.debug("addDayEmoji error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -207,7 +206,12 @@ public class CalController {
 
             Day day = dayService.storeTodayTxt(juneberryUser, date, todayTxt);
 
-            return responseDto.success(day);
+            return responseDto.success(CalResponseDto.DayInfo.builder()
+                            .dayUid(day.getDayUid())
+                            .date(day.getDate())
+                            .emojiCodes(day.getEmojiCodes())
+                            .todayTxt(day.getTodayTxt())
+                            .build());
         } catch (Exception e) {
             log.debug("updateTodayTxt error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -75,4 +75,15 @@ public class CalResponseDto {
         private LocalDate date;
         private List<String> emojiCodeArray;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DayInfo {
+        private Long dayUid;
+        private LocalDate date;
+        private String emojiCodes;
+        private String todayTxt;
+    }
 }
