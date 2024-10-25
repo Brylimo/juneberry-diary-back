@@ -1,4 +1,4 @@
-# juneberry diary
+# juneberry diary backend
 juneberry diary backend project
 
 준베리다이어리는 크게 지도에 장소를 저장하는 기능, 캘린더 및 투두리스트 기능, 블로그 기능을 제공합니다.
