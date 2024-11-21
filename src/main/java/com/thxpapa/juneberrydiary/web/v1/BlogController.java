@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.web;
+package com.thxpapa.juneberrydiary.web.v1;
 
 import com.thxpapa.juneberrydiary.domain.blog.Blog;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/blog")
+@RequestMapping(value = "/v1/blog")
 public class BlogController {
     private final BlogService blogService;
     private final ResponseDto responseDto;

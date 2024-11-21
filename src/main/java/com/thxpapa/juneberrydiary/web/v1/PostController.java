@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.web;
+package com.thxpapa.juneberrydiary.web.v1;
 
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.post.Post;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/post")
+@RequestMapping(value = "v1/post")
 public class PostController {
     private final PostService postService;
     private final ResponseDto responseDto;
