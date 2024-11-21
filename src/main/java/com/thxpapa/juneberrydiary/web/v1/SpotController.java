@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.web;
+package com.thxpapa.juneberrydiary.web.v1;
 
 import com.thxpapa.juneberrydiary.domain.geo.Spot;
 import com.thxpapa.juneberrydiary.dto.SpotRegisterRequestDto;
@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(value = "/spot")
+@RequestMapping(value = "/v1/spot")
 public class SpotController {
 
     private final SpotService spotService;

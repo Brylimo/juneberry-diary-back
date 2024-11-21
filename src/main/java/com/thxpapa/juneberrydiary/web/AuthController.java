@@ -26,7 +26,7 @@ import java.time.Duration;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/auth")
+@RequestMapping(value = "/auth")
 public class AuthController {
     @Value("${app.cookie.secure}")
     private boolean cookieSecure;

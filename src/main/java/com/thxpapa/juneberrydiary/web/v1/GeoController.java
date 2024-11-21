@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.web;
+package com.thxpapa.juneberrydiary.web.v1;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(value = "/geo")
+@RequestMapping(value = "/v1/geo")
 public class GeoController {
     @Value("${vworld.api.akey}")
     private String vKey;

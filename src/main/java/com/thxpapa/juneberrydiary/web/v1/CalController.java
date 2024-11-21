@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.web;
+package com.thxpapa.juneberrydiary.web.v1;
 
 import com.thxpapa.juneberrydiary.domain.cal.Day;
 import com.thxpapa.juneberrydiary.domain.cal.Todo;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/cal")
+@RequestMapping(value = "/v1/cal")
 public class CalController {
     private final TodoService todoService;
     private final DayService dayService;
