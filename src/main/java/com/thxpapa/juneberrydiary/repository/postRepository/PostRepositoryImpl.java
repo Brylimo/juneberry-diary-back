@@ -49,7 +49,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(post.modDt.desc())
+                .orderBy(post.regDt.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
