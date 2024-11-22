@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "v1/post")
+@RequestMapping(value = "/v1/post")
 public class PostController {
     private final PostService postService;
     private final ResponseDto responseDto;
@@ -188,6 +188,19 @@ public class PostController {
                     .build());
         } catch (Exception e) {
             log.debug("updatePost error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deletePost(@PathVariable String id) {
+        try {
+            UUID postId = UUID.fromString(id);
+
+            postService.deletePostById(postId);
+            return responseDto.success("Post deleted successfully");
+        } catch (Exception e) {
+            log.debug("deletePost error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

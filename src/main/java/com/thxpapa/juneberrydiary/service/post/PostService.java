@@ -17,4 +17,5 @@ public interface PostService {
     Optional<Post> getPostByIndex(PostRequestDto.SearchPostByIndex searchPostByIndex);
     Page<Post> getPostList(PostRequestDto.SearchPostList searchPostList, int pageNumber, int pageSize);
     long getTempPostCnt(String blogId);
+    void deletePostById(UUID id);
 }

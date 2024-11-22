@@ -175,7 +175,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public Page<Post> getPostList(PostRequestDto.SearchPostList searchPostList, int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("modDt").descending());
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("regDt").descending());
         return postRepository.searchPostList(searchPostList, pageable);
     }
 
@@ -183,5 +183,11 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public long getTempPostCnt(String blogId) {
         return postRepository.countByTempPost(blogId);
+    }
+
+    @Override
+    @Transactional
+    public void deletePostById(UUID id) {
+        postRepository.deleteById(id);
     }
 }
