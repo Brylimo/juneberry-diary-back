@@ -67,6 +67,7 @@ public class PostController {
                         .content(foundPost.getContent())
                         .isTemp(foundPost.getIsTemp())
                         .isPublic(foundPost.getIsPublic())
+                        .registeredDateTime(foundPost.getRegDt())
                         .updatedDateTime(foundPost.getModDt())
                         .thumbnailPath(thumbnailPath)
                         .build());
@@ -99,6 +100,7 @@ public class PostController {
                         .content(foundPost.getContent())
                         .isTemp(foundPost.getIsTemp())
                         .isPublic(foundPost.getIsPublic())
+                        .registeredDateTime(foundPost.getRegDt())
                         .updatedDateTime(foundPost.getModDt())
                         .thumbnailPath(thumbnailPath)
                         .build());
@@ -127,6 +129,7 @@ public class PostController {
                             .index(post.getIndex())
                             .description(post.getDescription())
                             .content(post.getContent())
+                            .registeredDateTime(post.getRegDt())
                             .updatedDateTime(post.getModDt())
                             .thumbnailPath(post.getJuneberryFile() != null ? post.getJuneberryFile().getPath() : null)
                             .build())
@@ -165,6 +168,7 @@ public class PostController {
                             .content(post.getContent())
                             .isTemp(post.getIsTemp())
                             .isPublic(post.getIsPublic())
+                            .registeredDateTime(post.getRegDt())
                             .updatedDateTime(post.getModDt())
                             .build());
         } catch (Exception e) {
@@ -184,6 +188,7 @@ public class PostController {
                     .content(post.getContent())
                     .isTemp(post.getIsTemp())
                     .isPublic(post.getIsPublic())
+                    .registeredDateTime(post.getRegDt())
                     .updatedDateTime(post.getModDt())
                     .build());
         } catch (Exception e) {
