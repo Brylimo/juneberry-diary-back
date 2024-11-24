@@ -113,12 +113,15 @@ public class PostServiceImpl implements PostService {
 
             // 태그 저장
             for (String tag : writePost.getTags()) {
-                Tag createdTag = tagRepository.save(Tag.builder()
-                        .name(tag)
-                        .build());
+                Optional<Tag> optionalTag = tagRepository.findTagByName(tag);
+
+                Tag resTag = optionalTag.orElseGet(
+                        () -> tagRepository.save(Tag.builder()
+                                .name(tag)
+                                .build()));
 
                 postTagRepository.save(PostTag.builder()
-                        .tag(createdTag)
+                        .tag(resTag)
                         .post(createdPost)
                         .build());
             }
@@ -172,7 +175,7 @@ public class PostServiceImpl implements PostService {
             }
 
             Set<String> orgSet = new HashSet<>(tagList.stream().map(tag -> tag.getName()).collect(Collectors.toList())); // 기존 존재하던 tag들
-            Set<String> newSet = new HashSet<>(writePost.getTags()); // 새로 입력된 tag들
+            Set<String> newSet = new HashSet<>(Optional.ofNullable(writePost.getTags()).orElse(new ArrayList<>())); // 새로 입력된 tag들
 
             // tag 삭제
             Set<String> deleteSet = orgSet.stream()
@@ -183,7 +186,11 @@ public class PostServiceImpl implements PostService {
                 Tag deleteTag = tagMap.get(element);
 
                 postTagRepository.deletePostTag(post, deleteTag);
-                tagRepository.deleteById(deleteTag.getTagUid());
+
+                long aliveTagCnt = postTagRepository.countByTag(deleteTag);
+                if (aliveTagCnt == 0L) { // 사용되는 태그가 존재하지 않으면 삭제
+                    tagRepository.deleteById(deleteTag.getTagUid());
+                }
             }
 
             // tag 추가
@@ -192,12 +199,15 @@ public class PostServiceImpl implements PostService {
                     .collect(Collectors.toSet());
 
             for (String element : addSet) {
-                Tag createdTag = tagRepository.save(Tag.builder()
-                        .name(element)
-                        .build());
+                Optional<Tag> optionalTag = tagRepository.findTagByName(element);
+
+                Tag resTag = optionalTag.orElseGet(
+                        () -> tagRepository.save(Tag.builder()
+                                .name(element)
+                                .build()));
 
                 postTagRepository.save(PostTag.builder()
-                        .tag(createdTag)
+                        .tag(resTag)
                         .post(post)
                         .build());
             }
