@@ -48,29 +48,13 @@ public class PostController {
     @GetMapping(value = "/getPost", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPost(@RequestParam("blogId") String blogId, @RequestParam("id") String id) {
         try {
-            Optional<Post> post = postService.getPostById(blogId, UUID.fromString(id));
+            Optional<PostResponseDto.PostInfo> optionalPostInfo = postService.getPostById(blogId, UUID.fromString(id));
 
-            if (post.isEmpty()) {
+            if (optionalPostInfo.isEmpty()) {
                 return responseDto.success("해당 post를 찾을 수 없습니다.");
             } else {
-                Post foundPost = post.get();
-                String thumbnailPath = null;
-                if (foundPost.getJuneberryFile() != null) {
-                    thumbnailPath = foundPost.getJuneberryFile().getPath();
-                }
-
-                return responseDto.success(PostResponseDto.PostInfo.builder()
-                        .id(foundPost.getPostUid().toString())
-                        .title(foundPost.getTitle())
-                        .index(foundPost.getIndex())
-                        .description(foundPost.getDescription())
-                        .content(foundPost.getContent())
-                        .isTemp(foundPost.getIsTemp())
-                        .isPublic(foundPost.getIsPublic())
-                        .registeredDateTime(foundPost.getRegDt())
-                        .updatedDateTime(foundPost.getModDt())
-                        .thumbnailPath(thumbnailPath)
-                        .build());
+                PostResponseDto.PostInfo postInfo = optionalPostInfo.get();
+                return responseDto.success(postInfo);
             }
         } catch (Exception e) {
             log.debug("getPost erorr occurred!");
@@ -81,29 +65,13 @@ public class PostController {
     @GetMapping(value = "/getPostByIndex", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPostByIndex(@ModelAttribute PostRequestDto.SearchPostByIndex searchPostByIndex) {
         try {
-            Optional<Post> optionalPost = postService.getPostByIndex(searchPostByIndex);
+            Optional<PostResponseDto.PostInfo> optionalPostInfo = postService.getPostByIndex(searchPostByIndex);
 
-            if (optionalPost.isEmpty()) {
+            if (optionalPostInfo.isEmpty()) {
                 return responseDto.success("해당 post를 찾을 수 없습니다.");
             } else {
-                Post foundPost = optionalPost.get();
-                String thumbnailPath = null;
-                if (foundPost.getJuneberryFile() != null) {
-                    thumbnailPath = foundPost.getJuneberryFile().getPath();
-                }
-
-                return responseDto.success(PostResponseDto.PostInfo.builder()
-                        .id(foundPost.getPostUid().toString())
-                        .title(foundPost.getTitle())
-                        .index(foundPost.getIndex())
-                        .description(foundPost.getDescription())
-                        .content(foundPost.getContent())
-                        .isTemp(foundPost.getIsTemp())
-                        .isPublic(foundPost.getIsPublic())
-                        .registeredDateTime(foundPost.getRegDt())
-                        .updatedDateTime(foundPost.getModDt())
-                        .thumbnailPath(thumbnailPath)
-                        .build());
+                PostResponseDto.PostInfo postInfo = optionalPostInfo.get();
+                return responseDto.success(postInfo);
             }
         } catch (Exception e) {
             log.debug("getPostByIndex error occurred!");

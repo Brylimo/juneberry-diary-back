@@ -3,6 +3,8 @@ package com.thxpapa.juneberrydiary.dto.post;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+
 public class PostRequestDto {
     @Data
     @AllArgsConstructor
@@ -17,6 +19,7 @@ public class PostRequestDto {
         private Boolean isTemp;
         private Boolean isPublic;
         private String blogId;
+        private ArrayList<String> tags;
         private MultipartFile thumbnailImg;
     }
 

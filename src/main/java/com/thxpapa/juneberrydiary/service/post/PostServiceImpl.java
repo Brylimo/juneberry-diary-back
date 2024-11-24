@@ -4,11 +4,16 @@ import com.thxpapa.juneberrydiary.domain.blog.Blog;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.post.Post;
 import com.thxpapa.juneberrydiary.domain.post.PostFile;
+import com.thxpapa.juneberrydiary.domain.post.PostTag;
+import com.thxpapa.juneberrydiary.domain.post.Tag;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
+import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
 import com.thxpapa.juneberrydiary.repository.blogRepository.BlogRepository;
 import com.thxpapa.juneberrydiary.repository.fileRepository.JuneberryFileRepository;
 import com.thxpapa.juneberrydiary.repository.postRepository.PostFileRepository;
 import com.thxpapa.juneberrydiary.repository.postRepository.PostRepository;
+import com.thxpapa.juneberrydiary.repository.postRepository.PostTagRepository;
+import com.thxpapa.juneberrydiary.repository.postRepository.TagRepository;
 import com.thxpapa.juneberrydiary.util.S3UploaderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,6 +39,8 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostFileRepository postFileRepository;
     private final BlogRepository blogRepository;
+    private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
 
     @Override
     @Transactional
@@ -92,6 +98,7 @@ public class PostServiceImpl implements PostService {
                 blog.updatePostIdxCnt(nextPostIdx);
             }
 
+            // 포스트 저장
             Post createdPost = postRepository.save(Post.builder()
                     .title(writePost.getTitle())
                     .content(writePost.getContent())
@@ -103,6 +110,18 @@ public class PostServiceImpl implements PostService {
                     .date(date)
                     .juneberryFile(resFile)
                     .build());
+
+            // 태그 저장
+            for (String tag : writePost.getTags()) {
+                Tag createdTag = tagRepository.save(Tag.builder()
+                        .name(tag)
+                        .build());
+
+                postTagRepository.save(PostTag.builder()
+                        .tag(createdTag)
+                        .post(createdPost)
+                        .build());
+            }
 
             return createdPost;
         } catch (Exception e) {
@@ -144,6 +163,45 @@ public class PostServiceImpl implements PostService {
                 post.getBlog().updatePostIdxCnt(nextPostIdx);
             }
 
+            // tag 처리
+            List<Tag> tagList = tagRepository.findTagsByPost(post);
+
+            HashMap<String, Tag> tagMap = new HashMap<>();
+            for (Tag tag : tagList) {
+                tagMap.put(tag.getName(), tag);
+            }
+
+            Set<String> orgSet = new HashSet<>(tagList.stream().map(tag -> tag.getName()).collect(Collectors.toList())); // 기존 존재하던 tag들
+            Set<String> newSet = new HashSet<>(writePost.getTags()); // 새로 입력된 tag들
+
+            // tag 삭제
+            Set<String> deleteSet = orgSet.stream()
+                            .filter(element -> !newSet.contains(element))
+                            .collect(Collectors.toSet());
+
+            for (String element : deleteSet) {
+                Tag deleteTag = tagMap.get(element);
+
+                postTagRepository.deletePostTag(post, deleteTag);
+                tagRepository.deleteById(deleteTag.getTagUid());
+            }
+
+            // tag 추가
+            Set<String> addSet = newSet.stream()
+                    .filter(element -> !orgSet.contains(element))
+                    .collect(Collectors.toSet());
+
+            for (String element : addSet) {
+                Tag createdTag = tagRepository.save(Tag.builder()
+                        .name(element)
+                        .build());
+
+                postTagRepository.save(PostTag.builder()
+                        .tag(createdTag)
+                        .post(post)
+                        .build());
+            }
+
             post.updatePostByWritePost(writePost, resFile);
 
             return post;
@@ -155,21 +213,90 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Optional<Post> getPostById(String blogId, UUID id) {
+    public Optional<PostResponseDto.PostInfo> getPostById(String blogId, UUID id) {
         Optional<Post> optionalPost = postRepository.findFirstByPostUid(id);
 
         if (optionalPost.isPresent() && !optionalPost.get().getBlog().getBlogId().equals(blogId)) {
             return Optional.empty();
         }
 
-        return optionalPost;
+        List<Tag> tagList = new ArrayList<>();
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            tagList = tagRepository.findTagsByPost(post);
+        } else {
+            // post가 없을 경우 처리
+            throw new NoSuchElementException("Post not found");
+        }
+
+        if (optionalPost.isEmpty()) {
+            return Optional.empty();
+        } else {
+            Post foundPost = optionalPost.get();
+            String thumbnailPath = null;
+            if (foundPost.getJuneberryFile() != null) {
+                thumbnailPath = foundPost.getJuneberryFile().getPath();
+            }
+
+            Optional<PostResponseDto.PostInfo> optionalPostInfo = Optional.ofNullable(PostResponseDto.PostInfo.builder()
+                    .id(foundPost.getPostUid().toString())
+                    .title(foundPost.getTitle())
+                    .index(foundPost.getIndex())
+                    .description(foundPost.getDescription())
+                    .content(foundPost.getContent())
+                    .isTemp(foundPost.getIsTemp())
+                    .isPublic(foundPost.getIsPublic())
+                    .registeredDateTime(foundPost.getRegDt())
+                    .updatedDateTime(foundPost.getModDt())
+                    .thumbnailPath(thumbnailPath)
+                    .tags(tagList.stream()
+                            .map(tag -> tag.getName()).collect(Collectors.toList()))
+                    .build());
+
+            return optionalPostInfo;
+        }
     }
 
     @Override
     @Transactional
-    public Optional<Post> getPostByIndex(PostRequestDto.SearchPostByIndex searchPostByIndex) {
+    public Optional<PostResponseDto.PostInfo> getPostByIndex(PostRequestDto.SearchPostByIndex searchPostByIndex) {
         Optional<Post> optionalPost = postRepository.findPostByIndex(searchPostByIndex);
-        return optionalPost;
+
+        List<Tag> tagList = new ArrayList<>();
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            tagList = tagRepository.findTagsByPost(post);
+        } else {
+            // post가 없을 경우 처리
+            throw new NoSuchElementException("Post not found");
+        }
+
+        if (optionalPost.isEmpty()) {
+            return Optional.empty();
+        } else {
+            Post foundPost = optionalPost.get();
+            String thumbnailPath = null;
+            if (foundPost.getJuneberryFile() != null) {
+                thumbnailPath = foundPost.getJuneberryFile().getPath();
+            }
+
+            Optional<PostResponseDto.PostInfo> optionalPostInfo = Optional.ofNullable(PostResponseDto.PostInfo.builder()
+                    .id(foundPost.getPostUid().toString())
+                    .title(foundPost.getTitle())
+                    .index(foundPost.getIndex())
+                    .description(foundPost.getDescription())
+                    .content(foundPost.getContent())
+                    .isTemp(foundPost.getIsTemp())
+                    .isPublic(foundPost.getIsPublic())
+                    .registeredDateTime(foundPost.getRegDt())
+                    .updatedDateTime(foundPost.getModDt())
+                    .thumbnailPath(thumbnailPath)
+                    .tags(tagList.stream()
+                            .map(tag -> tag.getName()).collect(Collectors.toList()))
+                    .build());
+
+            return optionalPostInfo;
+        }
     }
 
     @Override

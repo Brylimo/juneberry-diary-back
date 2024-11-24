@@ -10,6 +10,8 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -62,6 +64,9 @@ public class Post extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="thumbnailId")
     private JuneberryFile juneberryFile;
+
+    @OneToMany(mappedBy = "post")
+    private List<PostTag> postTags = new ArrayList<PostTag>();
 
     @Builder
     public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, Long index, Blog blog, JuneberryFile juneberryFile) {

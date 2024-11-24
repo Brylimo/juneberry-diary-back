@@ -32,6 +32,7 @@ public class PostResponseDto {
         private String title;
         private String description;
         private String content;
+        private List<String> tags;
         private Boolean isTemp;
         private Boolean isPublic;
         private String thumbnailPath;
