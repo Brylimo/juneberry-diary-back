@@ -2,6 +2,8 @@ package com.thxpapa.juneberrydiary.web.v1;
 
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.post.Post;
+import com.thxpapa.juneberrydiary.domain.post.PostTag;
+import com.thxpapa.juneberrydiary.domain.post.Tag;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
@@ -97,6 +99,10 @@ public class PostController {
                             .index(post.getIndex())
                             .description(post.getDescription())
                             .content(post.getContent())
+                            .tags(post.getPostTags().stream()
+                                    .map(PostTag::getTag)
+                                    .map(Tag::getName)
+                                    .collect(Collectors.toList()))
                             .registeredDateTime(post.getRegDt())
                             .updatedDateTime(post.getModDt())
                             .thumbnailPath(post.getJuneberryFile() != null ? post.getJuneberryFile().getPath() : null)

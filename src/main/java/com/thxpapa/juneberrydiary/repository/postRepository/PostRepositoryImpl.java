@@ -16,6 +16,8 @@ import java.util.Optional;
 import static com.thxpapa.juneberrydiary.domain.blog.QBlog.*;
 import static com.thxpapa.juneberrydiary.domain.file.QJuneberryFile.*;
 import static com.thxpapa.juneberrydiary.domain.post.QPost.*;
+import static com.thxpapa.juneberrydiary.domain.post.QPostTag.*;
+import static com.thxpapa.juneberrydiary.domain.post.QTag.*;
 
 public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -46,6 +48,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .selectFrom(post)
                 .join(post.blog, blog).fetchJoin()
                 .leftJoin(post.juneberryFile, juneberryFile).fetchJoin()
+                .leftJoin(post.postTags, postTag).fetchJoin().leftJoin(postTag.tag, tag).fetchJoin()
                 .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
