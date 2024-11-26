@@ -57,7 +57,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
-                .select(post.count())
+                .select(post.countDistinct())
                 .from(post)
                 .join(post.blog, blog)
                 .leftJoin(post.postTags, postTag)
