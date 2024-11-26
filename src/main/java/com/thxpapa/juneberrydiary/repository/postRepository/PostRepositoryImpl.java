@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.repository.postRepository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.thxpapa.juneberrydiary.domain.post.Post;
@@ -49,7 +50,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .join(post.blog, blog).fetchJoin()
                 .leftJoin(post.juneberryFile, juneberryFile).fetchJoin()
                 .leftJoin(post.postTags, postTag).fetchJoin().leftJoin(postTag.tag, tag).fetchJoin()
-                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()))
+                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()), selectPostIdsWithTag(searchPostList.getTagName()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(post.regDt.desc())
@@ -59,7 +60,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .select(post.count())
                 .from(post)
                 .join(post.blog, blog)
-                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()));
+                .leftJoin(post.postTags, postTag)
+                .leftJoin(postTag.tag, tag)
+                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()), selectPostIdsWithTag(searchPostList.getTagName()));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
@@ -76,6 +79,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchFirst();
 
         return Optional.ofNullable(result);
+    }
+
+    private BooleanExpression selectPostIdsWithTag(String tagName) {
+        return tagName != null ? post.postUid.in(JPAExpressions.select(postTag.post.postUid)
+                .from(postTag)
+                .join(postTag.tag, tag)
+                .where(tag.name.eq(tagName))
+                .distinct()) : null;
     }
 
     private BooleanExpression isPublicEq(Boolean isPublic) {
