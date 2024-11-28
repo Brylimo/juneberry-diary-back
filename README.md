@@ -5,9 +5,10 @@ juneberry diary backend project
 
 ### juneberry diary backend api 서버 개발 스택
 - 백엔드
-  -  Spring Boot, redis, postgresql, spring security, spring data jpa, querydsl, docker, nginx, jenkins, java
+  -  Spring Boot, redis, postgresql, spring security, spring data jpa, querydsl, docker, grafana, prometheus, nginx, jenkins, java
   -  jenkins 서버를 별도로 둬서 CI/CD 작업을 자동화
-  -  어플리케이션 서버는 nginx를 리버스 프록시로 사용하고 도커를 위에 띄우는 구조
+  -  Prometheus, Grafana를 이용한 모니터링 시스템 서버 별도 구축
+  -  어플리케이션 서버는 nginx를 리버스 프록시로 사용하고 도커 위에 어플리케이션을 띄우는 구조
 
 ### juneberry diary 프로젝트 작업
 - 프로젝트 작업 기간
