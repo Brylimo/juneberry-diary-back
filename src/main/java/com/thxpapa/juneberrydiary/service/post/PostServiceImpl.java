@@ -112,18 +112,20 @@ public class PostServiceImpl implements PostService {
                     .build());
 
             // 태그 저장
-            for (String tag : writePost.getTags()) {
-                Optional<Tag> optionalTag = tagRepository.findTagByName(tag);
+            if (writePost.getTags() != null) {
+                for (String tag : writePost.getTags()) {
+                    Optional<Tag> optionalTag = tagRepository.findTagByName(tag);
 
-                Tag resTag = optionalTag.orElseGet(
-                        () -> tagRepository.save(Tag.builder()
-                                .name(tag)
-                                .build()));
+                    Tag resTag = optionalTag.orElseGet(
+                            () -> tagRepository.save(Tag.builder()
+                                    .name(tag)
+                                    .build()));
 
-                postTagRepository.save(PostTag.builder()
-                        .tag(resTag)
-                        .post(createdPost)
-                        .build());
+                    postTagRepository.save(PostTag.builder()
+                            .tag(resTag)
+                            .post(createdPost)
+                            .build());
+                }
             }
 
             return createdPost;
