@@ -81,3 +81,9 @@ juneberry diary backend project
 
 ### not found 페이지
 ![](https://cdn.juneberrydiary.com/a2eb2266-c96b-41de-a671-8f596eb57cba.png)
+
+## 아키텍처
+![](https://cdn.juneberrydiary.com/6f846603-3d40-4ba2-8dc7-e35d52abab48.jpg)
+
+## ERD
+![](https://cdn.juneberrydiary.com/a1d0adab-a063-40dc-af47-77fa13d058d2.jpg)
