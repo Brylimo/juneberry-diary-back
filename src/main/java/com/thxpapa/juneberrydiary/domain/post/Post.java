@@ -68,6 +68,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<PostTag> postTags = new ArrayList<PostTag>();
 
+    @OneToMany(mappedBy = "post")
+    private List<PostCategory> postCategories = new ArrayList<PostCategory>();
+
     @Builder
     public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, Long index, Blog blog, JuneberryFile juneberryFile) {
         this.date = date;
