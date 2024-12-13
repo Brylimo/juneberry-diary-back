@@ -327,6 +327,25 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void deletePostById(UUID id) {
-        postRepository.deleteById(id);
+        Optional<Post> optionalPost = postRepository.findFirstByPostUid(id);
+
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+
+            // 태그 삭제
+            List<Tag> tagList = tagRepository.findTagsByPost(post);
+            for (Tag deleteTag : tagList) {
+                postTagRepository.deletePostTag(post, deleteTag);
+
+                long aliveTagCnt = postTagRepository.countByTag(deleteTag);
+                if (aliveTagCnt == 0L) {
+                    tagRepository.deleteById(deleteTag.getTagUid());
+                }
+            }
+
+            postRepository.deleteById(id);
+        } else {
+            throw new NoSuchElementException("Post not found");
+        }
     }
 }

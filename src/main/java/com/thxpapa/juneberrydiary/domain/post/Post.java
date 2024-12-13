@@ -65,6 +65,9 @@ public class Post extends BaseEntity {
     @JoinColumn(name="thumbnailId")
     private JuneberryFile juneberryFile;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostFile> postFiles = new ArrayList<>();
+
     @OneToMany(mappedBy = "post")
     private List<PostTag> postTags = new ArrayList<PostTag>();
 
