@@ -1,6 +1,7 @@
-package com.thxpapa.juneberrydiary.domain.post;
+package com.thxpapa.juneberrydiary.domain.blog;
 
 import com.thxpapa.juneberrydiary.domain.BaseTimeEntity;
+import com.thxpapa.juneberrydiary.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -24,11 +25,16 @@ public class Category extends BaseTimeEntity {
     @Column(name="name")
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name="blogId")
+    private Blog blog;
+
     @OneToMany(mappedBy = "category")
-    private List<PostCategory> postCategories = new ArrayList<PostCategory>();
+    private List<SubCategory> subCategories = new ArrayList<SubCategory>();
 
     @Builder
-    public Category(String name) {
+    public Category(String name, Blog blog) {
         this.name = name;
+        this.blog = blog;
     }
 }

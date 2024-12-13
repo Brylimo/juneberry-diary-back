@@ -1,6 +1,8 @@
 package com.thxpapa.juneberrydiary.service.post;
 
 import com.thxpapa.juneberrydiary.domain.blog.Blog;
+import com.thxpapa.juneberrydiary.domain.blog.Category;
+import com.thxpapa.juneberrydiary.domain.blog.SubCategory;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.domain.post.Post;
 import com.thxpapa.juneberrydiary.domain.post.PostFile;
@@ -9,6 +11,8 @@ import com.thxpapa.juneberrydiary.domain.post.Tag;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
 import com.thxpapa.juneberrydiary.repository.blogRepository.BlogRepository;
+import com.thxpapa.juneberrydiary.repository.blogRepository.CategoryRepository;
+import com.thxpapa.juneberrydiary.repository.blogRepository.SubCategoryRepository;
 import com.thxpapa.juneberrydiary.repository.fileRepository.JuneberryFileRepository;
 import com.thxpapa.juneberrydiary.repository.postRepository.PostFileRepository;
 import com.thxpapa.juneberrydiary.repository.postRepository.PostRepository;
@@ -39,6 +43,8 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostFileRepository postFileRepository;
     private final BlogRepository blogRepository;
+    private final CategoryRepository categoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
     private final TagRepository tagRepository;
     private final PostTagRepository postTagRepository;
 
@@ -49,13 +55,13 @@ public class PostServiceImpl implements PostService {
             JuneberryFile res = null;
 
             UUID id = UUID.fromString(postId);
-            Post post = postRepository.findFirstByPostUid(id).orElseGet(null);
+            Post post = postRepository.findPostByPostUid(id).orElseGet(null);
 
             if (multipartFile != null &&
                     post != null &&
                     !multipartFile.isEmpty() &&
                     !Objects.isNull(multipartFile.getOriginalFilename()) &&
-                    post.getBlog().getBlogId().equals(blogId)) {
+                    post.getSubCategory().getCategory().getBlog().getBlogId().equals(blogId)) {
                 JuneberryFile file = s3UploaderUtil.uploadFile(multipartFile, "post");
                 res = juneberryFileRepository.save(file);
                 postFileRepository.save(PostFile.builder()
@@ -90,6 +96,20 @@ public class PostServiceImpl implements PostService {
             Blog blog = blogRepository.findById(writePost.getBlogId())
                     .orElseThrow(() -> new NullPointerException("cannot find blog!"));
 
+            // 카테고리 fetch
+            Category category = categoryRepository.findFirstByName(writePost.getCategory())
+                    .orElseGet(() -> categoryRepository.save(Category.builder()
+                                    .name(writePost.getCategory())
+                                    .blog(blog)
+                                    .build()));
+
+            // 서브 카테고리 fetch
+            SubCategory subCategory = subCategoryRepository.findFirstByName(writePost.getSubCategory())
+                    .orElseGet(() -> subCategoryRepository.save(SubCategory.builder()
+                                    .name(writePost.getSubCategory())
+                                    .category(category)
+                                    .build()));
+
             Long nextPostIdx = null;
             if (!writePost.getIsTemp()) { // 발행되는 포스트 -> index 저장
                 nextPostIdx = blog.getPostIdxCnt() + 1;
@@ -103,7 +123,7 @@ public class PostServiceImpl implements PostService {
                     .title(writePost.getTitle())
                     .content(writePost.getContent())
                     .description(writePost.getDescription())
-                    .blog(blog)
+                    .subCategory(subCategory)
                     .isTemp(writePost.getIsTemp())
                     .isPublic(writePost.getIsPublic())
                     .index(nextPostIdx)
@@ -142,9 +162,10 @@ public class PostServiceImpl implements PostService {
             UUID id = UUID.fromString(writePost.getPostId());
             MultipartFile thumbnail = writePost.getThumbnailImg();
 
-            Post post = postRepository.findFirstByPostUid(id).orElseGet(() -> storePost(writePost));
+            Post post = postRepository.findPostByPostUid(id).orElseGet(() -> storePost(writePost));
+            Blog blog = post.getSubCategory().getCategory().getBlog();
 
-            if (!post.getBlog().getBlogId().equals(writePost.getBlogId())) {
+            if (!blog.getBlogId().equals(writePost.getBlogId())) {
                 throw new Exception("blogId doesn't match");
             }
 
@@ -162,10 +183,10 @@ public class PostServiceImpl implements PostService {
 
             // index 처리
             if (post.getIndex() == null && !writePost.getIsTemp()) {
-                Long nextPostIdx = post.getBlog().getPostIdxCnt() + 1;
+                Long nextPostIdx = blog.getPostIdxCnt() + 1;
 
                 post.updateIndex(nextPostIdx);
-                post.getBlog().updatePostIdxCnt(nextPostIdx);
+                blog.updatePostIdxCnt(nextPostIdx);
             }
 
             // tag 처리
@@ -226,9 +247,9 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public Optional<PostResponseDto.PostInfo> getPostById(String blogId, UUID id) {
-        Optional<Post> optionalPost = postRepository.findFirstByPostUid(id);
+        Optional<Post> optionalPost = postRepository.findPostByPostUid(id);
 
-        if (optionalPost.isPresent() && !optionalPost.get().getBlog().getBlogId().equals(blogId)) {
+        if (optionalPost.isPresent() && !optionalPost.get().getSubCategory().getCategory().getBlog().getBlogId().equals(blogId)) {
             return Optional.empty();
         }
 
@@ -327,7 +348,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void deletePostById(UUID id) {
-        Optional<Post> optionalPost = postRepository.findFirstByPostUid(id);
+        Optional<Post> optionalPost = postRepository.findPostByPostUid(id);
 
         if (optionalPost.isPresent()) {
             Post post = optionalPost.get();

@@ -1,8 +1,12 @@
-package com.thxpapa.juneberrydiary.domain.post;
+package com.thxpapa.juneberrydiary.domain.blog;
 
+import com.thxpapa.juneberrydiary.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -24,8 +28,12 @@ public class SubCategory {
     @JoinColumn(name="categoryId")
     private Category category;
 
+    @OneToMany(mappedBy = "subCategory")
+    private List<Post> posts = new ArrayList<Post>();
+
     @Builder
-    public SubCategory(String name) {
+    public SubCategory(String name, Category category) {
         this.name = name;
+        this.category = category;
     }
 }

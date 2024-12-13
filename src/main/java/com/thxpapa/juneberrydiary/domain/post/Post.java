@@ -1,7 +1,8 @@
 package com.thxpapa.juneberrydiary.domain.post;
 
 import com.thxpapa.juneberrydiary.domain.BaseEntity;
-import com.thxpapa.juneberrydiary.domain.blog.Blog;
+import com.thxpapa.juneberrydiary.domain.blog.Category;
+import com.thxpapa.juneberrydiary.domain.blog.SubCategory;
 import com.thxpapa.juneberrydiary.domain.file.JuneberryFile;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import jakarta.persistence.*;
@@ -58,8 +59,12 @@ public class Post extends BaseEntity {
     private Long index;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="blogId")
-    private Blog blog;
+    @JoinColumn(name="categoryId")
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="subCategoryId")
+    private SubCategory subCategory;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="thumbnailId")
@@ -71,11 +76,8 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<PostTag> postTags = new ArrayList<PostTag>();
 
-    @OneToMany(mappedBy = "post")
-    private List<PostCategory> postCategories = new ArrayList<PostCategory>();
-
     @Builder
-    public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, Long index, Blog blog, JuneberryFile juneberryFile) {
+    public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, Long index, Category category, SubCategory subCategory, JuneberryFile juneberryFile) {
         this.date = date;
         this.title = title;
         this.description = description;
@@ -83,7 +85,8 @@ public class Post extends BaseEntity {
         this.isTemp = isTemp;
         this.isPublic = isPublic;
         this.index = index;
-        this.blog = blog;
+        this.category = category;
+        this.subCategory = subCategory;
         this.juneberryFile = juneberryFile;
     }
 

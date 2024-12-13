@@ -9,6 +9,8 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 
 import static com.thxpapa.juneberrydiary.domain.blog.QBlog.*;
+import static com.thxpapa.juneberrydiary.domain.blog.QCategory.*;
+import static com.thxpapa.juneberrydiary.domain.blog.QSubCategory.*;
 import static com.thxpapa.juneberrydiary.domain.post.QPost.*;
 import static com.thxpapa.juneberrydiary.domain.post.QPostTag.*;
 import static com.thxpapa.juneberrydiary.domain.post.QTag.*;
@@ -22,7 +24,7 @@ public class TagRepositoryImpl implements TagRepositoryCustom {
     public List<Tag> findTagsByPost(Post p) {
         List<Tag> result = queryFactory
                 .selectFrom(tag)
-                .leftJoin(tag.postTags, postTag).fetchJoin().leftJoin(postTag.post, post).fetchJoin()
+                .join(tag.postTags, postTag).fetchJoin().leftJoin(postTag.post, post).fetchJoin()
                 .where(post.postUid.eq(p.getPostUid()))
                 .fetch();
 
@@ -33,9 +35,11 @@ public class TagRepositoryImpl implements TagRepositoryCustom {
     public List<Tag> findTagsByBlog(Blog b) {
         List<Tag> result = queryFactory
                 .selectFrom(tag).distinct()
-                .leftJoin(tag.postTags, postTag).fetchJoin()
-                .leftJoin(postTag.post, post).fetchJoin()
-                .leftJoin(post.blog, blog).fetchJoin()
+                .join(tag.postTags, postTag).fetchJoin()
+                .join(postTag.post, post).fetchJoin()
+                .join(post.subCategory, subCategory).fetchJoin()
+                .join(subCategory.category, category).fetchJoin()
+                .join(category.blog, blog).fetchJoin()
                 .where(blog.blogId.eq(b.getBlogId()))
                 .fetch();
 
