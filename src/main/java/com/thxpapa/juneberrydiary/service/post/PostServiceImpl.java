@@ -104,7 +104,7 @@ public class PostServiceImpl implements PostService {
                                     .build()));
 
             // 서브 카테고리 fetch
-            SubCategory subCategory = subCategoryRepository.findFirstByName(writePost.getSubCategory())
+            SubCategory subCategory = subCategoryRepository.findFirstByNameAndCategory(writePost.getSubCategory(), category)
                     .orElseGet(() -> subCategoryRepository.save(SubCategory.builder()
                                     .name(writePost.getSubCategory())
                                     .category(category)
@@ -273,6 +273,8 @@ public class PostServiceImpl implements PostService {
 
             Optional<PostResponseDto.PostInfo> optionalPostInfo = Optional.ofNullable(PostResponseDto.PostInfo.builder()
                     .id(foundPost.getPostUid().toString())
+                    .category(foundPost.getSubCategory().getCategory().getName())
+                    .subCategory(foundPost.getSubCategory().getName())
                     .title(foundPost.getTitle())
                     .index(foundPost.getIndex())
                     .description(foundPost.getDescription())

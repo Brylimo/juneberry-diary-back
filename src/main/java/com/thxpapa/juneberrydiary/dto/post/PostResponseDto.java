@@ -29,6 +29,8 @@ public class PostResponseDto {
         private LocalDateTime registeredDateTime;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd. HH:mm", timezone = "Asia/Seoul")
         private LocalDateTime updatedDateTime;
+        private String category;
+        private String subCategory;
         private String title;
         private String description;
         private String content;

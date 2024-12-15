@@ -18,6 +18,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class BlogServiceImpl implements BlogService {
+    private final CategoryService categoryService;
+
     private final BlogRepository blogRepository;
     private final BlogUserRepository blogUserRepository;
 
@@ -49,6 +51,9 @@ public class BlogServiceImpl implements BlogService {
                     .blog(createdBlog)
                     .juneberryUser(user)
                     .build());
+
+            // 디폴트 카테고리 생성 (카테고리가 아무것도 없을 경우 대비)
+            categoryService.createDefaultCategory(createdBlog);
 
             return createdBlog;
         } else {

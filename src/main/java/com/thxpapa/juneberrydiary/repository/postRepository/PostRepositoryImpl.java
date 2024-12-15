@@ -38,9 +38,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         long result = queryFactory
                 .select(post.count())
                 .from(post)
-                .join(post.subCategory, subCategory).fetchJoin()
-                .join(post.category, category).fetchJoin()
-                .join(category.blog, blog).fetchJoin()
+                .leftJoin(post.subCategory, subCategory)
+                .leftJoin(subCategory.category, category)
+                .join(category.blog, blog)
                 .where(blog.blogId.eq(blogId)
                         .and(post.isTemp.eq(true)))
                 .fetchOne();
@@ -52,8 +52,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public Page<Post> searchPostList(PostRequestDto.SearchPostList searchPostList, Pageable pageable) {
         List<Post> content = queryFactory
                 .selectFrom(post)
-                .join(post.subCategory, subCategory).fetchJoin()
-                .join(post.category, category).fetchJoin()
+                .leftJoin(post.subCategory, subCategory).fetchJoin()
+                .leftJoin(subCategory.category, category).fetchJoin()
                 .join(category.blog, blog).fetchJoin()
                 .leftJoin(post.juneberryFile, juneberryFile).fetchJoin()
                 .leftJoin(post.postTags, postTag).fetchJoin().leftJoin(postTag.tag, tag).fetchJoin()
@@ -66,9 +66,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         JPAQuery<Long> countQuery = queryFactory
                 .select(post.countDistinct())
                 .from(post)
-                .join(post.subCategory, subCategory).fetchJoin()
-                .join(post.category, category).fetchJoin()
-                .join(category.blog, blog).fetchJoin()
+                .leftJoin(post.subCategory, subCategory)
+                .leftJoin(subCategory.category, category)
+                .join(category.blog, blog)
                 .leftJoin(post.postTags, postTag)
                 .leftJoin(postTag.tag, tag)
                 .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()), selectPostIdsWithTag(searchPostList.getTagName()));
@@ -83,8 +83,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public Optional<Post> findPostByIndex(PostRequestDto.SearchPostByIndex searchPostByIndex) {
         Post result = queryFactory
                 .selectFrom(post)
-                .join(post.subCategory, subCategory).fetchJoin()
-                .join(subCategory.category, category).fetchJoin()
+                .leftJoin(post.subCategory, subCategory).fetchJoin()
+                .leftJoin(subCategory.category, category).fetchJoin()
                 .join(category.blog, blog).fetchJoin()
                 .where(blog.blogId.eq(searchPostByIndex.getBlogId()), post.index.eq(searchPostByIndex.getIndex()))
                 .fetchFirst();
@@ -96,8 +96,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public Optional<Post> findPostByPostUid(UUID id) {
         Post result = queryFactory
                 .selectFrom(post)
-                .join(post.subCategory, subCategory).fetchJoin()
-                .join(subCategory.category, category).fetchJoin()
+                .leftJoin(post.subCategory, subCategory).fetchJoin()
+                .leftJoin(subCategory.category, category).fetchJoin()
                 .join(category.blog, blog).fetchJoin()
                 .where(post.postUid.eq(id))
                 .fetchFirst();

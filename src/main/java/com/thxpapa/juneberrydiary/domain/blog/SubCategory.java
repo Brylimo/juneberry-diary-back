@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Table(name="sub_category", schema="datamart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = "subCategoryUid", callSuper=false)
+@EqualsAndHashCode(of = {"name", "category"}, callSuper=false)
 @ToString(of = {"subCategoryUid", "name"})
 public class SubCategory {
     @Id
@@ -24,7 +24,7 @@ public class SubCategory {
     @Column(name="name")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="categoryId")
     private Category category;
 

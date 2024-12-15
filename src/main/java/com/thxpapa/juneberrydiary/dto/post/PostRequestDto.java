@@ -18,8 +18,8 @@ public class PostRequestDto {
         private String thumbnailPath;
         private Boolean isTemp;
         private Boolean isPublic;
-        private String subCategory;
-        private String category;
+        private String subCategory = "";
+        private String category = "";
         private String blogId;
         private ArrayList<String> tags;
         private MultipartFile thumbnailImg;

@@ -59,10 +59,6 @@ public class Post extends BaseEntity {
     private Long index;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="categoryId")
-    private Category category;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="subCategoryId")
     private SubCategory subCategory;
 
@@ -77,7 +73,7 @@ public class Post extends BaseEntity {
     private List<PostTag> postTags = new ArrayList<PostTag>();
 
     @Builder
-    public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, Long index, Category category, SubCategory subCategory, JuneberryFile juneberryFile) {
+    public Post(LocalDate date, String title, String description, String content, Boolean isTemp, Boolean isPublic, Long index, SubCategory subCategory, JuneberryFile juneberryFile) {
         this.date = date;
         this.title = title;
         this.description = description;
@@ -85,7 +81,6 @@ public class Post extends BaseEntity {
         this.isTemp = isTemp;
         this.isPublic = isPublic;
         this.index = index;
-        this.category = category;
         this.subCategory = subCategory;
         this.juneberryFile = juneberryFile;
     }
