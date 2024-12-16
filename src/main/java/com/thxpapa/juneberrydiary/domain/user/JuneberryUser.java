@@ -34,10 +34,6 @@ public class JuneberryUser extends BaseTimeEntity implements UserDetails {
     @Column(name="email", length = 45, nullable = false)
     private String email;
 
-    @Comment("포스트 이름")
-    @Column(name="postname")
-    private String postname;
-
     @Comment("유저이름")
     @Column(name="username", length = 45, nullable = false)
     private String username;
@@ -94,10 +90,9 @@ public class JuneberryUser extends BaseTimeEntity implements UserDetails {
     private List<BlogUser> blogUsers = new ArrayList<BlogUser>();
 
     @Builder
-    public JuneberryUser(String name, String email, String postname, String username, String password, List<String> roles, String intro) {
+    public JuneberryUser(String name, String email, String username, String password, List<String> roles, String intro) {
         this.name = name;
         this.email = email;
-        this.postname = postname;
         this.username = username;
         this.password = password;
         this.roles = roles;
