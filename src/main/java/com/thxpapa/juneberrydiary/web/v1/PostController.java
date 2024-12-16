@@ -95,6 +95,8 @@ public class PostController {
                             .id(post.getPostUid().toString())
                             .isTemp(post.getIsTemp())
                             .isPublic(post.getIsPublic())
+                            .category(post.getSubCategory().getCategory().getName())
+                            .subCategory(post.getSubCategory().getName())
                             .title(post.getTitle())
                             .index(post.getIndex())
                             .description(post.getDescription())

@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorizeRequests->
                         authorizeRequests
-                                .requestMatchers("/actuator/**","/auth/login", "/auth/register", "/v1/cal/getTagsByMonth", "/v1/blog/getBlogById", "/v1/post/getPostList", "/v1/post/getPostByIndex", "/v1/tag/**").permitAll()
+                                .requestMatchers("/actuator/**","/auth/login", "/auth/register", "/v1/cal/getTagsByMonth", "/v1/blog/getBlogById", "/v1/blog/{blogId}/category/categories", "/v1/post/getPostList", "/v1/post/getPostByIndex", "/v1/tag/**").permitAll()
                                 .requestMatchers("/auth/validate", "/v1/cal/**", "/v1/post/**", "/v1/blog/**")
                                 .hasAnyRole("USER", "ADMIN")
                                 .anyRequest().authenticated()

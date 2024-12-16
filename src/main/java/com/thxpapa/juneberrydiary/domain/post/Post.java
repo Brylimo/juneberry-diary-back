@@ -89,6 +89,8 @@ public class Post extends BaseEntity {
         this.index = index;
     }
 
+    public void updateSubCategory(SubCategory subCategory) { this.subCategory = subCategory; }
+
     public Post updatePostByWritePost(PostRequestDto.WritePost writePost, JuneberryFile thumbnailFile) {
         if (thumbnailFile != null) {
             this.juneberryFile = thumbnailFile;

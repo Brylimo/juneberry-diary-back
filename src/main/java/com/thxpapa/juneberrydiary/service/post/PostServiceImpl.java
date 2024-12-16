@@ -97,9 +97,10 @@ public class PostServiceImpl implements PostService {
                     .orElseThrow(() -> new NullPointerException("cannot find blog!"));
 
             // 카테고리 fetch
-            Category category = categoryRepository.findFirstByName(writePost.getCategory())
+            Category category = categoryRepository.findFirstByNameAndBlog(writePost.getCategory(), blog)
                     .orElseGet(() -> categoryRepository.save(Category.builder()
                                     .name(writePost.getCategory())
+                                    .position(0)
                                     .blog(blog)
                                     .build()));
 
@@ -187,6 +188,35 @@ public class PostServiceImpl implements PostService {
 
                 post.updateIndex(nextPostIdx);
                 blog.updatePostIdxCnt(nextPostIdx);
+            }
+
+            // 카테고리 처리
+            Category orgCategory = post.getSubCategory().getCategory();
+            SubCategory orgSubCategory = post.getSubCategory();
+
+            if (!orgCategory.getName().equals(writePost.getCategory())) { // 카테고리가 다를 경우
+                Category newCategory = categoryRepository.findFirstByNameAndBlog(writePost.getCategory(), blog)
+                        .orElseGet(() -> categoryRepository.save(Category.builder()
+                                .name(writePost.getCategory())
+                                .position(0)
+                                .blog(blog)
+                                .build()));
+
+                SubCategory newSubCategory = subCategoryRepository.findFirstByNameAndCategory(writePost.getSubCategory(), newCategory)
+                        .orElseGet(() -> subCategoryRepository.save(SubCategory.builder()
+                                .name(writePost.getSubCategory())
+                                .category(newCategory)
+                                .build()));
+
+                post.updateSubCategory(newSubCategory);
+            } else if (!orgSubCategory.getName().equals(writePost.getSubCategory())) { // 카테고리는 같으나 서브 카테고리가 다를 경우
+                SubCategory newSubCategory = subCategoryRepository.findFirstByNameAndCategory(writePost.getSubCategory(), orgCategory)
+                        .orElseGet(() -> subCategoryRepository.save(SubCategory.builder()
+                                .name(writePost.getSubCategory())
+                                .category(orgCategory)
+                                .build()));
+
+                post.updateSubCategory(newSubCategory);
             }
 
             // tag 처리
@@ -317,6 +347,8 @@ public class PostServiceImpl implements PostService {
 
             Optional<PostResponseDto.PostInfo> optionalPostInfo = Optional.ofNullable(PostResponseDto.PostInfo.builder()
                     .id(foundPost.getPostUid().toString())
+                    .category(foundPost.getSubCategory().getCategory().getName())
+                    .subCategory(foundPost.getSubCategory().getName())
                     .title(foundPost.getTitle())
                     .index(foundPost.getIndex())
                     .description(foundPost.getDescription())

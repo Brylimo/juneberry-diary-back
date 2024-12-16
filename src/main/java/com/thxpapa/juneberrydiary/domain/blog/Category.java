@@ -24,6 +24,10 @@ public class Category extends BaseTimeEntity {
     @Column(name="name")
     private String name;
 
+    @Comment("위치")
+    @Column(name="position")
+    private Integer position = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="blogId")
     private Blog blog;
@@ -32,8 +36,9 @@ public class Category extends BaseTimeEntity {
     private List<SubCategory> subCategories = new ArrayList<SubCategory>();
 
     @Builder
-    public Category(String name, Blog blog) {
+    public Category(String name, int position, Blog blog) {
         this.name = name;
+        this.position = position;
         this.blog = blog;
     }
 

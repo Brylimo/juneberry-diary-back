@@ -3,6 +3,7 @@ package com.thxpapa.juneberrydiary.service.blog;
 import com.thxpapa.juneberrydiary.domain.blog.Blog;
 import com.thxpapa.juneberrydiary.domain.blog.Category;
 import com.thxpapa.juneberrydiary.domain.blog.SubCategory;
+import com.thxpapa.juneberrydiary.dto.category.CategoryPositionDto;
 import com.thxpapa.juneberrydiary.dto.category.CategoryRequestDto;
 import com.thxpapa.juneberrydiary.dto.category.CategoryResponseDto;
 import com.thxpapa.juneberrydiary.repository.blogRepository.BlogRepository;
@@ -32,6 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (blog != null) {
             Category defaultCategory = categoryRepository.save(Category.builder()
                     .name("")
+                    .position(0)
                     .blog(blog)
                     .build());
 
@@ -64,9 +66,13 @@ public class CategoryServiceImpl implements CategoryService {
                         HashMap::new // HashMap 생성
                 ));
 
-        for (CategoryResponseDto.CategoryInfo categoryInfo : createCategoryDto.getCategoryInfos()) {
+        List<CategoryPositionDto> updateCategoryList = new ArrayList<>();
+        for (int i = 0; i < createCategoryDto.getCategoryInfos().size(); i++) {
+            CategoryResponseDto.CategoryInfo categoryInfo = createCategoryDto.getCategoryInfos().get(i);
+
             Category category = Category.builder()
                     .name(categoryInfo.getCategoryName())
+                    .position(i)
                     .blog(blog)
                     .build();
 
@@ -91,6 +97,13 @@ public class CategoryServiceImpl implements CategoryService {
 
                 continue;
             } else {
+                if (oldCategoryMap.get(category.getName()).getPosition() != i) {
+                    updateCategoryList.add(CategoryPositionDto.builder()
+                                    .categoryUid(oldCategoryMap.get(category.getName()).getCategoryUid())
+                                    .position(i)
+                                    .build());
+                }
+
                 subCategories = categoryInfo.getChildren().stream()
                         .map(subCategoryInfo -> SubCategory.builder()
                                 .name(subCategoryInfo.getSubCategoryName())
@@ -116,6 +129,10 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (!categoryList.isEmpty()) {
             categoryRepository.saveAll(categoryList);
+        }
+
+        if (!updateCategoryList.isEmpty()) {
+            categoryRepository.updateCategoriesOrder(updateCategoryList);
         }
 
         // subcategory 삭제

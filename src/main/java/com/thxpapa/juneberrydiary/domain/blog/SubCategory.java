@@ -24,6 +24,10 @@ public class SubCategory {
     @Column(name="name")
     private String name;
 
+    @Comment("위치")
+    @Column(name="position")
+    private Integer position = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="categoryId")
     private Category category;
@@ -32,8 +36,9 @@ public class SubCategory {
     private List<Post> posts = new ArrayList<Post>();
 
     @Builder
-    public SubCategory(String name, Category category) {
+    public SubCategory(String name, int position, Category category) {
         this.name = name;
+        this.position = position;
         this.category = category;
     }
 }
