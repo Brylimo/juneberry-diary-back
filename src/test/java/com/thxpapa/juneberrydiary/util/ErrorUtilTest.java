@@ -14,7 +14,7 @@ public class ErrorUtilTest {
 
     @Test
     void testJasypt() {
-        String str = stringEncryptor.encrypt("revelation3d19!pass");
+        String str = stringEncryptor.encrypt("");
         // String str2 = stringEncryptor.decrypt("");
         System.out.println("[[" + str + "]]");
     }
