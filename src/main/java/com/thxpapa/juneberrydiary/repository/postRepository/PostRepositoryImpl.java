@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.repository.postRepository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -51,13 +52,13 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public Page<Post> searchPostList(PostRequestDto.SearchPostList searchPostList, Pageable pageable) {
         List<Post> content = queryFactory
-                .selectFrom(post)
+                .selectFrom(post).distinct()
                 .leftJoin(post.subCategory, subCategory).fetchJoin()
                 .leftJoin(subCategory.category, category).fetchJoin()
                 .join(category.blog, blog).fetchJoin()
                 .leftJoin(post.juneberryFile, juneberryFile).fetchJoin()
                 .leftJoin(post.postTags, postTag).fetchJoin().leftJoin(postTag.tag, tag).fetchJoin()
-                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()), selectPostIdsWithTag(searchPostList.getTagName()))
+                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()), selectCategoryIdsWithCategory(searchPostList.getCategory(), searchPostList.getSubCategory()), selectPostIdsWithTag(searchPostList.getTagName()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(post.regDt.desc())
@@ -71,7 +72,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .join(category.blog, blog)
                 .leftJoin(post.postTags, postTag)
                 .leftJoin(postTag.tag, tag)
-                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()), selectPostIdsWithTag(searchPostList.getTagName()));
+                .where(blog.blogId.eq(searchPostList.getBlogId()), isTempEq(searchPostList.getIsTemp()), isPublicEq(searchPostList.getIsPublic()), selectCategoryIdsWithCategory(searchPostList.getCategory(), searchPostList.getSubCategory()), selectPostIdsWithTag(searchPostList.getTagName()));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
@@ -103,6 +104,20 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchFirst();
 
         return Optional.ofNullable(result);
+    }
+
+    private BooleanExpression selectCategoryIdsWithCategory(String category, String subCategory) {
+        if (category != null && !category.isEmpty() && subCategory != null && !subCategory.isEmpty()) {
+            // category와 subCategory가 모두 존재하는 경우
+            return post.subCategory.category.name.eq(category)
+                    .and(post.subCategory.name.eq(subCategory));
+        } else if (category != null && !category.isEmpty()) {
+            // category만 존재하고 subCategory는 없는 경우
+            return post.subCategory.category.name.eq(category)
+                    .and(post.subCategory.name.isNull());
+        }
+
+        return Expressions.TRUE;
     }
 
     private BooleanExpression selectPostIdsWithTag(String tagName) {

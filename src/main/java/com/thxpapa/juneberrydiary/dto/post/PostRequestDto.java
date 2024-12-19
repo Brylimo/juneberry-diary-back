@@ -30,6 +30,8 @@ public class PostRequestDto {
     @NoArgsConstructor
     public static class SearchPostList {
         private String blogId;
+        private String category;
+        private String subCategory;
         private String tagName;
         private Boolean isTemp;
         private Boolean isPublic;
