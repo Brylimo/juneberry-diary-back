@@ -4,15 +4,14 @@ import com.thxpapa.juneberrydiary.domain.post.Tag;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.tag.TagResponseDto;
 import com.thxpapa.juneberrydiary.service.post.TagService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,13 +19,16 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/v1/tag")
+@RequestMapping(value = "/v1/blog/{blogId}/tag")
 public class TagController {
     private final TagService tagService;
     private final ResponseDto responseDto;
 
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllTags(@RequestParam("blogId") String blogId) {
+    @Operation(summary = "태그 목록 조회", description = "블로그에 해당하는 모든 태그 목록을 조회합니다.")
+    @GetMapping(value = "/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllTags(
+            @Parameter(required = true, description = "블로그 아이디")
+            @PathVariable("blogId") String blogId) {
         try {
             List<Tag> tagList = tagService.getAllTags(blogId);
 

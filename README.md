@@ -18,7 +18,7 @@ juneberry diary backend project
 준베리다이어리는 블로그/다이어리 기능과 캘린더 기록 기능, 지도 기록 기능이 모두 포함된 종합 다이어리 서비스입니다. 일상에서 경험하는 모든 종류의 기록을 준베리다이어리 서비스 하나만으로 해결할 수 있습니다. 또한 여러 종류의 서로 다른 기록을 서로 연동하고 이러한 기록을 통해 유저에게 새로운 인사이트를 제공하기 위해 노력합니다.
 
 ## 기술 스택
--  Spring Boot, redis, postgresql, spring security, spring data jpa, querydsl, docker, grafana, prometheus, nginx, jenkins, java
+-  Spring Boot, redis, postgresql, spring security, spring data jpa, querydsl, docker, grafana, prometheus, nginx, jenkins, swagger, java
 -  CI/CD 작업을 자동화하기 위해 genkins 서버 구축
 -  Prometheus, Grafana를 이용한 모니터링 시스템 서버 구축
 
@@ -69,6 +69,9 @@ juneberry diary backend project
 
 (태그 검색)
 ![](https://cdn.juneberrydiary.com/7424ceed-bca6-48e6-ab97-58707da9b4e8.jpg)
+
+(카테고리 검색)
+![](https://cdn.juneberrydiary.com/338312e7-578c-4d17-866e-d6629a4c0266.jpg)
 
 (블로그 포스트)
 ![](https://cdn.juneberrydiary.com/d3a30ca4-f7f5-414c-b8c3-22cfa522aa20.jpg)

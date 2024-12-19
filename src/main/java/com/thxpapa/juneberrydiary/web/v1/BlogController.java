@@ -6,6 +6,7 @@ import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.blog.BlogRequestDto;
 import com.thxpapa.juneberrydiary.dto.blog.BlogResponseDto;
 import com.thxpapa.juneberrydiary.service.blog.BlogService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class BlogController {
     private final BlogService blogService;
     private final ResponseDto responseDto;
 
+    @Operation(summary = "블로그 조회", description = "블로그 하나를 조회합니다.")
     @GetMapping(value = "/getBlogById", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBlogById(@RequestParam("id") String id) {
         try {
@@ -43,7 +45,7 @@ public class BlogController {
                         .build());
             }
         } catch (Exception e) {
-            log.debug("getBlog error occurred!");
+            log.debug("getBlogById error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
