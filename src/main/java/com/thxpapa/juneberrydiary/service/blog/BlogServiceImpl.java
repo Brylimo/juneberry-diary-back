@@ -32,7 +32,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     @Transactional
-    public List<Blog> getAllBlogsByUser(JuneberryUser user) {
+    public List<Blog> getAllBlogs(JuneberryUser user) {
         return blogRepository.findBlogsByUser(user);
     }
 

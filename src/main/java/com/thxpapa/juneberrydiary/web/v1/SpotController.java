@@ -17,7 +17,7 @@ public class SpotController {
 
     private final SpotService spotService;
 
-    @GetMapping("/item/{spotId}")
+    /*@GetMapping("/item/{spotId}")
     public String spotItem(@PathVariable Integer spotId) {
         return "geo/spot";
     }
@@ -30,5 +30,5 @@ public class SpotController {
         redirectAttributes.addAttribute("spotId", storedSpot.getSpotUid());
 
         return "redirect:/spot/item/{spotId}";
-    }
+    }*/
 }

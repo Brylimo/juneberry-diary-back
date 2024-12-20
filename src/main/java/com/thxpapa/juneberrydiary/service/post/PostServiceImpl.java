@@ -50,7 +50,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public JuneberryFile uploadImage(String blogId, String postId, MultipartFile multipartFile) {
+    public JuneberryFile uploadImage(String postId, MultipartFile multipartFile) {
         try {
             JuneberryFile res = null;
 
@@ -60,8 +60,7 @@ public class PostServiceImpl implements PostService {
             if (multipartFile != null &&
                     post != null &&
                     !multipartFile.isEmpty() &&
-                    !Objects.isNull(multipartFile.getOriginalFilename()) &&
-                    post.getSubCategory().getCategory().getBlog().getBlogId().equals(blogId)) {
+                    !Objects.isNull(multipartFile.getOriginalFilename())) {
                 JuneberryFile file = s3UploaderUtil.uploadFile(multipartFile, "post");
                 res = juneberryFileRepository.save(file);
                 postFileRepository.save(PostFile.builder()
@@ -276,12 +275,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Optional<PostResponseDto.PostInfo> getPostById(String blogId, UUID id) {
+    public Optional<PostResponseDto.PostInfo> getPostById(UUID id) {
         Optional<Post> optionalPost = postRepository.findPostByPostUid(id);
-
-        if (optionalPost.isPresent() && !optionalPost.get().getSubCategory().getCategory().getBlog().getBlogId().equals(blogId)) {
-            return Optional.empty();
-        }
 
         List<Tag> tagList = new ArrayList<>();
         if (optionalPost.isPresent()) {

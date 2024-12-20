@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1/geo")
 public class GeoController {
-    @Value("${vworld.api.akey}")
-    private String vKey;
+    //@Value("${vworld.api.akey}")
+    //private String vKey;
 
-    @GetMapping("/map")
+    /*@GetMapping("/map")
     public String map(Model model) {
         log.debug("map starts!");
 
         model.addAttribute("vKey", vKey);
         return "geo/map";
-    }
+    }*/
 }

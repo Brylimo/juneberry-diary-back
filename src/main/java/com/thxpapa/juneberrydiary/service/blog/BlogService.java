@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface BlogService {
     Optional<Blog> getBlogById(String id);
     Blog createBlog(JuneberryUser user, BlogRequestDto.CreateBlog createBlog);
-    List<Blog> getAllBlogsByUser(JuneberryUser user);
+    List<Blog> getAllBlogs(JuneberryUser user);
 }

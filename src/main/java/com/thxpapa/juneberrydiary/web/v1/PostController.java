@@ -8,6 +8,8 @@ import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
 import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
 import com.thxpapa.juneberrydiary.service.post.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,18 +27,20 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/v1/post")
+@RequestMapping(value = "/v1")
 public class PostController {
     private final PostService postService;
     private final ResponseDto responseDto;
-    @PostMapping(value = "/uploadPostImage", produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @Operation(summary = "포스트 이미지 저장", description = "포스트 이미지를 저장합니다.")
+    @PostMapping(value = "/post/{postId}/image", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> uploadPostImage(
-            @RequestParam("blogId") String blogId,
-            @RequestParam("postId") String postId,
+            @Parameter(description = "포스트 아이디")
+            @PathVariable("postId") String postId,
             @RequestPart("editorImg") MultipartFile file)
     {
         try {
-            JuneberryFile juneberryFile = postService.uploadImage(blogId, postId, file);
+            JuneberryFile juneberryFile = postService.uploadImage(postId, file);
 
             return responseDto.success(PostResponseDto.ImageInfo.builder()
                             .imagePath(juneberryFile.getPath())
@@ -47,10 +51,13 @@ public class PostController {
         }
     }
 
-    @GetMapping(value = "/getPost", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPost(@RequestParam("blogId") String blogId, @RequestParam("id") String id) {
+    @Operation(summary = "포스트 조회1", description = "포스트 id에 맞는 포스트를 조회합니다.")
+    @GetMapping(value = "/post", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPost(
+            @Parameter(description = "포스트 아이디")
+            @RequestParam("id") String id) {
         try {
-            Optional<PostResponseDto.PostInfo> optionalPostInfo = postService.getPostById(blogId, UUID.fromString(id));
+            Optional<PostResponseDto.PostInfo> optionalPostInfo = postService.getPostById(UUID.fromString(id));
 
             if (optionalPostInfo.isEmpty()) {
                 return responseDto.success("해당 post를 찾을 수 없습니다.");
@@ -64,7 +71,8 @@ public class PostController {
         }
     }
 
-    @GetMapping(value = "/getPostByIndex", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "포스트 조회2", description = "인덱스에 맞는 포스트를 조회합니다.")
+    @GetMapping(value = "/posts", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPostByIndex(@ModelAttribute PostRequestDto.SearchPostByIndex searchPostByIndex) {
         try {
             Optional<PostResponseDto.PostInfo> optionalPostInfo = postService.getPostByIndex(searchPostByIndex);
@@ -81,7 +89,8 @@ public class PostController {
         }
     }
 
-    @GetMapping(value = "getPostList", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "포스트 목록 조회", description = "포스트 목록을 조회합니다.")
+    @GetMapping(value = "/post/posts", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPostList(
             @ModelAttribute PostRequestDto.SearchPostList searchPostList,
             @RequestParam(value = "page", defaultValue = "0") int pageNumber,
@@ -121,8 +130,11 @@ public class PostController {
         }
     }
 
-    @GetMapping(value = "/getTempPostCnt", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getTempPostCnt(@RequestParam("blogId") String blogId) {
+    @Operation(summary = "임시 포스트 개수 조회", description = "임시 포스트 개수를 조회합니다.")
+    @GetMapping(value = "/post/temp/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTempPostCnt(
+            @Parameter(description = "블로그 아이디")
+            @RequestParam("blogId") String blogId) {
         try {
             long tempCnt = postService.getTempPostCnt(blogId);
 
@@ -133,7 +145,8 @@ public class PostController {
         }
     }
 
-    @PostMapping(value = "/addPost", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "포스트 저장", description = "포스트를 저장합니다.")
+    @PostMapping(value = "/post", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addPost(@ModelAttribute PostRequestDto.WritePost writePost) {
         try {
             Post post = postService.storePost(writePost);
@@ -153,7 +166,8 @@ public class PostController {
         }
     }
 
-    @PostMapping(value = "/updatePost", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "포스트 업데이트", description = "포스트를 업데이트합니다.")
+    @PutMapping(value = "/post", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePost(@ModelAttribute PostRequestDto.WritePost writePost) {
         try {
             Post post = postService.updatePost(writePost);
@@ -173,8 +187,11 @@ public class PostController {
         }
     }
 
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deletePost(@PathVariable String id) {
+    @Operation(summary = "포스트 삭제", description = "id에 해당하는 포스트를 삭제합니다.")
+    @DeleteMapping(value = "/post/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deletePost(
+            @Parameter(description = "포스트 아이디")
+            @PathVariable String id) {
         try {
             UUID postId = UUID.fromString(id);
 

@@ -5,6 +5,8 @@ import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.category.CategoryRequestDto;
 import com.thxpapa.juneberrydiary.dto.category.CategoryResponseDto;
 import com.thxpapa.juneberrydiary.service.blog.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,8 +25,13 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final ResponseDto responseDto;
 
+    @Operation(summary = "카테고리 저장", description = "전체 카테고리 조직도를 받아 저장합니다.")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addCategories(@PathVariable("blogId") String blogId, @RequestBody CategoryRequestDto.CreateCategory createCategoryDto) {
+    public ResponseEntity<?> addCategories(
+            @Parameter(required = true, description = "블로그 아이디")
+            @PathVariable("blogId") String blogId,
+            @Parameter(description = "카테고리 조직도")
+            @RequestBody CategoryRequestDto.CreateCategory createCategoryDto) {
         try {
             categoryService.storeCategories(blogId, createCategoryDto);
 
@@ -35,8 +42,11 @@ public class CategoryController {
         }
     }
 
+    @Operation(summary = "카테고리 목록 조회", description = "블로그에 해당하는 모든 카테고리 목록을 조회합니다.")
     @GetMapping(value = "/categories", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllCategories(@PathVariable("blogId") String blogId) {
+    public ResponseEntity<?> getAllCategories(
+            @Parameter(required = true, description = "블로그 아이디")
+            @PathVariable("blogId") String blogId) {
         try {
             List<Category> categoryList = categoryService.getCategoryList(blogId);
 

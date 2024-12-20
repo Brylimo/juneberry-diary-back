@@ -7,6 +7,7 @@ import com.thxpapa.juneberrydiary.dto.blog.BlogRequestDto;
 import com.thxpapa.juneberrydiary.dto.blog.BlogResponseDto;
 import com.thxpapa.juneberrydiary.service.blog.BlogService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,8 +29,10 @@ public class BlogController {
     private final ResponseDto responseDto;
 
     @Operation(summary = "블로그 조회", description = "블로그 하나를 조회합니다.")
-    @GetMapping(value = "/getBlogById", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getBlogById(@RequestParam("id") String id) {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getBlogById(
+            @Parameter(description = "블로그 아이디")
+            @RequestParam("id") String id) {
         try {
             Optional<Blog> blog = blogService.getBlogById(id);
 
@@ -50,10 +53,11 @@ public class BlogController {
         }
     }
 
-    @GetMapping(value = "/getAllBlogsByUser", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllBlogsByUser(@AuthenticationPrincipal JuneberryUser juneberryUser) {
+    @Operation(summary = "블로그 목록 조회", description = "사용자가 생성한 모든 블로그를 조회합니다.")
+    @GetMapping(value = "/blogs", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllBlogs(@AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
-            List<Blog> blogList = blogService.getAllBlogsByUser(juneberryUser);
+            List<Blog> blogList = blogService.getAllBlogs(juneberryUser);
 
             List<BlogResponseDto.BlogInfo> blogInfoList = blogList.stream()
                     .map(blog -> BlogResponseDto.BlogInfo.builder()
@@ -64,13 +68,16 @@ public class BlogController {
                     .collect(Collectors.toList());
             return responseDto.success(blogInfoList);
         } catch (Exception e) {
-            log.debug("getAllBlogsByUser error occurred!");
+            log.debug("getAllBlogs error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping(value="/createBlog", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createBlog(@RequestBody BlogRequestDto.CreateBlog blogCreateBlogRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    @Operation(summary = "블로그 저장", description = "블로그를 저장합니다.")
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createBlog(
+            @RequestBody BlogRequestDto.CreateBlog blogCreateBlogRequestDto,
+            @AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
             Blog blog = blogService.createBlog(juneberryUser, blogCreateBlogRequestDto);
 
