@@ -48,6 +48,7 @@ public class CalResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TodoInfo {
+        private Long id;
         private String date;
         private int position;
         private String content;

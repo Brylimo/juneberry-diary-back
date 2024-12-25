@@ -47,8 +47,8 @@ public class SecurityConfig {
                 .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorizeRequests->
                         authorizeRequests
-                                .requestMatchers("/swagger-ui/**", "/actuator/**","/auth/login", "/auth/register", "/v1/cal/getTagsByMonth", "/v1/blog", "/v1/blog/{blogId}/category/categories", "/v1/blog/{blogId}/tag/tags", "/v1/post/posts", "/v1/posts").permitAll()
-                                .requestMatchers("/auth/validate", "/v1/cal/**", "/v1/post/**", "/v1/blog/**")
+                                .requestMatchers("/swagger-ui/**", "/actuator/**","/token/login", "/v1/user", "/v1/cal/tags", "/v1/blog", "/v1/blog/{blogId}/category/categories", "/v1/blog/{blogId}/tag/tags", "/v1/post/posts", "/v1/posts").permitAll()
+                                .requestMatchers("/token/**", "/v1/cal/**", "/v1/post/**", "/v1/blog/**")
                                 .hasAnyRole("USER", "ADMIN")
                                 .anyRequest().authenticated()
                 )

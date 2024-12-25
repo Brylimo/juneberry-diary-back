@@ -1,12 +1,12 @@
 package com.thxpapa.juneberrydiary.security.filter;
 
-import com.thxpapa.juneberrydiary.domain.auth.RefreshToken;
+import com.thxpapa.juneberrydiary.domain.token.RefreshToken;
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.repository.authRepository.RefreshTokenRepository;
 import com.thxpapa.juneberrydiary.repository.userRepository.JuneberryUserRepository;
 import com.thxpapa.juneberrydiary.security.provider.TokenProvider;
 import com.thxpapa.juneberrydiary.security.service.JuneberryUserDetailsService;
-import com.thxpapa.juneberrydiary.service.auth.RefreshTokenService;
+import com.thxpapa.juneberrydiary.service.token.RefreshTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

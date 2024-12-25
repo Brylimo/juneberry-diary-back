@@ -1,6 +1,6 @@
-package com.thxpapa.juneberrydiary.service.auth;
+package com.thxpapa.juneberrydiary.service.token;
 
-import com.thxpapa.juneberrydiary.domain.auth.RefreshToken;
+import com.thxpapa.juneberrydiary.domain.token.RefreshToken;
 import com.thxpapa.juneberrydiary.repository.authRepository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

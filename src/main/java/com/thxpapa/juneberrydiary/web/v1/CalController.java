@@ -9,6 +9,8 @@ import com.thxpapa.juneberrydiary.dto.cal.CalResponseDto;
 import com.thxpapa.juneberrydiary.service.cal.DayService;
 import com.thxpapa.juneberrydiary.service.cal.SpecialDayService;
 import com.thxpapa.juneberrydiary.service.cal.TodoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,8 +35,13 @@ public class CalController {
     private final SpecialDayService specialDayService;
     private final ResponseDto responseDto;
 
-    @GetMapping(value = "/getTagsByMonth", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getTagsByMonth(@RequestParam("year") String year, @RequestParam("month") String month) {
+    @Operation(summary = "캘린더 일반 태그 목록 조회", description = "캘린더 렌더링에 필요한 모든 태그들을 조회합니다.")
+    @GetMapping(value = "/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTagsByMonth(
+            @Parameter(description = "년")
+            @RequestParam("year") String year,
+            @Parameter(description = "월")
+            @RequestParam("month") String month) {
         try {
             LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
             LocalDate endDate = startDate.plusMonths(1).minusDays(1);
@@ -72,8 +79,14 @@ public class CalController {
         }
     }
 
-    @GetMapping(value = "/getEventTagsByMonth", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getEventTagsByMonth(@RequestParam("year") String year, @RequestParam("month") String month, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    @Operation(summary = "캘린더 이벤트 태그 목록 조회", description = "사용자가 생성한 모든 캘린더 이벤트 태그들을 조회합니다.")
+    @GetMapping(value = "/event-tags", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getEventTagsByMonth(
+            @Parameter(description = "년")
+            @RequestParam("year") String year,
+            @Parameter(description = "월")
+            @RequestParam("month") String month,
+            @AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
             LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
             LocalDate endDate = startDate.plusMonths(1).minusDays(1);
@@ -86,8 +99,14 @@ public class CalController {
         }
     }
 
-    @GetMapping(value = "/getEmojisByMonth", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getEmojisByMonth(@RequestParam("year") String year, @RequestParam("month") String month, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    @Operation(summary = "캘린더 이모지 목록 조회", description = "사용자가 생성한 모든 이모지들을 조회합니다.")
+    @GetMapping(value = "/emojis", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getEmojisByMonth(
+            @Parameter(description = "년")
+            @RequestParam("year") String year,
+            @Parameter(description = "월")
+            @RequestParam("month") String month,
+            @AuthenticationPrincipal JuneberryUser juneberryUser) {
         try {
             LocalDate startDate = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).atDay(1);
             LocalDate endDate = startDate.plusMonths(1).minusDays(1);
@@ -100,7 +119,8 @@ public class CalController {
         }
     }
 
-    @PostMapping(value = "/addEventTagList", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "이벤트 태그 저장", description = "해당 일자에 속하는 모든 이벤트 태그를 받아 저장합니다.")
+    @PostMapping(value = "/event-tags", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addEventTagList(@RequestBody CalRequestDto.SetEventTags calSetEventTagsRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -116,7 +136,8 @@ public class CalController {
         }
     }
 
-    @PostMapping(value = "/addDayEmoji", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "이모지 저장", description = "해당 일자에 속하는 이모지를 저장합니다.")
+    @PostMapping(value = "/emoji", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addDayEmoji(@RequestBody CalRequestDto.DayEmoji calDayEmojiRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -132,8 +153,12 @@ public class CalController {
         }
     }
 
-    @GetMapping(value = "/getTodosByDay", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getTodosByDay(@RequestParam("date") String date, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    @Operation(summary = "투두 목록 조회", description = "해당 일자에 속하는 모든 투두 목록을 조회합니다.")
+    @GetMapping(value = "/todos", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTodosByDay(
+            @Parameter(description = "날짜")
+            @RequestParam("date") String date,
+            @AuthenticationPrincipal JuneberryUser juneberryUser) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
@@ -149,8 +174,12 @@ public class CalController {
         }
     }
 
-    @GetMapping(value = "/getTodayTxt", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getTodayTxt(@RequestParam("date") String date, @AuthenticationPrincipal JuneberryUser juneberryUser) {
+    @Operation(summary = "오늘의 한마디 조회", description = "해당 일자에 속하는 오늘의 한마디를 조회합니다.")
+    @GetMapping(value = "/today-text", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTodayTxt(
+            @Parameter(description = "날짜")
+            @RequestParam("date") String date,
+            @AuthenticationPrincipal JuneberryUser juneberryUser) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
@@ -170,7 +199,8 @@ public class CalController {
         }
     }
 
-    @PostMapping(value = "/addOneTodo", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "투두 저장", description = "해당 일자에 속하는 투두를 저장합니다.")
+    @PostMapping(value = "/todo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addOneTodo(@RequestBody CalRequestDto.TodoLine calTodoLineRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -181,6 +211,7 @@ public class CalController {
                 return responseDto.success("todo가 비어있습니다.");
             } else {
                 return responseDto.success(CalResponseDto.TodoInfo.builder()
+                        .id(todo.get().getTodoUid())
                         .date(date.toString())
                         .position(todo.get().getPosition())
                         .content(todo.get().getContent())
@@ -196,7 +227,8 @@ public class CalController {
         }
     }
 
-    @PostMapping(value = "/updateTodayTxt", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "오늘의 한마디 업데이트", description = "해당 일자에 속하는 오늘의 한마디를 업데이트합니다.")
+    @PutMapping(value = "/today-text", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateTodayTxt(@RequestBody CalRequestDto.TodayTxt calTodayTxtRequestDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -218,19 +250,23 @@ public class CalController {
         }
     }
 
-    @PostMapping(value = "/updateTodoChk", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateTodoChk(@RequestBody CalRequestDto.TodoChk calTodoChkDto, @AuthenticationPrincipal JuneberryUser juneberryUser) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    @Operation(summary = "투두 업데이트", description = "투두를 업데이트합니다.")
+    @PatchMapping(value = "/todo/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateTodo(
+            @Parameter(description = "투두의 고유 아이디")
+            @PathVariable("id") String id,
+            @RequestBody CalRequestDto.TodoLine calTodoLineRequestDto) {
 
         try {
-            LocalDate date = LocalDate.parse(calTodoChkDto.getDate(), formatter);
-            Optional<Todo> todo = todoService.updateTodoChk(juneberryUser, date, calTodoChkDto);
+            Long todoId = Long.parseLong(id);
+            Optional<Todo> todo = todoService.updateTodo(todoId, calTodoLineRequestDto);
 
             if (todo.isEmpty()) {
                 return responseDto.success("todo가 비어있습니다.");
             } else {
                 return responseDto.success(CalResponseDto.TodoInfo.builder()
-                        .date(date.toString())
+                        .id(todo.get().getTodoUid())
+                        .date(todo.get().getDay().toString())
                         .position(todo.get().getPosition())
                         .content(todo.get().getContent())
                         .chkStatus(todo.get().getChkStatus())
@@ -239,8 +275,10 @@ public class CalController {
                         .groupName(todo.get().getTodoGroup().getName())
                         .build());
             }
+        } catch (NumberFormatException e) {
+            return responseDto.fail("todo id 값은 숫자여야 합니다.", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            log.debug("updateTodoChk error occurred!");
+            log.debug("updateTodo error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

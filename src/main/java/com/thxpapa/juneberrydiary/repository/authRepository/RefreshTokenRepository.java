@@ -1,6 +1,6 @@
 package com.thxpapa.juneberrydiary.repository.authRepository;
 
-import com.thxpapa.juneberrydiary.domain.auth.RefreshToken;
+import com.thxpapa.juneberrydiary.domain.token.RefreshToken;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

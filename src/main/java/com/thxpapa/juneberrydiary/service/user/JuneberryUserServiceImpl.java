@@ -6,7 +6,7 @@ import com.thxpapa.juneberrydiary.dto.user.UserResponseDto;
 import com.thxpapa.juneberrydiary.enums.Authority;
 import com.thxpapa.juneberrydiary.repository.userRepository.JuneberryUserRepository;
 import com.thxpapa.juneberrydiary.security.provider.TokenProvider;
-import com.thxpapa.juneberrydiary.service.auth.RefreshTokenService;
+import com.thxpapa.juneberrydiary.service.token.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

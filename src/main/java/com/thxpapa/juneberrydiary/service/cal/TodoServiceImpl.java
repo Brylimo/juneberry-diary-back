@@ -73,6 +73,7 @@ public class TodoServiceImpl implements TodoService {
         List<CalResponseDto.TodoInfo> todoInfoList = todoList.stream()
                 .map(todo -> {
                    return CalResponseDto.TodoInfo.builder()
+                               .id(todo.getTodoUid())
                                .date(date.toString())
                                .content(todo.getContent())
                                .position(todo.getPosition())
@@ -94,12 +95,11 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     @Transactional
-    public Optional<Todo> updateTodoChk(JuneberryUser user, LocalDate date, CalRequestDto.TodoChk calTodoChkDto) {
-        Day day = dayService.findOneDay(user, date).orElseGet(() -> dayService.createDay(user, date));
-        Optional<Todo> optionalTodo = getTodoByPosition(day, calTodoChkDto.getPosition());
+    public Optional<Todo> updateTodo(Long id, CalRequestDto.TodoLine todoLine) {
+        Optional<Todo> optionalTodo = todoRepository.findByTodoUid(id);
 
         return optionalTodo.map(todo -> {
-            todo.updateTodoByCheck(calTodoChkDto);
+            todo.updateTodoByTodoLine(todoLine, null);
             return todo;
         });
     }

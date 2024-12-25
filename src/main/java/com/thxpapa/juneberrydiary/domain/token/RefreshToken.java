@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.domain.auth;
+package com.thxpapa.juneberrydiary.domain.token;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

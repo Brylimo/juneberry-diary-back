@@ -35,7 +35,7 @@ public class CalRequestDto {
         private String date;
         private String groupName;
         private String content;
-        private int position;
+        private Integer position;
         private String chkStatus;
     }
 
@@ -46,16 +46,6 @@ public class CalRequestDto {
     public static class TodayTxt {
         private String date;
         private String todayTxt;
-    }
-
-    @Builder
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class TodoChk {
-        private String date;
-        private int position;
-        private String chkStatus;
     }
 
     @Builder

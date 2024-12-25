@@ -1,4 +1,4 @@
-package com.thxpapa.juneberrydiary.service.auth;
+package com.thxpapa.juneberrydiary.service.token;
 
 public interface RefreshTokenService {
     void writeTokenInfo(String username, String refreshToken, String accessToken);

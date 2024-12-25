@@ -57,13 +57,15 @@ public class Todo extends BaseTimeEntity {
     }
 
     public Todo updateTodoByTodoLine(CalRequestDto.TodoLine todoLine, TodoGroup todoGroup) {
-        this.content = todoLine.getContent();
-        this.todoGroup = todoGroup;
-        return this;
-    }
-
-    public Todo updateTodoByCheck(CalRequestDto.TodoChk todoChk) {
-        this.chkStatus = CheckStatus.fromValue(todoChk.getChkStatus());
+        if (todoLine.getContent() != null) {
+            this.content = todoLine.getContent();
+        }
+        if (todoLine.getChkStatus() != null) {
+            this.chkStatus = CheckStatus.fromValue(todoLine.getChkStatus());
+        }
+        if (todoLine.getContent() != null) {
+            this.todoGroup = todoGroup;
+        }
         return this;
     }
 }
