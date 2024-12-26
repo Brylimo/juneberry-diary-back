@@ -10,7 +10,9 @@ import java.util.Set;
 
 @Getter
 @Entity
-@Table(name="sub_category", schema="datamart")
+@Table(name="sub_category", schema="datamart", indexes = {
+        @Index(name = "idx_category_id", columnList = "categoryId")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"name", "category"}, callSuper=false)
 @ToString(of = {"subCategoryUid", "name"})

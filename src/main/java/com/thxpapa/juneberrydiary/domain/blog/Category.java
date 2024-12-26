@@ -10,7 +10,10 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name="category", schema="datamart")
+@Table(name="category", schema="datamart", indexes = {
+        @Index(name = "idx_blog_id", columnList = "blogId"),
+        @Index(name = "idx_position", columnList = "position")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "name", callSuper = false) // 이름만 동일성 비교 기준
 @ToString(of = {"categoryUid", "name"})

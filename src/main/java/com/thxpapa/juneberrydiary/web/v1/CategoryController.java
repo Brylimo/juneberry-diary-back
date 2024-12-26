@@ -67,7 +67,7 @@ public class CategoryController {
                                     .findFirst() // Optional<SubCategory> 반환
                                     .map(subCategory -> subCategory.getPosts().size())
                                     .orElse(0))
-                            .children(category.getSubCategories().stream()
+                            .children(category.getSubCategories().stream().distinct()
                                     .map(subCategory -> CategoryResponseDto.SubCategoryInfo.builder()
                                             .subCategoryName(subCategory.getName())
                                             .count(subCategory.getPosts().size())

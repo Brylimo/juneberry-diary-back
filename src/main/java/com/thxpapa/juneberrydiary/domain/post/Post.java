@@ -17,7 +17,9 @@ import java.util.UUID;
 
 @Getter
 @Entity
-@Table(name="post", schema="datamart")
+@Table(name="post", schema="datamart", indexes = {
+        @Index(name = "idx_sub_category_id", columnList = "subCategoryId")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "postUid", callSuper=false)
 @ToString(of = {"postUid", "date", "title", "description", "content", "isTemp", "isPublic"})
