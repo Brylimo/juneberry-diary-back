@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -33,7 +33,7 @@ public class SubCategory {
     private Category category;
 
     @OneToMany(mappedBy = "subCategory")
-    private List<Post> posts = new ArrayList<Post>();
+    private Set<Post> posts = new HashSet<>();
 
     @Builder
     public SubCategory(String name, int position, Category category) {

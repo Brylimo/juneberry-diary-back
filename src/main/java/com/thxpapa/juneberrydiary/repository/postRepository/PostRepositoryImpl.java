@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.thxpapa.juneberrydiary.domain.post.Post;
 import com.thxpapa.juneberrydiary.dto.post.PostRequestDto;
+import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,18 +33,17 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     /**
-     * BlogId에 속해 있는 모든 일시저장 포스트를 가져오기
+     * postInfo 조건에 따라 BlogId에 속해 있는 모든 포스트 가져오기
      */
     @Override
-    public long countByTempPost(String blogId) {
+    public long countByPostInfo(String blogId, PostResponseDto.PostInfo postInfo) {
         long result = queryFactory
                 .select(post.count())
                 .from(post)
                 .leftJoin(post.subCategory, subCategory)
                 .leftJoin(subCategory.category, category)
                 .join(category.blog, blog)
-                .where(blog.blogId.eq(blogId)
-                        .and(post.isTemp.eq(true)))
+                .where(blog.blogId.eq(blogId), isTempEq(postInfo.getIsTemp()), isPublicEq(postInfo.getIsPublic()))
                 .fetchOne();
 
         return result;

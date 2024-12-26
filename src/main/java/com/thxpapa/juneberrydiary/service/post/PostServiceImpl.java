@@ -370,8 +370,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public long getTempPostCnt(String blogId) {
-        return postRepository.countByTempPost(blogId);
+    public long getPostCnt(String blogId, PostResponseDto.PostInfo postInfo) {
+        return postRepository.countByPostInfo(blogId, postInfo);
     }
 
     @Override

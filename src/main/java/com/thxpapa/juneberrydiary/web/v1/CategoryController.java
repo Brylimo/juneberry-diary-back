@@ -4,7 +4,9 @@ import com.thxpapa.juneberrydiary.domain.blog.Category;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.category.CategoryRequestDto;
 import com.thxpapa.juneberrydiary.dto.category.CategoryResponseDto;
+import com.thxpapa.juneberrydiary.dto.post.PostResponseDto;
 import com.thxpapa.juneberrydiary.service.blog.CategoryService;
+import com.thxpapa.juneberrydiary.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/v1/blog/{blogId}/category")
 public class CategoryController {
     private final CategoryService categoryService;
+    private final PostService postService;
     private final ResponseDto responseDto;
 
     @Operation(summary = "카테고리 저장", description = "전체 카테고리 조직도를 받아 저장합니다.")
@@ -50,18 +53,33 @@ public class CategoryController {
         try {
             List<Category> categoryList = categoryService.getCategoryList(blogId);
 
+            PostResponseDto.PostInfo postInfo = PostResponseDto.PostInfo.builder()
+                    .isPublic(true)
+                    .isTemp(false)
+                    .build();
+
+            long total = postService.getPostCnt(blogId, postInfo);
             List<CategoryResponseDto.CategoryInfo> categoryInfoList = categoryList.stream()
                     .map(category -> CategoryResponseDto.CategoryInfo.builder()
                             .categoryName(category.getName())
+                            .count(category.getSubCategories().stream()
+                                    .filter(subCategory -> subCategory.getName().equals(""))
+                                    .findFirst() // Optional<SubCategory> 반환
+                                    .map(subCategory -> subCategory.getPosts().size())
+                                    .orElse(0))
                             .children(category.getSubCategories().stream()
                                     .map(subCategory -> CategoryResponseDto.SubCategoryInfo.builder()
                                             .subCategoryName(subCategory.getName())
+                                            .count(subCategory.getPosts().size())
                                             .build())
                                     .collect(Collectors.toList())) // subCategory 리스트로 변환
                             .build())
                     .collect(Collectors.toList());
 
-            return responseDto.success(categoryInfoList);
+            return responseDto.success(CategoryResponseDto.CategoryListInfo.builder()
+                            .categoryInfoList(categoryInfoList)
+                            .total(total)
+                            .build());
         } catch (Exception e) {
             log.debug("getAllCategories error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);

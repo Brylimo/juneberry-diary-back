@@ -13,7 +13,7 @@ import java.util.List;
 import static com.thxpapa.juneberrydiary.domain.blog.QBlog.*;
 import static com.thxpapa.juneberrydiary.domain.blog.QCategory.*;
 import static com.thxpapa.juneberrydiary.domain.blog.QSubCategory.*;
-import static com.thxpapa.juneberrydiary.domain.post.QPost.post;
+import static com.thxpapa.juneberrydiary.domain.post.QPost.*;
 
 public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -31,7 +31,12 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
                 .selectFrom(category)
                 .join(category.blog, blog).fetchJoin()
                 .leftJoin(category.subCategories, subCategory).fetchJoin()
-                .where(blog.blogId.eq(blogId))
+                .leftJoin(subCategory.posts, post).fetchJoin()
+                .where(
+                        blog.blogId.eq(blogId),
+                        post.isPublic.eq(true).or(post.isPublic.isNull()),
+                        post.isTemp.eq(false).or(post.isTemp.isNull())
+                )
                 .orderBy(category.position.asc())
                 .fetch();
 

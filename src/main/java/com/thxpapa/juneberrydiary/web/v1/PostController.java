@@ -136,7 +136,11 @@ public class PostController {
             @Parameter(description = "블로그 아이디")
             @RequestParam("blogId") String blogId) {
         try {
-            long tempCnt = postService.getTempPostCnt(blogId);
+            PostResponseDto.PostInfo tempPostInfo = PostResponseDto.PostInfo.builder()
+                    .isTemp(true)
+                    .build();
+
+            long tempCnt = postService.getPostCnt(blogId, tempPostInfo);
 
             return responseDto.success(tempCnt);
         } catch (Exception e) {

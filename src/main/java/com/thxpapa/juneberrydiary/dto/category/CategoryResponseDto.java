@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 public class CategoryResponseDto {
+
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CategoryInfo {
         private String categoryName;
+        private Integer count;
         private List<SubCategoryInfo> children;
     }
 
@@ -23,5 +25,15 @@ public class CategoryResponseDto {
     @AllArgsConstructor
     public static class SubCategoryInfo {
         private String subCategoryName;
+        private Integer count;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CategoryListInfo {
+        private Long total;
+        private List<CategoryInfo> categoryInfoList;
     }
 }
