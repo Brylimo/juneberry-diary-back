@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+  <style>
+    .email-wrapper {
+      width: 100%;
+      background-color: #efeff0;
+    }
+    .email-block {
+      width: 640px;
+      background-color: white;
+      margin: 0 auto;
+    }
+    .header {
+      background-color: #ded2ff;
+      text-align: center;
+      font-weight: 400;
+      padding: 15px 0;
+    }
+    .header h1 {
+      font-weight: 400;
+    }
+    .body {
+      padding: 22px 12px;
+    }
+    .body h1 {
+      margin: 35px 0;
+      font-size: 18px;
+      line-height: 22px;
+      font-weight: bold;
+      color: #1e1e1e;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-block">
+      <div class="header">
+        <h1>Juneberry Diary 계정</h1>
+      </div>
+      <div class="body">
+        <p>안녕하십니까.</p>
+        <p>Juneberry Diary 회원가입을 축하합니다!</p>
+        <br />
+        <p>Juneberry Diary 회원가입을 위한 이메일 인증을 진행합니다.</p>
+        <p>아래 인증코드를 확인하신 후 입력해주시기 바랍니다.</p>
+
+        <h2 th:text="${code}"></h2>
+
+        <p>※유의 사항 안내</p>
+        <p>-이메일 인증 코드는 발송 시점부터 5분간 유효합니다.</p>
+        <p>-새로운 인증 코드를 재발송하시는 경우에는 기존 인증 코드는 만료됩니다.</p>
+        <p>-이메일이 도착하지 않았다면 스팸 메일 보관함을 확인하시기 바랍니다.</p>
+        <br />
+        <p>추가 문의사항이 있다면 본 이메일을 통해 회신 주시면 감사하겠습니다. :)</p>
+        <br />
+        <p>감사합니다.</p>
+        <p>준베리다이어리 드림.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

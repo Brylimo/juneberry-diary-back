@@ -7,6 +7,7 @@ import com.thxpapa.juneberrydiary.dto.user.UserResponseDto;
 import com.thxpapa.juneberrydiary.service.user.JuneberryUserService;
 import com.thxpapa.juneberrydiary.util.ErrorUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -50,6 +50,25 @@ public class UserController {
                     .build());
         } catch (Exception e) {
             log.debug("join error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "사용자 이메일 조회", description = "이메일을 이용해 사용자를 조회합니다.")
+    @GetMapping(value = "/email", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUserByEmail(
+            @Parameter(description = "이메일")
+            @RequestParam("email") String email) {
+        try {
+            Optional<JuneberryUser> optionalJuneberryUser = juneberryUserService.getByEmail(email);
+
+            if (optionalJuneberryUser.isEmpty()) {
+                return responseDto.fail("유저가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+            } else {
+                return responseDto.success();
+            }
+        } catch (Exception e) {
+            log.debug("getUserByEmail error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

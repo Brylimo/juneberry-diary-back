@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -44,6 +45,11 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
             return user;
         }
         return null;
+    }
+
+    @Override
+    public Optional<JuneberryUser> getByEmail(String email) {
+        return juneberryUserRepository.findFirstByEmail(email);
     }
 
     @Override
