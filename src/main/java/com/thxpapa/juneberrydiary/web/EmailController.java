@@ -24,7 +24,7 @@ public class EmailController {
     private final ResponseDto responseDto;
 
     @Operation(summary = "임시 코드 발송 요청", description = "임시 코드를 이메일을 통해 발송합니다.")
-    @PostMapping(value = "/temp-code", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/verification-code", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> sendCode(@RequestBody EmailRequestDto.SendCode sendCode) {
         try {
             EmailResponseDto.EmailMessage emailMessage = EmailResponseDto.EmailMessage.builder()
@@ -32,7 +32,7 @@ public class EmailController {
                     .subject("[Juneberry Diary]회원가입 이메일 인증 안내")
                     .build();
 
-            emailUtil.sendMail(emailMessage, "email");
+            emailUtil.sendMail(emailMessage, "/email/signup");
 
             return responseDto.success();
         } catch (Exception e) {

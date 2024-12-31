@@ -40,4 +40,13 @@ public class UserRequestDto {
             return new UsernamePasswordAuthenticationToken(username, password);
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VerifyCode {
+        private String email;
+        private String code;
+    }
 }

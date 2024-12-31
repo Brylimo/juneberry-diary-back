@@ -5,6 +5,7 @@ import com.thxpapa.juneberrydiary.dto.ResponseDto;
 import com.thxpapa.juneberrydiary.dto.user.UserRequestDto;
 import com.thxpapa.juneberrydiary.dto.user.UserResponseDto;
 import com.thxpapa.juneberrydiary.service.user.JuneberryUserService;
+import com.thxpapa.juneberrydiary.service.verificationCode.VerificationCodeService;
 import com.thxpapa.juneberrydiary.util.ErrorUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,6 +26,7 @@ import java.util.Optional;
 @RequestMapping(value = "/v1/user")
 public class UserController {
     private final JuneberryUserService juneberryUserService;
+    private final VerificationCodeService verificationCodeService;
     private final ErrorUtil errorUtil;
     private final ResponseDto responseDto;
 
@@ -69,6 +71,23 @@ public class UserController {
             }
         } catch (Exception e) {
             log.debug("getUserByEmail error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "회원가입 인증코드 검증", description = "회원가입시 이메일 인증코드를 검증합니다.")
+    @PostMapping(value = "/verification-code", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> verifyCode(@RequestBody UserRequestDto.VerifyCode verifyCode) {
+        try {
+            boolean isVerified = verificationCodeService.verifySignUpVerificationCode(verifyCode);
+
+            if (isVerified) {
+                return responseDto.success();
+            } else {
+                return responseDto.fail("인증코드가 맞지 않습니다.", HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            log.debug("verificationCode error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

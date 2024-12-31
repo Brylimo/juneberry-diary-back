@@ -1,6 +1,7 @@
 package com.thxpapa.juneberrydiary.util;
 
 import com.thxpapa.juneberrydiary.dto.email.EmailResponseDto;
+import com.thxpapa.juneberrydiary.service.verificationCode.VerificationCodeService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,15 @@ import java.util.Random;
 public class EmailUtil {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
+    private final VerificationCodeService verificationCodeService;
 
     public String sendMail(EmailResponseDto.EmailMessage emailMessageDto, String type) {
         String code = createCode();
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-        if (type.equals("password")) {
-
+        if (type.equals("/email/signup")) { // 회원가입 이메일 인증
+            verificationCodeService.storeSignUpVerificationCode(emailMessageDto.getTo(), code);
         }
 
         try {
