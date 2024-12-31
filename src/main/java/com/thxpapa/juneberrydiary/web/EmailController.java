@@ -32,7 +32,7 @@ public class EmailController {
                     .subject("[Juneberry Diary]회원가입 이메일 인증 안내")
                     .build();
 
-            emailUtil.sendMail(emailMessage, "/email/signup");
+            emailUtil.sendMail(emailMessage, "email/signup");
 
             return responseDto.success();
         } catch (Exception e) {

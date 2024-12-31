@@ -28,7 +28,7 @@ public class EmailUtil {
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-        if (type.equals("/email/signup")) { // 회원가입 이메일 인증
+        if (type.equals("email/signup")) { // 회원가입 이메일 인증
             verificationCodeService.storeSignUpVerificationCode(emailMessageDto.getTo(), code);
         }
 
