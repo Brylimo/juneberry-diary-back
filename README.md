@@ -18,21 +18,32 @@ juneberry diary backend project
 준베리다이어리는 블로그/다이어리 기능과 캘린더 기록 기능, 지도 기록 기능이 모두 포함된 종합 다이어리 서비스입니다. 일상에서 경험하는 모든 종류의 기록을 준베리다이어리 서비스 하나만으로 해결할 수 있습니다. 또한 여러 종류의 서로 다른 기록을 서로 연동하고 이러한 기록을 통해 유저에게 새로운 인사이트를 제공하기 위해 노력합니다.
 
 ## 기술 스택
--  Spring Boot, redis, postgresql, spring security, spring data jpa, querydsl, docker, grafana, prometheus, nginx, jenkins, swagger, java
--  CI/CD 작업을 자동화하기 위해 genkins 서버 구축
+-  Spring Boot, Redis, PostgreSQL, Spring Security, Spring Data JPA, Querydsl, Docker, Grafana, Prometheus, Nginx, Jenkins, Swagger, Java
+-  CI/CD 작업을 자동화하기 위해 Jenkins 서버 구축
 -  Prometheus, Grafana를 이용한 모니터링 시스템 서버 구축
 
 ## 로컬 실행 방법
 1. java 17버전 이상 설치 및 코드 클론
-2. active profile을 dev로 설정한 후 실행(실제 서비스와 연결된 DB 사용), 로컬 DB와 연결할 경우 active profile을 local로 설정한 후 실행
-3. 스프링부트 실행
+2. email.username(spring-boot-starter-mail 이메일 이름), email.password(spring-boot-starter-mail 이메일 패스워드) 환경 변수(Environment Variable) 값 설정
+3. active profile을 dev로 설정한 후 실행(실제 서비스와 연결된 DB 사용), 로컬 DB와 연결할 경우 active profile을 local로 설정한 후 실행
+4. 스프링부트 실행
 
 포트: 8081
+
+## 아키텍처
+![](https://cdn.juneberrydiary.com/6f846603-3d40-4ba2-8dc7-e35d52abab48.jpg)
+
+## ERD
+![](https://velog.velcdn.com/images/brylimo/post/9da74794-1ce3-4a63-a1d5-7c5fa5fddf8d/image.jpg)
 
 ## 화면 구성
 ### 로그인 및 회원가입
 ![](https://cdn.juneberrydiary.com/5d3b1a67-51cb-42d2-ae2e-718d56f8968f.png)
-![](https://cdn.juneberrydiary.com/6ff4572b-1201-4d8f-895f-05d04beedf71.png)
+![](https://cdn.juneberrydiary.com/dd54d50a-b597-45e2-953b-3d4c7ecbc756.jpg)
+![](https://cdn.juneberrydiary.com/079656c3-66e3-4bba-a686-8d7f91d1464b.jpg)
+![](https://cdn.juneberrydiary.com/70efe8b1-f5c4-4234-b2ec-fc7f91555b26.jpg)
+![](https://cdn.juneberrydiary.com/4eca48f0-d397-4d88-8cdc-7b7e5afd9f54.jpg)
+![](https://cdn.juneberrydiary.com/36af3b03-5249-4887-953c-73721ababaae.jpg)
 
 ### 지도
 (※ 지도 관련 기능은 merci 프로젝트를 이용해주세요.)
@@ -84,9 +95,3 @@ juneberry diary backend project
 
 ### not found 페이지
 ![](https://cdn.juneberrydiary.com/a2eb2266-c96b-41de-a671-8f596eb57cba.png)
-
-## 아키텍처
-![](https://cdn.juneberrydiary.com/6f846603-3d40-4ba2-8dc7-e35d52abab48.jpg)
-
-## ERD
-![](https://velog.velcdn.com/images/brylimo/post/9da74794-1ce3-4a63-a1d5-7c5fa5fddf8d/image.jpg)
