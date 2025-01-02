@@ -29,7 +29,7 @@ public class EmailController {
         try {
             EmailResponseDto.EmailMessage emailMessage = EmailResponseDto.EmailMessage.builder()
                     .to(sendCode.getEmail())
-                    .subject("[Juneberry Diary]회원가입 이메일 인증 안내")
+                    .subject("[준베리다이어리] 회원가입 이메일 인증 안내")
                     .build();
 
             emailUtil.sendMail(emailMessage, "email/signup");

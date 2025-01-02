@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Slf4j
@@ -23,26 +25,28 @@ public class EmailUtil {
     private final SpringTemplateEngine templateEngine;
     private final VerificationCodeService verificationCodeService;
 
-    public String sendMail(EmailResponseDto.EmailMessage emailMessageDto, String type) {
-        String code = createCode();
-
+    public void sendMail(EmailResponseDto.EmailMessage emailMessageDto, String type) {
+        HashMap<String, String> map = new HashMap<>();
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         if (type.equals("email/signup")) { // 회원가입 이메일 인증
+            String code = createCode(); // 코드 생성
+            map.put("code", code);
+
             verificationCodeService.storeSignUpVerificationCode(emailMessageDto.getTo(), code);
+        } else if (type.equals("email/signup_confirm")) { // 회원가입 확인
+            map.put("email", emailMessageDto.getTo());
+            map.put("name", emailMessageDto.getMessage());
         }
 
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
             mimeMessageHelper.setTo(emailMessageDto.getTo()); // 메일 수신자
             mimeMessageHelper.setSubject(emailMessageDto.getSubject()); // 메일 제목
-            mimeMessageHelper.setText(setContext(code, type), true); // 메일 본문 내용, HTML 여부
+            mimeMessageHelper.setText(setContext(map, type), true); // 메일 본문 내용, HTML 여부
             javaMailSender.send(mimeMessage);
-
-            return code;
         } catch (MessagingException e) {
             log.error("sendMail error occurred!");
-            return null;
         }
     }
 
@@ -63,9 +67,11 @@ public class EmailUtil {
     }
 
     // thymeleaf를 통한 html 적용
-    public String setContext(String code, String type) {
+    public String setContext(HashMap<String, String> map, String type) {
         Context context = new Context();
-        context.setVariable("code", code);
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            context.setVariable(entry.getKey(), entry.getValue());
+        }
         return templateEngine.process(type, context);
     }
 }

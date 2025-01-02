@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,11 +50,22 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
 
     @Override
     public Optional<JuneberryUser> getByEmail(String email) {
-        return juneberryUserRepository.findFirstByEmail(email);
+        return juneberryUserRepository.findByEmail(email);
     }
 
     @Override
-    public JuneberryUser createJuneberryUser(UserRequestDto.Register userRegisterRequestDto) {
+    public Optional<JuneberryUser> getByUsername(String username) { return juneberryUserRepository.findByUsername(username); }
+
+    @Override
+    public Optional<JuneberryUser> createJuneberryUser(UserRequestDto.Register userRegisterRequestDto) {
+        if (StringUtils.hasText(userRegisterRequestDto.getEmail())) {
+            Optional<JuneberryUser> optionalJuneberryUser = getByEmail(userRegisterRequestDto.getEmail());
+
+            if (!optionalJuneberryUser.isEmpty()) { // 유저가 존재
+                return Optional.empty();
+            }
+        }
+
         JuneberryUser createdJuneberryUser =  juneberryUserRepository.save(JuneberryUser.builder()
                                             .name(userRegisterRequestDto.getName())
                                             .email(userRegisterRequestDto.getEmail())
@@ -62,7 +74,7 @@ public class JuneberryUserServiceImpl implements JuneberryUserService {
                                             .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                                             .intro(userRegisterRequestDto.getIntro())
                                             .build());
-        return createdJuneberryUser;
+        return Optional.ofNullable(createdJuneberryUser);
     }
 
     @Override

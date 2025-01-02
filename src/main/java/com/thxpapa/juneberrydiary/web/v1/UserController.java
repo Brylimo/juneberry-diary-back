@@ -2,10 +2,12 @@ package com.thxpapa.juneberrydiary.web.v1;
 
 import com.thxpapa.juneberrydiary.domain.user.JuneberryUser;
 import com.thxpapa.juneberrydiary.dto.ResponseDto;
+import com.thxpapa.juneberrydiary.dto.email.EmailResponseDto;
 import com.thxpapa.juneberrydiary.dto.user.UserRequestDto;
 import com.thxpapa.juneberrydiary.dto.user.UserResponseDto;
 import com.thxpapa.juneberrydiary.service.user.JuneberryUserService;
 import com.thxpapa.juneberrydiary.service.verificationCode.VerificationCodeService;
+import com.thxpapa.juneberrydiary.util.EmailUtil;
 import com.thxpapa.juneberrydiary.util.ErrorUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +29,7 @@ import java.util.Optional;
 public class UserController {
     private final JuneberryUserService juneberryUserService;
     private final VerificationCodeService verificationCodeService;
+    private final EmailUtil emailUtil;
     private final ErrorUtil errorUtil;
     private final ResponseDto responseDto;
 
@@ -38,11 +41,21 @@ public class UserController {
         }
 
         try {
-            JuneberryUser juneberryUser = juneberryUserService.createJuneberryUser(userRegisterRequestDto);
+            Optional<JuneberryUser> optionalJuneberryUser = juneberryUserService.createJuneberryUser(userRegisterRequestDto);
 
-            if (juneberryUser == null) {
+            if (optionalJuneberryUser.isEmpty()) {
                 return responseDto.fail("can't register user", HttpStatus.BAD_REQUEST);
             }
+
+            JuneberryUser juneberryUser = optionalJuneberryUser.get();
+
+            // 회원가입 확인 이메일 메시지 발송
+            EmailResponseDto.EmailMessage emailMessage = EmailResponseDto.EmailMessage.builder()
+                    .to(juneberryUser.getEmail())
+                    .subject("[준베리다이어리] 회원가입을 축하드립니다.")
+                    .message(juneberryUser.getUsername())
+                    .build();
+            emailUtil.sendMail(emailMessage, "email/signup_confirm");
 
             return responseDto.success(UserResponseDto.UserInfo.builder()
                     .name(juneberryUser.getName())
@@ -56,7 +69,7 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "사용자 이메일 조회", description = "이메일을 이용해 사용자를 조회합니다.")
+    @Operation(summary = "이메일로 사용자 조회", description = "이메일을 이용해 사용자를 조회합니다.")
     @GetMapping(value = "/email", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUserByEmail(
             @Parameter(description = "이메일")
@@ -71,6 +84,26 @@ public class UserController {
             }
         } catch (Exception e) {
             log.debug("getUserByEmail error occurred!");
+            return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "사용자 이름으로 사용자 조회", description = "사용자 이름을 이용해 사용자를 조회합니다.")
+    @GetMapping(value = "/username", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUserByUsername(
+            @Parameter(description = "사용자 이름")
+            @RequestParam("username") String username) {
+        try {
+            Optional<JuneberryUser> optionalJuneberryUser = juneberryUserService.getByUsername(username);
+
+            if (optionalJuneberryUser.isEmpty()) {
+                return responseDto.fail("유저가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+            } else {
+                return responseDto.success();
+            }
+
+        } catch (Exception e) {
+            log.debug("getUserByUsername error occurred!");
             return responseDto.fail("server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

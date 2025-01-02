@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface JuneberryUserRepository extends JpaRepository<JuneberryUser, Long> {
     Optional<JuneberryUser> findByUsername(String username);
-    Optional<JuneberryUser> findFirstByEmail(String email);
+    Optional<JuneberryUser> findByEmail(String email);
 }
