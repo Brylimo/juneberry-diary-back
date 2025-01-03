@@ -21,6 +21,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -47,10 +48,30 @@ public class SecurityConfig {
                 .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorizeRequests->
                         authorizeRequests
-                                .requestMatchers("/swagger-ui/**", "/actuator/**","/email/**", "/token/login", "/v1/user", "/v1/user/email", "/v1/user/username", "/v1/user/verification-code", "/v1/cal/tags", "/v1/blog", "/v1/blog/{blogId}/category/categories", "/v1/blog/{blogId}/tag/tags", "/v1/post/posts", "/v1/posts").permitAll()
-                                .requestMatchers("/token/**", "/v1/cal/**", "/v1/post/**", "/v1/blog/**")
+                                .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**"),
+                                        new AntPathRequestMatcher("/h2-console/**"),
+                                        new AntPathRequestMatcher("/actuator/**"),
+                                        new AntPathRequestMatcher("/email/**"),
+                                        new AntPathRequestMatcher("/token/login"),
+                                        new AntPathRequestMatcher("/v1/user"),
+                                        new AntPathRequestMatcher("/v1/user/email"),
+                                        new AntPathRequestMatcher("/v1/user/username"),
+                                        new AntPathRequestMatcher("/v1/user/verification-code"),
+                                        new AntPathRequestMatcher("/v1/cal/tags"),
+                                        new AntPathRequestMatcher("/v1/blog"),
+                                        new AntPathRequestMatcher("/v1/blog/{blogId}/category/categories"),
+                                        new AntPathRequestMatcher("/v1/blog/{blogId}/tag/tags"),
+                                        new AntPathRequestMatcher("/v1/post/posts"),
+                                        new AntPathRequestMatcher("/v1/posts")).permitAll() // 공개 경로
+                                .requestMatchers(new AntPathRequestMatcher("/token/**"),
+                                        new AntPathRequestMatcher("/v1/cal/**"),
+                                        new AntPathRequestMatcher("/v1/post/**"),
+                                        new AntPathRequestMatcher("/v1/blog/**"))
                                 .hasAnyRole("USER", "ADMIN")
                                 .anyRequest().authenticated()
+                )
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.disable()) // H2 Console 프레임 보호 비활성화
                 )
                 .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

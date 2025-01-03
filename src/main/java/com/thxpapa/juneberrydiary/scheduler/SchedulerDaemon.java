@@ -16,7 +16,7 @@ public class SchedulerDaemon {
 
     @PostConstruct
     public void init() {
-        fetchSpecialDayData();
+        //fetchSpecialDayData();
     }
 
     static private boolean lock = false;

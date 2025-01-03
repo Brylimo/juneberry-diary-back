@@ -164,6 +164,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
     database: postgresql
 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
 app:
   front.url: http://localhost:3000
   cookie.secure: false
@@ -206,21 +211,24 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
-        jdbc.lob.non_contextual_creation: true
-        dialect: org.hibernate.dialect.PostgreSQL10Dialect
-    database: postgresql
+        dialect: org.hibernate.dialect.H2Dialect
+    #    jdbc.lob.non_contextual_creation: true
+    defer-datasource-initialization: false
 
   # Database
   datasource:
-    url: jdbc:postgresql://juneberrydiary.store:5432/jdb?serverTimezone=Asia/Seoul&currentSchema=datamart
-    driver-class-name: org.postgresql.Driver
-    username: ENC(xcsy7h2bak01mQWhgd4cYfqQLlj8pBTW)
-    password: ENC(bwjwiKBzRdLTNzFTBV8j7HpcwoDixxuON7HUemIUaQM=)
+    url: jdbc:h2:mem:test;mode=postgresql;NON_KEYWORDS=DAY;INIT=RUNSCRIPT FROM 'classpath:schema.sql'
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql.init.mode: always
+  # 전체 테스트에서 test 설정을 사용
+  #test.database.replace: none
 
 app:
   front.url: http://localhost:3000
