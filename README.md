@@ -18,9 +18,10 @@ juneberry diary backend project
 준베리다이어리는 블로그/다이어리 기능과 캘린더 기록 기능, 지도 기록 기능이 모두 포함된 종합 다이어리 서비스입니다. 일상에서 경험하는 모든 종류의 기록을 준베리다이어리 서비스 하나만으로 해결할 수 있습니다. 또한 여러 종류의 서로 다른 기록을 서로 연동하고 이러한 기록을 통해 유저에게 새로운 인사이트를 제공하기 위해 노력합니다.
 
 ## 기술 스택
--  Spring Boot, Redis, PostgreSQL, Spring Security, Spring Data JPA, Querydsl, Docker, Grafana, Prometheus, Nginx, Jenkins, Swagger, Java
--  CI/CD 작업을 자동화하기 위해 Jenkins 서버 구축
+-  Spring Boot, Redis, PostgreSQL, Spring Security, Spring Data JPA, Querydsl, Docker, Grafana, Prometheus, Nginx, Jenkins, JUnit5, H2 Database, Swagger, Java
+-  Jenkins 기반 CI/CD 파이프라인 구축(CI 테스트 포함)
 -  Prometheus, Grafana를 이용한 모니터링 시스템 서버 구축
+-  JUnit5 + H2 Database 기반 테스트 코드 작성
 
 ## 로컬 실행 방법
 1. java 17버전 이상 설치 및 코드 클론
@@ -31,7 +32,7 @@ juneberry diary backend project
 포트: 8081
 
 ## 아키텍처
-![](https://cdn.juneberrydiary.com/6f846603-3d40-4ba2-8dc7-e35d52abab48.jpg)
+![](https://velog.velcdn.com/images/brylimo/post/b109be88-0269-4567-8553-aa0b4ce24760/image.jpg)
 
 ## ERD
 ![](https://velog.velcdn.com/images/brylimo/post/9da74794-1ce3-4a63-a1d5-7c5fa5fddf8d/image.jpg)
