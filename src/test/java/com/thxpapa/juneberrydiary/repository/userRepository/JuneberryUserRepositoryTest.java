@@ -35,10 +35,9 @@ class JuneberryUserRepositoryTest {
         JuneberryUser user = juneberryUserRepository.findByUsername("juneberry").get();
 
         // then
-        assertThat(user.getName()).isEqualTo("김준베");
-        assertThat(user.getEmail()).isEqualTo("juneberry@jbd.com");
-        assertThat(user.getUsername()).isEqualTo("juneberry");
-        assertThat(user.getPassword()).isEqualTo("juneberrypassword12");
+        assertThat(user)
+                .extracting("name", "email", "username", "password")
+                .contains("김준베", "juneberry@jbd.com", "juneberry", "juneberrypassword12");
     }
 
     @DisplayName("이메일에 맞는 유저를 조회한다.")
@@ -49,14 +48,14 @@ class JuneberryUserRepositoryTest {
         JuneberryUser user2 = createUser("김철수", "soo@jbd.com", "soo12", "soosoopassword12");
 
         juneberryUserRepository.saveAll(List.of(user1, user2));
+
         // when
         JuneberryUser user = juneberryUserRepository.findByEmail("juneberry@jbd.com").get();
 
         // then
-        assertThat(user.getName()).isEqualTo("김준베");
-        assertThat(user.getEmail()).isEqualTo("juneberry@jbd.com");
-        assertThat(user.getUsername()).isEqualTo("juneberry");
-        assertThat(user.getPassword()).isEqualTo("juneberrypassword12");
+        assertThat(user)
+                .extracting("name", "email", "username", "password")
+                .contains("김준베", "juneberry@jbd.com", "juneberry", "juneberrypassword12");
     }
 
     private JuneberryUser createUser(String name, String email, String username, String password) {
