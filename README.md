@@ -1,5 +1,5 @@
 # juneberry diary (backend)
-juneberry diary backend project
+juneberry diary backend project 
 
 ## 프로젝트 정보
 ### 준베리다이어리(juneberry diary)
